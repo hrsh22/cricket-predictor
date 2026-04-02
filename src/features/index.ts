@@ -11,10 +11,12 @@ export {
   BASELINE_PRE_MATCH_FEATURE_SET_VERSION,
   buildBaselinePreMatchFeatureRow,
   createHeadToHeadKey,
+  createTeamSeasonKey,
   createVenueStrengthKey,
   DEFAULT_IPL_TEAM_RATING,
   type PreMatchFeatureContext,
   type TeamRecentForm,
+  type TeamSeasonContext,
   type TeamScheduleContext,
 } from "./pre-match.js";
 export {

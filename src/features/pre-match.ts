@@ -25,14 +25,36 @@ export interface TeamScheduleContext {
   matchesInPrevious7Days: number;
 }
 
+export interface TeamSeasonContext {
+  wins: number;
+  matchesPlayed: number;
+  weightedWinRate?: number;
+}
+
+export interface TeamLineupContext {
+  matches: number;
+  stability: number;
+  continuity: number;
+  rotation: number;
+}
+
+export interface TeamRoleCompositionContext {
+  matches: number;
+  bowlerShare: number;
+  allRounderShare: number;
+}
+
 export interface PreMatchFeatureContext {
   teamRatings: Record<string, number>;
   teamRatingDeviations: Record<string, number>;
   teamRecentForm: Record<string, TeamRecentForm>;
   teamSchedule: Record<string, TeamScheduleContext>;
+  teamSeasonContext?: Record<string, TeamSeasonContext>;
   teamVenueStrength: Record<string, number>;
   teamHeadToHeadStrength: Record<string, number>;
   venueTossDecisionWinRate: Record<string, number>;
+  teamLineupContext: Record<string, TeamLineupContext>;
+  teamRoleCompositionContext: Record<string, TeamRoleCompositionContext>;
 }
 
 export function createVenueTossDecisionKey(
@@ -47,6 +69,10 @@ export function createVenueStrengthKey(
   venueName: string,
 ): string {
   return `${normalizeKeyToken(teamName)}::${normalizeKeyToken(venueName)}`;
+}
+
+export function createTeamSeasonKey(teamName: string, season: number): string {
+  return `${normalizeKeyToken(teamName)}::${season}`;
 }
 
 export function buildBaselinePreMatchFeatureRow(
@@ -132,6 +158,72 @@ export function buildBaselinePreMatchFeatureRow(
     6,
   );
 
+  const teamASeason = readTeamSeasonContext(
+    context.teamSeasonContext,
+    match.teamAName,
+    match.season,
+  );
+  const teamBSeason = readTeamSeasonContext(
+    context.teamSeasonContext,
+    match.teamBName,
+    match.season,
+  );
+  const teamASeasonWinRate = computeSeasonWinRate(teamASeason);
+  const teamBSeasonWinRate = computeSeasonWinRate(teamBSeason);
+  const seasonWinRateDiff = roundTo(teamASeasonWinRate - teamBSeasonWinRate, 6);
+  const seasonMatchesPlayedDiffNormalized = roundTo(
+    normalizeSampleDiff(teamASeason.matchesPlayed, teamBSeason.matchesPlayed),
+    6,
+  );
+  const teamASeasonWinStrength = computeSeasonWinStrength(
+    teamASeasonWinRate,
+    teamASeason.matchesPlayed,
+  );
+  const teamBSeasonWinStrength = computeSeasonWinStrength(
+    teamBSeasonWinRate,
+    teamBSeason.matchesPlayed,
+  );
+  const seasonWinStrengthDiff = roundTo(
+    teamASeasonWinStrength - teamBSeasonWinStrength,
+    6,
+  );
+  const teamALineup = readTeamLineupContext(
+    context.teamLineupContext,
+    match.teamAName,
+  );
+  const teamBLineup = readTeamLineupContext(
+    context.teamLineupContext,
+    match.teamBName,
+  );
+  const lineupStabilityDiff = roundTo(
+    teamALineup.stability - teamBLineup.stability,
+    6,
+  );
+  const lineupContinuityDiff = roundTo(
+    teamALineup.continuity - teamBLineup.continuity,
+    6,
+  );
+  const lineupRotationEdge = roundTo(
+    teamBLineup.rotation - teamALineup.rotation,
+    6,
+  );
+  const teamARoleComposition = readTeamRoleCompositionContext(
+    context.teamRoleCompositionContext,
+    match.teamAName,
+  );
+  const teamBRoleComposition = readTeamRoleCompositionContext(
+    context.teamRoleCompositionContext,
+    match.teamBName,
+  );
+  const bowlerShareDiff = roundTo(
+    teamARoleComposition.bowlerShare - teamBRoleComposition.bowlerShare,
+    6,
+  );
+  const allRounderShareDiff = roundTo(
+    teamARoleComposition.allRounderShare - teamBRoleComposition.allRounderShare,
+    6,
+  );
+
   const scheduledDate = new Date(match.scheduledStart);
   const scheduledHourUtc = scheduledDate.getUTCHours();
   const scheduledWeekdayUtc = scheduledDate.getUTCDay();
@@ -173,6 +265,22 @@ export function buildBaselinePreMatchFeatureRow(
     teamAHeadToHeadStrength,
     teamBHeadToHeadStrength,
     headToHeadDiff,
+    teamASeasonMatchesPlayed: teamASeason.matchesPlayed,
+    teamBSeasonMatchesPlayed: teamBSeason.matchesPlayed,
+    seasonMatchesPlayedDiffNormalized,
+    teamASeasonWinRate,
+    teamBSeasonWinRate,
+    seasonWinRateDiff,
+    teamASeasonWinStrength,
+    teamBSeasonWinStrength,
+    seasonWinStrengthDiff,
+    teamALineupMatchesKnown: teamALineup.matches,
+    teamBLineupMatchesKnown: teamBLineup.matches,
+    lineupStabilityDiff,
+    lineupContinuityDiff,
+    lineupRotationEdge,
+    bowlerShareDiff,
+    allRounderShareDiff,
     scheduledHourUtc,
     scheduledWeekdayUtc,
     isWeekendUtc,
@@ -193,6 +301,9 @@ export function buildBaselinePreMatchFeatureRow(
       ratingDeviationsSource: "glicko2_rating_deviations",
       formSource: "provided_recent_form",
       scheduleSource: "provided_schedule_context",
+      teamSeasonSource: "provided_team_season_context",
+      teamLineupSource: "historical_team_lineup_context",
+      teamRoleCompositionSource: "historical_team_role_composition_context",
       venueSource: "provided_venue_strength",
       headToHeadSource: "provided_head_to_head_strength",
       venueConditionsSource: "computed_venue_conditions",
@@ -309,6 +420,86 @@ function readTeamForm(
   };
 }
 
+function readTeamSeasonContext(
+  seasonByTeam: Record<string, TeamSeasonContext> | undefined,
+  teamName: string,
+  season: number,
+): TeamSeasonContext {
+  if (seasonByTeam === undefined || !Number.isInteger(season)) {
+    return {
+      wins: 0,
+      matchesPlayed: 0,
+      weightedWinRate: 0.5,
+    };
+  }
+
+  const rawSeason = seasonByTeam[createTeamSeasonKey(teamName, season)];
+  if (rawSeason === undefined) {
+    return {
+      wins: 0,
+      matchesPlayed: 0,
+      weightedWinRate: 0.5,
+    };
+  }
+
+  const matchesPlayed = Math.max(0, Math.floor(rawSeason.matchesPlayed));
+  const wins = Math.max(0, Math.min(matchesPlayed, Math.floor(rawSeason.wins)));
+
+  const weightedWinRate =
+    typeof rawSeason.weightedWinRate === "number" &&
+    Number.isFinite(rawSeason.weightedWinRate)
+      ? Math.max(0, Math.min(1, roundTo(rawSeason.weightedWinRate, 6)))
+      : null;
+
+  return {
+    wins,
+    matchesPlayed,
+    ...(weightedWinRate === null ? {} : { weightedWinRate }),
+  };
+}
+
+function readTeamLineupContext(
+  lineupByTeam: Record<string, TeamLineupContext>,
+  teamName: string,
+): TeamLineupContext {
+  const rawLineup = lineupByTeam[teamName];
+  if (rawLineup === undefined) {
+    return {
+      matches: 0,
+      stability: 0.5,
+      continuity: 0.5,
+      rotation: 0.5,
+    };
+  }
+
+  return {
+    matches: Math.max(0, Math.floor(rawLineup.matches)),
+    stability: clampUnitInterval(rawLineup.stability),
+    continuity: clampUnitInterval(rawLineup.continuity),
+    rotation: clampUnitInterval(rawLineup.rotation),
+  };
+}
+
+function readTeamRoleCompositionContext(
+  roleByTeam: Record<string, TeamRoleCompositionContext>,
+  teamName: string,
+): TeamRoleCompositionContext {
+  const rawRole = roleByTeam[teamName];
+  if (rawRole === undefined) {
+    return {
+      matches: 0,
+      bowlerShare: 0.35,
+      allRounderShare: 0.25,
+    };
+  }
+
+  return {
+    matches: Math.max(0, Math.floor(rawRole.matches)),
+    bowlerShare: clampUnitInterval(rawRole.bowlerShare),
+    allRounderShare: clampUnitInterval(rawRole.allRounderShare),
+  };
+}
+
 function readScheduleContext(
   scheduleByTeam: Record<string, TeamScheduleContext>,
   teamName: string,
@@ -393,6 +584,53 @@ function computeWinRate(form: TeamRecentForm): number {
 
   const wins = Math.min(form.wins, form.matches);
   return roundTo(wins / form.matches, 6);
+}
+
+function computeSeasonWinRate(season: TeamSeasonContext): number {
+  if (
+    typeof season.weightedWinRate === "number" &&
+    Number.isFinite(season.weightedWinRate)
+  ) {
+    return roundTo(Math.max(0, Math.min(1, season.weightedWinRate)), 6);
+  }
+
+  if (season.matchesPlayed <= 0) {
+    return 0.5;
+  }
+
+  return roundTo(season.wins / season.matchesPlayed, 6);
+}
+
+function computeSeasonWinStrength(
+  winRate: number,
+  matchesPlayed: number,
+): number {
+  const boundedMatches = Math.max(0, Math.floor(matchesPlayed));
+  const reliability = boundedMatches / (boundedMatches + 6);
+  return roundTo((winRate - 0.5) * reliability, 6);
+}
+
+function clampUnitInterval(value: number | undefined): number {
+  if (typeof value !== "number" || !Number.isFinite(value)) {
+    return 0.5;
+  }
+
+  return Math.max(0, Math.min(1, roundTo(value, 6)));
+}
+
+function normalizeSampleDiff(
+  teamASamples: number,
+  teamBSamples: number,
+): number {
+  const safeA = Math.max(0, Math.floor(teamASamples));
+  const safeB = Math.max(0, Math.floor(teamBSamples));
+  const denominator = safeA + safeB + 4;
+
+  if (denominator <= 0) {
+    return 0;
+  }
+
+  return (safeA - safeB) / denominator;
 }
 
 function normalizeKeyToken(value: string): string {

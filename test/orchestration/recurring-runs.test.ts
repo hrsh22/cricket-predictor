@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 
 import { beforeAll, afterAll, afterEach, describe, expect, it } from "vitest";
 
-import { migrateDatabase } from "../../database/migration-runner.js";
+import { resetDatabase } from "../../database/migration-runner.js";
 import { loadAppConfig } from "../../src/config/index.js";
 import {
   runRecurringPipeline,
@@ -12,6 +12,7 @@ import {
   createPgPool,
   createRepositorySet,
 } from "../../src/repositories/index.js";
+import { ensureTestDatabaseExists } from "../helpers/postgres-test-db.js";
 import {
   inningsBreakCricapiPayload,
   postTossCricapiPayload,
@@ -19,14 +20,18 @@ import {
 } from "../fixtures/cricket/cricapi.js";
 
 describe("recurring orchestration", () => {
-  const config = loadAppConfig();
+  const config = loadAppConfig({
+    DATABASE_URL:
+      "postgresql://harsh@localhost:5434/sports_predictor_orchestration_test",
+  });
   const orchestrationPool = createPgPool(config.databaseUrl);
   const cleanupPool = createPgPool(config.databaseUrl);
   const seedRepositories = createRepositorySet(config);
   const createdSuffixes = new Set<string>();
 
   beforeAll(async () => {
-    await migrateDatabase(config.databaseUrl);
+    await ensureTestDatabaseExists(config.databaseUrl);
+    await resetDatabase(config.databaseUrl);
   });
 
   afterEach(async () => {

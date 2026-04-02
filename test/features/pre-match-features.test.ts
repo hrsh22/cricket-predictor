@@ -33,6 +33,9 @@ describe("baseline pre-match feature generation", () => {
     expect(featureRowA.features["restDiff"]).toBe(3);
     expect(featureRowA.features["congestionDiff"]).toBe(-1);
     expect(featureRowA.features["headToHeadDiff"]).toBe(0.24);
+    expect(featureRowA.features["seasonWinRateDiff"]).toBe(0.3);
+    expect(featureRowA.features["seasonMatchesPlayedDiffNormalized"]).toBe(0);
+    expect(featureRowA.features["seasonWinStrengthDiff"]).toBe(0.12);
 
     expect(
       (featureRowA.features["source"] as Record<string, unknown>)[
@@ -49,11 +52,14 @@ describe("baseline pre-match feature generation", () => {
         teamRatingDeviations: {},
         teamRecentForm: {},
         teamSchedule: {},
+        teamSeasonContext: {},
         teamVenueStrength: {
           [createVenueStrengthKey("some-team", "some-venue")]: 0.2,
         },
         teamHeadToHeadStrength: {},
         venueTossDecisionWinRate: {},
+        teamLineupContext: {},
+        teamRoleCompositionContext: {},
       },
     );
 
@@ -65,6 +71,13 @@ describe("baseline pre-match feature generation", () => {
     expect(neutralFeatureRow.features["venueDiff"]).toBe(0);
     expect(neutralFeatureRow.features["restDiff"]).toBe(0);
     expect(neutralFeatureRow.features["headToHeadDiff"]).toBe(0);
+    expect(neutralFeatureRow.features["teamASeasonMatchesPlayed"]).toBe(0);
+    expect(neutralFeatureRow.features["teamBSeasonMatchesPlayed"]).toBe(0);
+    expect(neutralFeatureRow.features["seasonWinRateDiff"]).toBe(0);
+    expect(
+      neutralFeatureRow.features["seasonMatchesPlayedDiffNormalized"],
+    ).toBe(0);
+    expect(neutralFeatureRow.features["seasonWinStrengthDiff"]).toBe(0);
   });
 
   it("rejects market-odds leakage keys from the structured feature payload", () => {

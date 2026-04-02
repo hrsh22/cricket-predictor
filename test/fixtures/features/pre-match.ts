@@ -5,6 +5,7 @@ import {
 import {
   createVenueTossDecisionKey,
   createHeadToHeadKey,
+  createTeamSeasonKey,
   createVenueStrengthKey,
   type PreMatchFeatureContext,
 } from "../../../src/features/pre-match.js";
@@ -79,6 +80,18 @@ export const baselinePreMatchFeatureContext: PreMatchFeatureContext = {
       matchesInPrevious7Days: 2,
     },
   },
+  teamSeasonContext: {
+    [createTeamSeasonKey("Royal Challengers Bengaluru", 2026)]: {
+      wins: 3,
+      matchesPlayed: 4,
+      weightedWinRate: 0.65,
+    },
+    [createTeamSeasonKey("Kolkata Knight Riders", 2026)]: {
+      wins: 1,
+      matchesPlayed: 4,
+      weightedWinRate: 0.35,
+    },
+  },
   teamVenueStrength: {
     [createVenueStrengthKey(
       "Royal Challengers Bengaluru",
@@ -100,5 +113,31 @@ export const baselinePreMatchFeatureContext: PreMatchFeatureContext = {
   venueTossDecisionWinRate: {
     [createVenueTossDecisionKey("M. Chinnaswamy Stadium", "bowl")]: 0.56,
     [createVenueTossDecisionKey("M. Chinnaswamy Stadium", "bat")]: 0.49,
+  },
+  teamLineupContext: {
+    "Royal Challengers Bengaluru": {
+      matches: 5,
+      stability: 0.78,
+      continuity: 0.82,
+      rotation: 0.18,
+    },
+    "Kolkata Knight Riders": {
+      matches: 5,
+      stability: 0.61,
+      continuity: 0.66,
+      rotation: 0.34,
+    },
+  },
+  teamRoleCompositionContext: {
+    "Royal Challengers Bengaluru": {
+      matches: 5,
+      bowlerShare: 0.36,
+      allRounderShare: 0.27,
+    },
+    "Kolkata Knight Riders": {
+      matches: 5,
+      bowlerShare: 0.42,
+      allRounderShare: 0.18,
+    },
   },
 };

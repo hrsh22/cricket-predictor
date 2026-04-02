@@ -55,6 +55,7 @@ describe("import-cricsheet-ipl helpers", () => {
       winningTeamName: "Royal Challengers Bengaluru",
       resultType: "win",
       status: "completed",
+      lineups: [],
     });
   });
 });

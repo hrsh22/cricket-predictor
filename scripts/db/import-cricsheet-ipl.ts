@@ -21,6 +21,8 @@ interface CricsheetMatch {
     event?: { match_number?: number };
     match_type?: string;
     season?: string | number;
+    players?: Record<string, string[]>;
+    registry?: { people?: Record<string, string> };
     teams?: string[];
     toss?: { winner?: string; decision?: string };
     venue?: string;
@@ -45,6 +47,12 @@ interface NormalizedImportRow {
   winningTeamName: string | null;
   resultType: "win" | "tie" | "no_result" | "abandoned" | "super_over" | null;
   status: "completed" | "abandoned" | "no_result";
+  lineups: Array<{
+    teamName: string;
+    sourcePlayerName: string;
+    cricsheetPlayerId: string | null;
+    lineupOrder: number;
+  }>;
 }
 
 async function main(): Promise<void> {
@@ -102,7 +110,33 @@ async function main(): Promise<void> {
           resultType: row.resultType,
         });
 
-        await normalizedRepository.saveCanonicalMatch(canonical);
+        const canonicalRecord =
+          await normalizedRepository.saveCanonicalMatch(canonical);
+
+        for (const lineup of row.lineups) {
+          const playerRegistry =
+            lineup.cricsheetPlayerId === null
+              ? null
+              : await normalizedRepository.savePlayerRegistry({
+                  cricsheetPlayerId: lineup.cricsheetPlayerId,
+                  canonicalName: lineup.sourcePlayerName,
+                  metadata: {
+                    source: "cricsheet_info_players",
+                  },
+                });
+
+          await normalizedRepository.saveMatchPlayerAppearance({
+            canonicalMatchId: canonicalRecord.id,
+            teamName: lineup.teamName,
+            playerRegistryId: playerRegistry?.id ?? null,
+            sourcePlayerName: lineup.sourcePlayerName,
+            lineupOrder: lineup.lineupOrder,
+            metadata: {
+              source: "cricsheet_info_players",
+            },
+          });
+        }
+
         persisted += 1;
       }
 
@@ -286,6 +320,7 @@ export function normalizeCricsheetMatch(
       outcome.winner === undefined ? null : normalizeTeamName(outcome.winner),
     resultType,
     status,
+    lineups: normalizeLineups(info.players, info.registry?.people),
   };
 }
 
@@ -377,6 +412,50 @@ function normalizeTeams(teams: string[] | undefined): [string, string] | null {
   }
 
   return [teams[0], teams[1]];
+}
+
+function normalizeLineups(
+  players: Record<string, string[]> | undefined,
+  registry: Record<string, string> | undefined,
+): Array<{
+  teamName: string;
+  sourcePlayerName: string;
+  cricsheetPlayerId: string | null;
+  lineupOrder: number;
+}> {
+  if (players === undefined) {
+    return [];
+  }
+
+  const lineups: Array<{
+    teamName: string;
+    sourcePlayerName: string;
+    cricsheetPlayerId: string | null;
+    lineupOrder: number;
+  }> = [];
+
+  for (const [teamName, teamPlayers] of Object.entries(players)) {
+    if (!Array.isArray(teamPlayers)) {
+      continue;
+    }
+
+    const normalizedTeamName = normalizeTeamName(teamName);
+    for (const [index, playerName] of teamPlayers.entries()) {
+      if (typeof playerName !== "string" || playerName.trim().length === 0) {
+        continue;
+      }
+
+      const normalizedPlayerName = playerName.trim();
+      lineups.push({
+        teamName: normalizedTeamName,
+        sourcePlayerName: normalizedPlayerName,
+        cricsheetPlayerId: registry?.[normalizedPlayerName] ?? null,
+        lineupOrder: index + 1,
+      });
+    }
+  }
+
+  return lineups;
 }
 
 function normalizeDate(value: string | null): string | null {

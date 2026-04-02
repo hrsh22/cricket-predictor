@@ -337,6 +337,20 @@ function readModelWeightsOverride(
     headToHead: readFinite(value["headToHead"]) ?? fallback.headToHead,
     rest: readFinite(value["rest"]) ?? fallback.rest,
     congestion: readFinite(value["congestion"]) ?? fallback.congestion,
+    lineupStability:
+      readFinite(value["lineupStability"]) ?? fallback.lineupStability,
+    lineupContinuity:
+      readFinite(value["lineupContinuity"]) ?? fallback.lineupContinuity,
+    lineupRotation:
+      readFinite(value["lineupRotation"]) ?? fallback.lineupRotation,
+    bowlerShare: readFinite(value["bowlerShare"]) ?? fallback.bowlerShare,
+    allRounderShare:
+      readFinite(value["allRounderShare"]) ?? fallback.allRounderShare,
+    seasonWinRate: readFinite(value["seasonWinRate"]) ?? fallback.seasonWinRate,
+    seasonMatchesPlayed:
+      readFinite(value["seasonMatchesPlayed"]) ?? fallback.seasonMatchesPlayed,
+    seasonWinStrength:
+      readFinite(value["seasonWinStrength"]) ?? fallback.seasonWinStrength,
     dewFactor: readFinite(value["dewFactor"]) ?? fallback.dewFactor,
     homeAdvantage: readFinite(value["homeAdvantage"]) ?? fallback.homeAdvantage,
     pitchBattingIndex:

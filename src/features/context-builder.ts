@@ -4,6 +4,7 @@ import type { PreMatchFeatureContext } from "../features/pre-match.js";
 import {
   createVenueTossDecisionKey,
   createHeadToHeadKey,
+  createTeamSeasonKey,
   createVenueStrengthKey,
 } from "../features/pre-match.js";
 import { computeGlicko2Ratings, type Glicko2Rating } from "../ratings/index.js";
@@ -11,8 +12,10 @@ import { computeGlicko2Ratings, type Glicko2Rating } from "../ratings/index.js";
 const DEFAULT_ELO = 1500;
 const DEFAULT_RD = 300;
 const ELO_K_FACTOR = 32;
+export const ELO_SEASON_CARRYOVER = 0.65;
 
 interface MatchResult {
+  season: number;
   teamA: string;
   teamB: string;
   winner: string | null;
@@ -47,13 +50,36 @@ interface VenueTossStats {
   [key: string]: { wins: number; matches: number };
 }
 
+interface TeamSeasonStats {
+  [key: string]: { wins: number; matchesPlayed: number };
+}
+
+interface TeamLineupMatch {
+  teamName: string;
+  resultKnownAt: Date;
+  players: string[];
+}
+
+interface TeamRoleLineupMatch {
+  teamName: string;
+  resultKnownAt: Date;
+  roles: string[];
+}
+
 export async function buildFeatureContextFromHistory(
   pool: Pool,
   asOfDate: Date,
+  options?: {
+    eloSeasonCarryover?: number;
+  },
 ): Promise<PreMatchFeatureContext> {
   const matches = await fetchCompletedMatches(pool, asOfDate);
 
-  const eloRatings = computeEloRatings(matches, asOfDate);
+  const eloRatings = computeEloRatings(
+    matches,
+    asOfDate,
+    options?.eloSeasonCarryover ?? ELO_SEASON_CARRYOVER,
+  );
   const teamRatingDeviations: Record<string, number> = {};
   for (const team of Object.keys(eloRatings)) {
     teamRatingDeviations[team] = DEFAULT_RD;
@@ -64,6 +90,12 @@ export async function buildFeatureContextFromHistory(
   const headToHeadStrength = computeHeadToHeadStrength(matches);
   const venueTossDecisionWinRate = computeVenueTossDecisionWinRate(matches);
   const scheduleContext = computeScheduleContext(matches, asOfDate);
+  const teamSeasonContext = computeTeamSeasonContext(matches, asOfDate);
+  const teamLineupContext = await computeTeamLineupContext(pool, asOfDate);
+  const teamRoleCompositionContext = await computeTeamRoleCompositionContext(
+    pool,
+    asOfDate,
+  );
 
   return {
     teamRatings: eloRatings,
@@ -81,6 +113,8 @@ export async function buildFeatureContextFromHistory(
     teamVenueStrength: venueStrength,
     teamHeadToHeadStrength: headToHeadStrength,
     venueTossDecisionWinRate,
+    teamLineupContext,
+    teamRoleCompositionContext,
     teamSchedule: Object.fromEntries(
       Object.entries(scheduleContext).map(([team, ctx]) => [
         team,
@@ -99,17 +133,25 @@ export async function buildFeatureContextFromHistory(
         },
       ]),
     ),
+    teamSeasonContext,
   };
 }
 
 function computeEloRatings(
   matches: MatchResult[],
   asOfDate: Date,
+  seasonCarryover: number,
 ): Record<string, number> {
   const ratings: Record<string, number> = {};
+  let activeSeason: number | null = null;
 
   for (const match of matches) {
     if (match.winner === null) continue;
+
+    if (activeSeason !== null && match.season !== activeSeason) {
+      regressRatingsTowardMean(ratings, seasonCarryover);
+    }
+    activeSeason = match.season;
 
     const teamARating = ratings[match.teamA] ?? DEFAULT_ELO;
     const teamBRating = ratings[match.teamB] ?? DEFAULT_ELO;
@@ -132,6 +174,22 @@ function computeEloRatings(
   }
 
   return ratings;
+}
+
+function regressRatingsTowardMean(
+  ratings: Record<string, number>,
+  carryover: number,
+): void {
+  for (const team of Object.keys(ratings)) {
+    const currentRating = ratings[team];
+    if (currentRating === undefined) {
+      continue;
+    }
+
+    ratings[team] = Number(
+      (DEFAULT_ELO + (currentRating - DEFAULT_ELO) * carryover).toFixed(6),
+    );
+  }
 }
 
 function computeRecencyWeight(matchDate: Date, asOfDate: Date): number {
@@ -161,6 +219,7 @@ async function fetchCompletedMatches(
   asOfDate: Date,
 ): Promise<MatchResult[]> {
   const result = await pool.query<{
+    season: number;
     team_a_name: string;
     team_b_name: string;
     winning_team_name: string | null;
@@ -201,6 +260,7 @@ async function fetchCompletedMatches(
         GROUP BY source_match_id
       )
       SELECT
+        cm.season,
         cm.team_a_name,
         cm.team_b_name,
         cm.winning_team_name,
@@ -229,6 +289,7 @@ async function fetchCompletedMatches(
   );
 
   return result.rows.map((row) => ({
+    season: row.season,
     teamA: row.team_a_name,
     teamB: row.team_b_name,
     winner: row.winning_team_name,
@@ -363,6 +424,382 @@ function computeScheduleContext(
   }
 
   return schedule;
+}
+
+function computeTeamSeasonContext(
+  matches: MatchResult[],
+  asOfDate: Date,
+): Record<
+  string,
+  { wins: number; matchesPlayed: number; weightedWinRate: number }
+> {
+  const seasonStats: TeamSeasonStats = {};
+
+  for (const match of matches) {
+    if (match.resultKnownAt >= asOfDate || match.winner === null) {
+      continue;
+    }
+
+    const teamAKey = createTeamSeasonKey(match.teamA, match.season);
+    const teamBKey = createTeamSeasonKey(match.teamB, match.season);
+
+    if (seasonStats[teamAKey] === undefined) {
+      seasonStats[teamAKey] = { wins: 0, matchesPlayed: 0 };
+    }
+    if (seasonStats[teamBKey] === undefined) {
+      seasonStats[teamBKey] = { wins: 0, matchesPlayed: 0 };
+    }
+
+    seasonStats[teamAKey].matchesPlayed += 1;
+    seasonStats[teamBKey].matchesPlayed += 1;
+
+    if (match.winner === match.teamA) {
+      seasonStats[teamAKey].wins += 1;
+    } else if (match.winner === match.teamB) {
+      seasonStats[teamBKey].wins += 1;
+    }
+  }
+
+  const normalized: Record<
+    string,
+    { wins: number; matchesPlayed: number; weightedWinRate: number }
+  > = {};
+
+  for (const [key, stats] of Object.entries(seasonStats)) {
+    const rawWinRate =
+      stats.matchesPlayed <= 0 ? 0.5 : stats.wins / stats.matchesPlayed;
+    const weightedWinRate = bayesianShrink(
+      rawWinRate,
+      stats.matchesPlayed,
+      0.5,
+      4,
+    );
+    normalized[key] = {
+      wins: stats.wins,
+      matchesPlayed: stats.matchesPlayed,
+      weightedWinRate: Number(weightedWinRate.toFixed(6)),
+    };
+  }
+
+  return normalized;
+}
+
+async function computeTeamLineupContext(
+  pool: Pool,
+  asOfDate: Date,
+): Promise<
+  Record<
+    string,
+    { matches: number; stability: number; continuity: number; rotation: number }
+  >
+> {
+  const result = await pool.query<{
+    team_name: string;
+    result_known_at: Date;
+    player_registry_id: string | number | null;
+    source_player_name: string;
+    lineup_order: number;
+  }>(
+    `
+      WITH first_completed_snapshot AS (
+        SELECT
+          source_match_id,
+          MIN(snapshot_time) AS result_known_at
+        FROM raw_cricket_snapshots
+        WHERE (
+          match_status IS NOT NULL
+          AND (
+            lower(match_status) IN ('completed', 'complete', 'result', 'finished', 'end', 'ended')
+            OR lower(match_status) LIKE '%won%'
+            OR lower(match_status) LIKE '%draw%'
+            OR lower(match_status) LIKE '%tie%'
+            OR lower(match_status) LIKE '%abandon%'
+            OR lower(match_status) LIKE '%no result%'
+          )
+        )
+        OR (
+          payload ->> 'status' IS NOT NULL
+          AND (
+            lower(payload ->> 'status') IN ('completed', 'complete', 'result', 'finished', 'end', 'ended')
+            OR lower(payload ->> 'status') LIKE '%won%'
+            OR lower(payload ->> 'status') LIKE '%draw%'
+            OR lower(payload ->> 'status') LIKE '%tie%'
+            OR lower(payload ->> 'status') LIKE '%abandon%'
+            OR lower(payload ->> 'status') LIKE '%no result%'
+          )
+        )
+        GROUP BY source_match_id
+      )
+      SELECT
+        mpa.team_name,
+        COALESCE(
+          fcs.result_known_at,
+          cm.scheduled_start + INTERVAL '12 hours'
+        ) AS result_known_at,
+        mpa.player_registry_id,
+        mpa.source_player_name,
+        mpa.lineup_order
+      FROM match_player_appearances mpa
+      JOIN canonical_matches cm ON cm.id = mpa.canonical_match_id
+      LEFT JOIN first_completed_snapshot fcs
+        ON fcs.source_match_id = cm.source_match_id
+      WHERE cm.competition = 'IPL'
+        AND cm.status = 'completed'
+        AND COALESCE(
+          fcs.result_known_at,
+          cm.scheduled_start + INTERVAL '12 hours'
+        ) < $1
+      ORDER BY mpa.team_name ASC, result_known_at ASC, mpa.lineup_order ASC
+    `,
+    [asOfDate],
+  );
+
+  const byTeam = new Map<string, TeamLineupMatch[]>();
+  const lineupIndex = new Map<string, TeamLineupMatch>();
+
+  for (const row of result.rows) {
+    const lineupKey = `${row.team_name}::${row.result_known_at.toISOString()}`;
+    let lineup = lineupIndex.get(lineupKey);
+    if (lineup === undefined) {
+      lineup = {
+        teamName: row.team_name,
+        resultKnownAt: row.result_known_at,
+        players: [],
+      };
+      lineupIndex.set(lineupKey, lineup);
+      const current = byTeam.get(row.team_name) ?? [];
+      current.push(lineup);
+      byTeam.set(row.team_name, current);
+    }
+
+    const playerKey =
+      row.player_registry_id === null
+        ? `name:${row.source_player_name.toLowerCase()}`
+        : `id:${row.player_registry_id}`;
+    lineup.players.push(playerKey);
+  }
+
+  const output: Record<
+    string,
+    { matches: number; stability: number; continuity: number; rotation: number }
+  > = {};
+  for (const [team, lineups] of byTeam.entries()) {
+    output[team] = summarizeTeamLineups(lineups.slice(-5));
+  }
+
+  return output;
+}
+
+async function computeTeamRoleCompositionContext(
+  pool: Pool,
+  asOfDate: Date,
+): Promise<
+  Record<
+    string,
+    { matches: number; bowlerShare: number; allRounderShare: number }
+  >
+> {
+  const result = await pool.query<{
+    team_name: string;
+    result_known_at: Date;
+    player_role: string | null;
+    lineup_order: number;
+  }>(
+    `
+      WITH first_completed_snapshot AS (
+        SELECT
+          source_match_id,
+          MIN(snapshot_time) AS result_known_at
+        FROM raw_cricket_snapshots
+        WHERE (
+          match_status IS NOT NULL
+          AND (
+            lower(match_status) IN ('completed', 'complete', 'result', 'finished', 'end', 'ended')
+            OR lower(match_status) LIKE '%won%'
+            OR lower(match_status) LIKE '%draw%'
+            OR lower(match_status) LIKE '%tie%'
+            OR lower(match_status) LIKE '%abandon%'
+            OR lower(match_status) LIKE '%no result%'
+          )
+        )
+        OR (
+          payload ->> 'status' IS NOT NULL
+          AND (
+            lower(payload ->> 'status') IN ('completed', 'complete', 'result', 'finished', 'end', 'ended')
+            OR lower(payload ->> 'status') LIKE '%won%'
+            OR lower(payload ->> 'status') LIKE '%draw%'
+            OR lower(payload ->> 'status') LIKE '%tie%'
+            OR lower(payload ->> 'status') LIKE '%abandon%'
+            OR lower(payload ->> 'status') LIKE '%no result%'
+          )
+        )
+        GROUP BY source_match_id
+      )
+      SELECT
+        mpa.team_name,
+        COALESCE(
+          fcs.result_known_at,
+          cm.scheduled_start + INTERVAL '12 hours'
+        ) AS result_known_at,
+        pr.player_role,
+        mpa.lineup_order
+      FROM match_player_appearances mpa
+      JOIN canonical_matches cm ON cm.id = mpa.canonical_match_id
+      LEFT JOIN first_completed_snapshot fcs
+        ON fcs.source_match_id = cm.source_match_id
+      LEFT JOIN player_registry pr ON pr.id = mpa.player_registry_id
+      WHERE cm.competition = 'IPL'
+        AND cm.status = 'completed'
+        AND COALESCE(
+          fcs.result_known_at,
+          cm.scheduled_start + INTERVAL '12 hours'
+        ) < $1
+      ORDER BY mpa.team_name ASC, result_known_at ASC, mpa.lineup_order ASC
+    `,
+    [asOfDate],
+  );
+
+  const byTeam = new Map<string, TeamRoleLineupMatch[]>();
+  const lineupIndex = new Map<string, TeamRoleLineupMatch>();
+
+  for (const row of result.rows) {
+    const lineupKey = `${row.team_name}::${row.result_known_at.toISOString()}`;
+    let lineup = lineupIndex.get(lineupKey);
+    if (lineup === undefined) {
+      lineup = {
+        teamName: row.team_name,
+        resultKnownAt: row.result_known_at,
+        roles: [],
+      };
+      lineupIndex.set(lineupKey, lineup);
+      const current = byTeam.get(row.team_name) ?? [];
+      current.push(lineup);
+      byTeam.set(row.team_name, current);
+    }
+
+    lineup.roles.push(row.player_role ?? "unknown");
+  }
+
+  const output: Record<
+    string,
+    { matches: number; bowlerShare: number; allRounderShare: number }
+  > = {};
+  for (const [team, lineups] of byTeam.entries()) {
+    output[team] = summarizeRoleComposition(lineups.slice(-5));
+  }
+
+  return output;
+}
+
+function summarizeRoleComposition(lineups: TeamRoleLineupMatch[]): {
+  matches: number;
+  bowlerShare: number;
+  allRounderShare: number;
+} {
+  if (lineups.length === 0) {
+    return { matches: 0, bowlerShare: 0.35, allRounderShare: 0.25 };
+  }
+
+  let totalBowlerShare = 0;
+  let totalAllRounderShare = 0;
+  for (const lineup of lineups) {
+    const total = Math.max(1, lineup.roles.length);
+    const bowlers = lineup.roles.filter((role) => role === "bowler").length;
+    const allRounders = lineup.roles.filter(
+      (role) => role === "all_rounder",
+    ).length;
+    totalBowlerShare += bowlers / total;
+    totalAllRounderShare += allRounders / total;
+  }
+
+  return {
+    matches: lineups.length,
+    bowlerShare: Number((totalBowlerShare / lineups.length).toFixed(6)),
+    allRounderShare: Number((totalAllRounderShare / lineups.length).toFixed(6)),
+  };
+}
+
+function summarizeTeamLineups(lineups: TeamLineupMatch[]): {
+  matches: number;
+  stability: number;
+  continuity: number;
+  rotation: number;
+} {
+  if (lineups.length < 2) {
+    return {
+      matches: lineups.length,
+      stability: 0.5,
+      continuity: 0.5,
+      rotation: 0.5,
+    };
+  }
+
+  const uniqueLineups = lineups.map((lineup) =>
+    Array.from(new Set(lineup.players)),
+  );
+  let totalJaccard = 0;
+  let comparisons = 0;
+
+  for (let index = 1; index < uniqueLineups.length; index += 1) {
+    const previous = uniqueLineups[index - 1];
+    const current = uniqueLineups[index];
+    if (previous === undefined || current === undefined) {
+      continue;
+    }
+    totalJaccard += jaccard(previous, current);
+    comparisons += 1;
+  }
+
+  const latest = uniqueLineups[uniqueLineups.length - 1] ?? [];
+  const prior = uniqueLineups.slice(0, -1);
+  let continuityHits = 0;
+  for (const player of latest) {
+    if (prior.some((lineup) => lineup.includes(player))) {
+      continuityHits += 1;
+    }
+  }
+
+  const allRecentPlayers = new Set(uniqueLineups.flat());
+  const averageLineupSize =
+    uniqueLineups.reduce((sum, lineup) => sum + lineup.length, 0) /
+    uniqueLineups.length;
+  const rotation =
+    averageLineupSize <= 0
+      ? 0.5
+      : Math.min(
+          1,
+          Math.max(
+            0,
+            (allRecentPlayers.size - averageLineupSize) / averageLineupSize,
+          ),
+        );
+
+  return {
+    matches: uniqueLineups.length,
+    stability: Number((totalJaccard / Math.max(1, comparisons)).toFixed(6)),
+    continuity: Number(
+      (continuityHits / Math.max(1, latest.length)).toFixed(6),
+    ),
+    rotation: Number(rotation.toFixed(6)),
+  };
+}
+
+function jaccard(left: string[], right: string[]): number {
+  const leftSet = new Set(left);
+  const rightSet = new Set(right);
+  const union = new Set([...leftSet, ...rightSet]);
+  if (union.size === 0) {
+    return 0.5;
+  }
+
+  let intersection = 0;
+  for (const value of leftSet) {
+    if (rightSet.has(value)) {
+      intersection += 1;
+    }
+  }
+
+  return intersection / union.size;
 }
 
 function computeVenueTossDecisionWinRate(

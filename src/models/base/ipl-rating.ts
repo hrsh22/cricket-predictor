@@ -23,6 +23,14 @@ export interface ModelWeights {
   rest: number;
   /** Weight for schedule congestion difference (normalized by 4, inverted) */
   congestion: number;
+  lineupStability: number;
+  lineupContinuity: number;
+  lineupRotation: number;
+  bowlerShare: number;
+  allRounderShare: number;
+  seasonWinRate: number;
+  seasonMatchesPlayed: number;
+  seasonWinStrength: number;
   /** Weight for dew factor (evening matches at humid venues favor chasing team) */
   dewFactor: number;
   /** Weight for home advantage difference */
@@ -43,6 +51,14 @@ export const DEFAULT_MODEL_WEIGHTS: Readonly<ModelWeights> = {
   headToHead: 0.2,
   rest: 0.5,
   congestion: 0.4,
+  lineupStability: 0.0,
+  lineupContinuity: 0.0,
+  lineupRotation: 0.0,
+  bowlerShare: 0.0,
+  allRounderShare: 0.0,
+  seasonWinRate: 0.0,
+  seasonMatchesPlayed: 0.0,
+  seasonWinStrength: 0.0,
   dewFactor: 0.0,
   homeAdvantage: 0.0,
   pitchBattingIndex: 0.0,
@@ -103,6 +119,46 @@ export function scoreBaselineIplPreMatch(
     featureRow.features,
     "congestionDiff",
   );
+  const seasonWinRateDiff = readOptionalFiniteNumber(
+    featureRow.features,
+    "seasonWinRateDiff",
+    0,
+  );
+  const seasonMatchesPlayedDiffNormalized = readOptionalFiniteNumber(
+    featureRow.features,
+    "seasonMatchesPlayedDiffNormalized",
+    0,
+  );
+  const seasonWinStrengthDiff = readOptionalFiniteNumber(
+    featureRow.features,
+    "seasonWinStrengthDiff",
+    0,
+  );
+  const lineupStabilityDiff = readOptionalFiniteNumber(
+    featureRow.features,
+    "lineupStabilityDiff",
+    0,
+  );
+  const lineupContinuityDiff = readOptionalFiniteNumber(
+    featureRow.features,
+    "lineupContinuityDiff",
+    0,
+  );
+  const lineupRotationEdge = readOptionalFiniteNumber(
+    featureRow.features,
+    "lineupRotationEdge",
+    0,
+  );
+  const bowlerShareDiff = readOptionalFiniteNumber(
+    featureRow.features,
+    "bowlerShareDiff",
+    0,
+  );
+  const allRounderShareDiff = readOptionalFiniteNumber(
+    featureRow.features,
+    "allRounderShareDiff",
+    0,
+  );
   const headToHeadDiff = readRequiredFiniteNumber(
     featureRow.features,
     "headToHeadDiff",
@@ -128,6 +184,19 @@ export function scoreBaselineIplPreMatch(
   const headToHeadComponent = headToHeadDiff * weights.headToHead;
   const restComponent = (restDiff / 7) * weights.rest;
   const congestionComponent = (-congestionDiff / 4) * weights.congestion;
+  const lineupStabilityComponent =
+    lineupStabilityDiff * weights.lineupStability;
+  const lineupContinuityComponent =
+    lineupContinuityDiff * weights.lineupContinuity;
+  const lineupRotationComponent = lineupRotationEdge * weights.lineupRotation;
+  const bowlerShareComponent = bowlerShareDiff * weights.bowlerShare;
+  const allRounderShareComponent =
+    allRounderShareDiff * weights.allRounderShare;
+  const seasonWinRateComponent = seasonWinRateDiff * weights.seasonWinRate;
+  const seasonMatchesPlayedComponent =
+    seasonMatchesPlayedDiffNormalized * weights.seasonMatchesPlayed;
+  const seasonWinStrengthComponent =
+    seasonWinStrengthDiff * weights.seasonWinStrength;
   const dewFactorComponent = dewFactor * weights.dewFactor;
   const homeAdvantageComponent = homeAdvantageDiff * weights.homeAdvantage;
   const pitchBattingIndexComponent =
@@ -140,6 +209,14 @@ export function scoreBaselineIplPreMatch(
     headToHeadComponent +
     restComponent +
     congestionComponent +
+    lineupStabilityComponent +
+    lineupContinuityComponent +
+    lineupRotationComponent +
+    bowlerShareComponent +
+    allRounderShareComponent +
+    seasonWinRateComponent +
+    seasonMatchesPlayedComponent +
+    seasonWinStrengthComponent +
     dewFactorComponent +
     homeAdvantageComponent +
     pitchBattingIndexComponent;
@@ -181,6 +258,14 @@ export function scoreBaselineIplPreMatch(
       headToHeadComponent: roundTo(headToHeadComponent, 8),
       restComponent: roundTo(restComponent, 8),
       congestionComponent: roundTo(congestionComponent, 8),
+      lineupStabilityComponent: roundTo(lineupStabilityComponent, 8),
+      lineupContinuityComponent: roundTo(lineupContinuityComponent, 8),
+      lineupRotationComponent: roundTo(lineupRotationComponent, 8),
+      bowlerShareComponent: roundTo(bowlerShareComponent, 8),
+      allRounderShareComponent: roundTo(allRounderShareComponent, 8),
+      seasonWinRateComponent: roundTo(seasonWinRateComponent, 8),
+      seasonMatchesPlayedComponent: roundTo(seasonMatchesPlayedComponent, 8),
+      seasonWinStrengthComponent: roundTo(seasonWinStrengthComponent, 8),
       dewFactorComponent: roundTo(dewFactorComponent, 8),
       homeAdvantageComponent: roundTo(homeAdvantageComponent, 8),
       pitchBattingIndexComponent: roundTo(pitchBattingIndexComponent, 8),

@@ -4,7 +4,7 @@ import { beforeAll, afterAll, afterEach, describe, expect, it } from "vitest";
 
 import lifecycleSnapshots from "../fixtures/cricket/cricapi-lifecycle.snapshots.json" with { type: "json" };
 
-import { migrateDatabase } from "../../database/migration-runner.js";
+import { resetDatabase } from "../../database/migration-runner.js";
 import { loadAppConfig } from "../../src/config/index.js";
 import {
   ingestCricketSnapshots,
@@ -14,6 +14,7 @@ import {
   createPgPool,
   createRepositorySet,
 } from "../../src/repositories/index.js";
+import { ensureTestDatabaseExists } from "../helpers/postgres-test-db.js";
 import {
   dlsCricapiPayload,
   noResultCricapiPayload,
@@ -28,13 +29,17 @@ import {
 } from "../fixtures/cricket/cricapi.js";
 
 describe("cricket normalization pipeline", () => {
-  const config = loadAppConfig();
+  const config = loadAppConfig({
+    DATABASE_URL:
+      "postgresql://harsh@localhost:5434/sports_predictor_ingest_test",
+  });
   const repositories = createRepositorySet(config);
   const cleanupPool = createPgPool(config.databaseUrl);
   const createdSourceMatchIds = new Set<string>();
 
   beforeAll(async () => {
-    await migrateDatabase(config.databaseUrl);
+    await ensureTestDatabaseExists(config.databaseUrl);
+    await resetDatabase(config.databaseUrl);
   });
 
   afterAll(async () => {

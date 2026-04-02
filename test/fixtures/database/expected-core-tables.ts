@@ -5,6 +5,8 @@ export const expectedCoreTables = [
   "checkpoint_states",
   "market_match_mappings",
   "match_features",
+  "player_registry",
+  "match_player_appearances",
   "model_scores",
   "backtests",
   "model_registry",

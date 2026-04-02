@@ -57,6 +57,8 @@ const EMPTY_PRE_MATCH_CONTEXT: PreMatchFeatureContext = {
   teamVenueStrength: {},
   teamHeadToHeadStrength: {},
   venueTossDecisionWinRate: {},
+  teamLineupContext: {},
+  teamRoleCompositionContext: {},
 };
 
 interface TransactionalRepositorySet {

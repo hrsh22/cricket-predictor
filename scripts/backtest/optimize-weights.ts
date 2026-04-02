@@ -116,11 +116,7 @@ async function main(): Promise<void> {
     console.error(`Generated ${weightGrid.length} weight combinations.`);
 
     console.error(`Evaluating candidates on training set...`);
-    const candidates = evaluateCandidates(
-      trainMatches,
-      weightGrid,
-      options.metric,
-    );
+    const candidates = evaluateCandidates(trainMatches, weightGrid);
 
     const sortedCandidates = [...candidates].sort(
       (a, b) => a.trainMetrics[options.metric] - b.trainMetrics[options.metric],
@@ -303,6 +299,14 @@ function generateWeightGrid(resolution: number): ModelWeights[] {
   const h2hRange = generateRange(0.2, 1.0, resolution);
   const restRange = generateRange(0.0, 0.5, resolution);
   const congestionRange = generateRange(0.0, 0.4, resolution);
+  const lineupStabilityRange = generateRange(0.0, 0.8, resolution);
+  const lineupContinuityRange = generateRange(0.0, 0.8, resolution);
+  const lineupRotationRange = generateRange(0.0, 0.8, resolution);
+  const bowlerShareRange = generateRange(0.0, 0.8, resolution);
+  const allRounderShareRange = generateRange(0.0, 0.8, resolution);
+  const seasonWinRateRange = generateRange(0.0, 0.8, resolution);
+  const seasonMatchesPlayedRange = generateRange(0.0, 0.4, resolution);
+  const seasonWinStrengthRange = generateRange(0.0, 1.0, resolution);
   const dewFactorRange = generateRange(0.0, 0.6, resolution);
   const homeAdvantageRange = generateRange(0.0, 0.8, resolution);
   const pitchBattingIndexRange = generateRange(0.0, 0.6, resolution);
@@ -315,20 +319,65 @@ function generateWeightGrid(resolution: number): ModelWeights[] {
         for (const headToHead of h2hRange) {
           for (const rest of restRange) {
             for (const congestion of congestionRange) {
-              for (const dewFactor of dewFactorRange) {
-                for (const homeAdvantage of homeAdvantageRange) {
-                  for (const pitchBattingIndex of pitchBattingIndexRange) {
-                    grid.push({
-                      rating: roundTo(rating, 2),
-                      form: roundTo(form, 2),
-                      venue: roundTo(venue, 2),
-                      headToHead: roundTo(headToHead, 2),
-                      rest: roundTo(rest, 2),
-                      congestion: roundTo(congestion, 2),
-                      dewFactor: roundTo(dewFactor, 2),
-                      homeAdvantage: roundTo(homeAdvantage, 2),
-                      pitchBattingIndex: roundTo(pitchBattingIndex, 2),
-                    });
+              for (const lineupStability of lineupStabilityRange) {
+                for (const lineupContinuity of lineupContinuityRange) {
+                  for (const lineupRotation of lineupRotationRange) {
+                    for (const bowlerShare of bowlerShareRange) {
+                      for (const allRounderShare of allRounderShareRange) {
+                        for (const seasonWinRate of seasonWinRateRange) {
+                          for (const seasonMatchesPlayed of seasonMatchesPlayedRange) {
+                            for (const seasonWinStrength of seasonWinStrengthRange) {
+                              for (const dewFactor of dewFactorRange) {
+                                for (const homeAdvantage of homeAdvantageRange) {
+                                  for (const pitchBattingIndex of pitchBattingIndexRange) {
+                                    grid.push({
+                                      rating: roundTo(rating, 2),
+                                      form: roundTo(form, 2),
+                                      venue: roundTo(venue, 2),
+                                      headToHead: roundTo(headToHead, 2),
+                                      rest: roundTo(rest, 2),
+                                      congestion: roundTo(congestion, 2),
+                                      lineupStability: roundTo(
+                                        lineupStability,
+                                        2,
+                                      ),
+                                      lineupContinuity: roundTo(
+                                        lineupContinuity,
+                                        2,
+                                      ),
+                                      lineupRotation: roundTo(
+                                        lineupRotation,
+                                        2,
+                                      ),
+                                      bowlerShare: roundTo(bowlerShare, 2),
+                                      allRounderShare: roundTo(
+                                        allRounderShare,
+                                        2,
+                                      ),
+                                      seasonWinRate: roundTo(seasonWinRate, 2),
+                                      seasonMatchesPlayed: roundTo(
+                                        seasonMatchesPlayed,
+                                        2,
+                                      ),
+                                      seasonWinStrength: roundTo(
+                                        seasonWinStrength,
+                                        2,
+                                      ),
+                                      dewFactor: roundTo(dewFactor, 2),
+                                      homeAdvantage: roundTo(homeAdvantage, 2),
+                                      pitchBattingIndex: roundTo(
+                                        pitchBattingIndex,
+                                        2,
+                                      ),
+                                    });
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
                   }
                 }
               }
@@ -355,7 +404,6 @@ function generateRange(min: number, max: number, steps: number): number[] {
 function evaluateCandidates(
   matches: MatchWithContext[],
   weightGrid: ModelWeights[],
-  _metric: string,
 ): WeightCandidate[] {
   const totalCandidates = weightGrid.length;
   let processed = 0;

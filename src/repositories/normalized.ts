@@ -14,6 +14,31 @@ export interface CanonicalMatchRecord extends CanonicalMatch {
   updatedAt: string;
 }
 
+export interface PlayerRegistryRecord {
+  id: number;
+  cricsheetPlayerId: string;
+  canonicalName: string;
+  battingStyle: string | null;
+  bowlingStyle: string | null;
+  bowlingTypeGroup: string | null;
+  playerRole: string | null;
+  metadata: JsonObject;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface MatchPlayerAppearanceRecord {
+  id: number;
+  canonicalMatchId: number;
+  teamName: string;
+  playerRegistryId: number | null;
+  sourcePlayerName: string;
+  lineupOrder: number;
+  isPlayingXi: boolean;
+  metadata: JsonObject;
+  createdAt: string;
+}
+
 export type CheckpointStateRecord = CheckpointState & {
   id: number;
   canonicalMatchId: number;
@@ -27,6 +52,24 @@ export interface FeatureRowRecord extends FeatureRow {
 
 export interface NormalizedRepository {
   saveCanonicalMatch(match: CanonicalMatch): Promise<CanonicalMatchRecord>;
+  savePlayerRegistry(player: {
+    cricsheetPlayerId: string;
+    canonicalName: string;
+    battingStyle?: string | null;
+    bowlingStyle?: string | null;
+    bowlingTypeGroup?: string | null;
+    playerRole?: string | null;
+    metadata?: JsonObject;
+  }): Promise<PlayerRegistryRecord>;
+  saveMatchPlayerAppearance(input: {
+    canonicalMatchId: number;
+    teamName: string;
+    playerRegistryId: number | null;
+    sourcePlayerName: string;
+    lineupOrder: number;
+    isPlayingXi?: boolean;
+    metadata?: JsonObject;
+  }): Promise<MatchPlayerAppearanceRecord>;
   saveCheckpoint(
     checkpoint: CanonicalCheckpoint,
   ): Promise<CheckpointStateRecord>;
@@ -85,6 +128,31 @@ export interface FeatureRowRow {
   feature_set_version: string;
   generated_at: Date;
   features: JsonObject;
+}
+
+interface PlayerRegistryRow {
+  id: string | number;
+  cricsheet_player_id: string;
+  canonical_name: string;
+  batting_style: string | null;
+  bowling_style: string | null;
+  bowling_type_group: string | null;
+  player_role: string | null;
+  metadata: JsonObject;
+  created_at: Date;
+  updated_at: Date;
+}
+
+interface MatchPlayerAppearanceRow {
+  id: string | number;
+  canonical_match_id: string | number;
+  team_name: string;
+  player_registry_id: string | number | null;
+  source_player_name: string;
+  lineup_order: number;
+  is_playing_xi: boolean;
+  metadata: JsonObject;
+  created_at: Date;
 }
 
 export function createNormalizedRepository(
@@ -160,6 +228,98 @@ export function createNormalizedRepository(
       );
 
       return mapCanonicalMatchRow(result.rows[0] as CanonicalMatchRow);
+    },
+
+    async savePlayerRegistry(player): Promise<PlayerRegistryRecord> {
+      const result = await executor.query<PlayerRegistryRow>(
+        `
+          insert into player_registry (
+            cricsheet_player_id,
+            canonical_name,
+            batting_style,
+            bowling_style,
+            bowling_type_group,
+            player_role,
+            metadata
+          ) values ($1, $2, $3, $4, $5, $6, $7)
+          on conflict (cricsheet_player_id) do update set
+            canonical_name = excluded.canonical_name,
+            batting_style = coalesce(excluded.batting_style, player_registry.batting_style),
+            bowling_style = coalesce(excluded.bowling_style, player_registry.bowling_style),
+            bowling_type_group = coalesce(excluded.bowling_type_group, player_registry.bowling_type_group),
+            player_role = coalesce(excluded.player_role, player_registry.player_role),
+            metadata = excluded.metadata,
+            updated_at = now()
+          returning
+            id,
+            cricsheet_player_id,
+            canonical_name,
+            batting_style,
+            bowling_style,
+            bowling_type_group,
+            player_role,
+            metadata,
+            created_at,
+            updated_at
+        `,
+        [
+          player.cricsheetPlayerId,
+          player.canonicalName,
+          player.battingStyle ?? null,
+          player.bowlingStyle ?? null,
+          player.bowlingTypeGroup ?? null,
+          player.playerRole ?? null,
+          player.metadata ?? {},
+        ],
+      );
+
+      return mapPlayerRegistryRow(result.rows[0] as PlayerRegistryRow);
+    },
+
+    async saveMatchPlayerAppearance(
+      input,
+    ): Promise<MatchPlayerAppearanceRecord> {
+      const result = await executor.query<MatchPlayerAppearanceRow>(
+        `
+          insert into match_player_appearances (
+            canonical_match_id,
+            team_name,
+            player_registry_id,
+            source_player_name,
+            lineup_order,
+            is_playing_xi,
+            metadata
+          ) values ($1, $2, $3, $4, $5, $6, $7)
+          on conflict (canonical_match_id, team_name, lineup_order) do update set
+            player_registry_id = excluded.player_registry_id,
+            source_player_name = excluded.source_player_name,
+            is_playing_xi = excluded.is_playing_xi,
+            metadata = excluded.metadata
+          returning
+            id,
+            canonical_match_id,
+            team_name,
+            player_registry_id,
+            source_player_name,
+            lineup_order,
+            is_playing_xi,
+            metadata,
+            created_at
+        `,
+        [
+          input.canonicalMatchId,
+          input.teamName,
+          input.playerRegistryId,
+          input.sourcePlayerName,
+          input.lineupOrder,
+          input.isPlayingXi ?? true,
+          input.metadata ?? {},
+        ],
+      );
+
+      return mapMatchPlayerAppearanceRow(
+        result.rows[0] as MatchPlayerAppearanceRow,
+      );
     },
 
     async saveCheckpoint(
@@ -301,6 +461,40 @@ export function mapCanonicalMatchRow(
     resultType: row.result_type,
     createdAt: row.created_at.toISOString(),
     updatedAt: row.updated_at.toISOString(),
+  };
+}
+
+export function mapPlayerRegistryRow(
+  row: PlayerRegistryRow,
+): PlayerRegistryRecord {
+  return {
+    id: Number(row.id),
+    cricsheetPlayerId: row.cricsheet_player_id,
+    canonicalName: row.canonical_name,
+    battingStyle: row.batting_style,
+    bowlingStyle: row.bowling_style,
+    bowlingTypeGroup: row.bowling_type_group,
+    playerRole: row.player_role,
+    metadata: row.metadata,
+    createdAt: row.created_at.toISOString(),
+    updatedAt: row.updated_at.toISOString(),
+  };
+}
+
+export function mapMatchPlayerAppearanceRow(
+  row: MatchPlayerAppearanceRow,
+): MatchPlayerAppearanceRecord {
+  return {
+    id: Number(row.id),
+    canonicalMatchId: Number(row.canonical_match_id),
+    teamName: row.team_name,
+    playerRegistryId:
+      row.player_registry_id === null ? null : Number(row.player_registry_id),
+    sourcePlayerName: row.source_player_name,
+    lineupOrder: row.lineup_order,
+    isPlayingXi: row.is_playing_xi,
+    metadata: row.metadata,
+    createdAt: row.created_at.toISOString(),
   };
 }
 

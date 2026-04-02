@@ -4,6 +4,7 @@ import { parseFeatureRow } from "../../../src/domain/checkpoint.js";
 import { buildBaselinePreMatchFeatureRow } from "../../../src/features/index.js";
 import {
   assertCoherentTwoOutcomeProbabilities,
+  DEFAULT_MODEL_WEIGHTS,
   scoreBaselineIplPreMatch,
 } from "../../../src/models/base/index.js";
 import {
@@ -93,5 +94,43 @@ describe("baseline IPL rating model", () => {
         "plattCalibrationApplied"
       ],
     ).toBe(1);
+  });
+
+  it("uses season-to-date components when present", () => {
+    const featureRow = buildBaselinePreMatchFeatureRow(
+      baselinePreMatchCheckpoint,
+      baselinePreMatchFeatureContext,
+    );
+
+    const seasonBoosted = scoreBaselineIplPreMatch(featureRow, {
+      weights: {
+        ...DEFAULT_MODEL_WEIGHTS,
+        rating: 0,
+        form: 0,
+        venue: 0,
+        headToHead: 0,
+        rest: 0,
+        congestion: 0,
+        seasonWinRate: 1,
+        seasonMatchesPlayed: 0,
+        seasonWinStrength: 1,
+        dewFactor: 0,
+        homeAdvantage: 0,
+        pitchBattingIndex: 0,
+      },
+      logitBounds: { min: -10, max: 10 },
+    });
+
+    expect(seasonBoosted.teamAWinProbability).toBeGreaterThan(0.5);
+    expect(
+      (seasonBoosted.scoreBreakdown as Record<string, unknown>)[
+        "seasonWinRateComponent"
+      ],
+    ).toBe(0.3);
+    expect(
+      (seasonBoosted.scoreBreakdown as Record<string, unknown>)[
+        "seasonWinStrengthComponent"
+      ],
+    ).toBe(0.12);
   });
 });
