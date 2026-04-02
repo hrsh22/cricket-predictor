@@ -12,7 +12,10 @@ import {
   createPgPool,
   createRepositorySet,
 } from "../../src/repositories/index.js";
-import { ensureTestDatabaseExists } from "../helpers/postgres-test-db.js";
+import {
+  buildTestDatabaseUrl,
+  ensureTestDatabaseExists,
+} from "../helpers/postgres-test-db.js";
 import {
   inningsBreakCricapiPayload,
   postTossCricapiPayload,
@@ -21,8 +24,7 @@ import {
 
 describe("recurring orchestration", () => {
   const config = loadAppConfig({
-    DATABASE_URL:
-      "postgresql://harsh@localhost:5434/sports_predictor_orchestration_test",
+    DATABASE_URL: buildTestDatabaseUrl("sports_predictor_orchestration_test"),
   });
   const orchestrationPool = createPgPool(config.databaseUrl);
   const cleanupPool = createPgPool(config.databaseUrl);

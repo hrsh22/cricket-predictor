@@ -8,12 +8,14 @@ import {
   createPgPool,
   createRepositorySet,
 } from "../../src/repositories/index.js";
-import { ensureTestDatabaseExists } from "../helpers/postgres-test-db.js";
+import {
+  buildTestDatabaseUrl,
+  ensureTestDatabaseExists,
+} from "../helpers/postgres-test-db.js";
 
 describe("postgres repositories", () => {
   const config = loadAppConfig({
-    DATABASE_URL:
-      "postgresql://harsh@localhost:5434/sports_predictor_repositories_test",
+    DATABASE_URL: buildTestDatabaseUrl("sports_predictor_repositories_test"),
   });
   const repositories = createRepositorySet(config);
   const cleanupPool = createPgPool(config.databaseUrl);

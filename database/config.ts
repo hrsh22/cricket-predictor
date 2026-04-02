@@ -60,6 +60,15 @@ export function getDatabaseName(databaseUrl: string): string {
   );
 }
 
+export function withDatabaseName(
+  databaseUrl: string,
+  databaseName: string,
+): string {
+  const parsed = parseDatabaseUrl(databaseUrl);
+  parsed.pathname = `/${encodeURIComponent(databaseName)}`;
+  return parsed.toString();
+}
+
 export function isSafeResetTarget(databaseUrl: string): boolean {
   const databaseName = getDatabaseName(databaseUrl);
 

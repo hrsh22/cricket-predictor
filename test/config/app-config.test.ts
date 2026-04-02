@@ -45,7 +45,10 @@ describe("app config", () => {
   it("fails fast on invalid database URLs", () => {
     expect(() =>
       loadAppConfig({
-        DATABASE_URL: "postgresql://localhost:5432/",
+        DATABASE_URL: DEFAULT_DATABASE_URL.replace(
+          /sports_predictor_mvp$/u,
+          "",
+        ),
       }),
     ).toThrow(/DATABASE_URL/);
   });

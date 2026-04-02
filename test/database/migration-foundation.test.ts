@@ -7,6 +7,7 @@ import {
   MIGRATIONS_DIRECTORY,
   isSafeResetTarget,
   parseDatabaseUrl,
+  withDatabaseName,
 } from "../../database/config.js";
 import { loadMigrations } from "../../database/migration-runner.js";
 import { expectedCoreTables } from "../fixtures/database/expected-core-tables.js";
@@ -62,13 +63,17 @@ describe("database migration foundation", () => {
 
   it("rejects invalid reset targets unless they are local MVP or *_test databases", () => {
     expect(
-      isSafeResetTarget("postgresql://localhost:5432/sports_predictor_mvp"),
+      isSafeResetTarget(
+        withDatabaseName(DEFAULT_DATABASE_URL, "sports_predictor_mvp"),
+      ),
     ).toBe(true);
     expect(
-      isSafeResetTarget("postgresql://localhost:5432/sports_predictor_test"),
+      isSafeResetTarget(
+        withDatabaseName(DEFAULT_DATABASE_URL, "sports_predictor_test"),
+      ),
     ).toBe(true);
-    expect(isSafeResetTarget("postgresql://localhost:5432/postgres")).toBe(
-      false,
-    );
+    expect(
+      isSafeResetTarget(withDatabaseName(DEFAULT_DATABASE_URL, "postgres")),
+    ).toBe(false);
   });
 });

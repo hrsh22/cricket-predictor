@@ -1,6 +1,11 @@
 import { Client } from "pg";
 
-import { getDatabaseName, parseDatabaseUrl } from "../../database/config.js";
+import {
+  getDatabaseName,
+  getDatabaseUrl,
+  parseDatabaseUrl,
+  withDatabaseName,
+} from "../../database/config.js";
 
 export async function ensureTestDatabaseExists(
   databaseUrl: string,
@@ -32,4 +37,8 @@ export async function ensureTestDatabaseExists(
 
 function quoteIdentifier(value: string): string {
   return `"${value.replace(/"/gu, '""')}"`;
+}
+
+export function buildTestDatabaseUrl(databaseName: string): string {
+  return withDatabaseName(getDatabaseUrl(), databaseName);
 }
