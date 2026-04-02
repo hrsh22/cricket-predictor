@@ -1,0 +1,10 @@
+drop table if exists backtests;
+drop table if exists model_scores;
+drop table if exists scoring_runs;
+drop table if exists model_registry;
+drop table if exists match_features;
+drop table if exists checkpoint_states;
+drop table if exists canonical_matches;
+drop table if exists raw_cricket_snapshots;
+drop table if exists raw_market_snapshots;
+drop type if exists checkpoint_type;

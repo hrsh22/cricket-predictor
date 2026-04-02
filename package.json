@@ -1,0 +1,45 @@
+{
+  "name": "ipl-predictor-mvp",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx src/index.ts",
+    "db:migrate": "tsx scripts/db/migrate.ts",
+    "db:reset": "tsx scripts/db/reset.ts",
+    "db:rollback": "tsx scripts/db/rollback.ts",
+    "score": "tsx scripts/score.ts",
+    "ingest:cricket": "tsx scripts/ingest/cricket.ts",
+    "ingest:polymarket": "tsx scripts/ingest/polymarket.ts --trigger=manual",
+    "ingest:polymarket:scheduled": "tsx scripts/ingest/polymarket.ts --trigger=scheduled",
+    "smoke": "tsx scripts/smoke.ts",
+    "test": "vitest run",
+    "backtest:walk-forward": "tsx scripts/backtest/walk-forward.ts",
+    "backtest:optimize-weights": "tsx scripts/backtest/optimize-weights.ts",
+    "backtest:train-calibration": "tsx scripts/backtest/train-calibration.ts",
+    "backtest:season-performance": "tsx scripts/backtest/season-performance.ts",
+    "backtest:season-analyze": "tsx scripts/backtest/analyze-season-report.ts",
+    "backtest:backfill-season-scores": "tsx scripts/backtest/backfill-season-scores.ts",
+    "backtest:train-post-toss": "tsx scripts/backtest/train-post-toss.ts",
+    "model:register": "tsx scripts/models/register-model.ts",
+    "db:validate-seasons": "tsx scripts/db/validate-season-coverage.ts",
+    "db:import-ipl-seasons": "tsx scripts/db/import-ipl-seasons.ts",
+    "db:import-cricsheet-ipl": "tsx scripts/db/import-cricsheet-ipl.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint ."
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "@types/pg": "^8.20.0",
+    "eslint": "^9.22.0",
+    "eslint-config-prettier": "^10.0.2",
+    "prettier": "^3.5.3",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2",
+    "typescript-eslint": "^8.26.1",
+    "vitest": "^3.0.7"
+  },
+  "dependencies": {
+    "cheerio": "^1.2.0",
+    "pg": "^8.20.0"
+  }
+}

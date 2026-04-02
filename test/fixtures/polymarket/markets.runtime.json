@@ -1,0 +1,29 @@
+{
+  "markets": [
+    {
+      "id": "1683001",
+      "question": "Indian Premier League: Chennai Super Kings vs Mumbai Indians",
+      "slug": "cricipl-csk-mi-2026-03-29",
+      "endDate": "2026-03-29T14:00:00Z",
+      "liquidity": "42000",
+      "outcomes": ["Chennai Super Kings", "Mumbai Indians"],
+      "outcomePrices": [0.54, 0.46],
+      "active": true,
+      "closed": false,
+      "archived": false,
+      "updatedAt": "2026-03-29T13:04:00.000Z",
+      "liquidityClob": 42000,
+      "clobTokenIds": ["pm-token-yes", "pm-token-no"],
+      "lastTradePrice": 0.53,
+      "sportsMarketType": "moneyline",
+      "events": [
+        {
+          "id": "296001",
+          "slug": "cricipl-csk-mi-2026-03-29",
+          "title": "Indian Premier League: Chennai Super Kings vs Mumbai Indians",
+          "seriesSlug": "indian-premier-league"
+        }
+      ]
+    }
+  ]
+}

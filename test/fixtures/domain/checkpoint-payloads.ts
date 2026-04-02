@@ -1,0 +1,152 @@
+export const validPreMatchCheckpoint = {
+  checkpointType: "pre_match",
+  match: {
+    competition: "IPL",
+    matchSlug: "ipl-2026-chennai-vs-mumbai",
+    sourceMatchId: "polymarket-event-001",
+    season: 2026,
+    scheduledStart: "2026-03-29T14:00:00.000Z",
+    teamAName: "Chennai Super Kings",
+    teamBName: "Mumbai Indians",
+    venueName: "Wankhede Stadium",
+    status: "scheduled",
+    tossWinnerTeamName: null,
+    tossDecision: null,
+    winningTeamName: null,
+    resultType: null,
+  },
+  state: {
+    matchSlug: "ipl-2026-chennai-vs-mumbai",
+    checkpointType: "pre_match",
+    snapshotTime: "2026-03-29T13:30:00.000Z",
+    stateVersion: 1,
+    sourceMarketSnapshotId: 101,
+    sourceCricketSnapshotId: 201,
+    inningsNumber: null,
+    battingTeamName: null,
+    bowlingTeamName: null,
+    runs: null,
+    wickets: null,
+    overs: null,
+    targetRuns: null,
+    currentRunRate: null,
+    requiredRunRate: null,
+    statePayload: {},
+  },
+} as const;
+
+export const validPostTossCheckpoint = {
+  checkpointType: "post_toss",
+  match: {
+    competition: "IPL",
+    matchSlug: "ipl-2026-chennai-vs-mumbai",
+    sourceMatchId: "polymarket-event-001",
+    season: 2026,
+    scheduledStart: "2026-03-29T14:00:00.000Z",
+    teamAName: "Chennai Super Kings",
+    teamBName: "Mumbai Indians",
+    venueName: "Wankhede Stadium",
+    status: "scheduled",
+    tossWinnerTeamName: "Mumbai Indians",
+    tossDecision: "bowl",
+    winningTeamName: null,
+    resultType: null,
+  },
+  state: {
+    matchSlug: "ipl-2026-chennai-vs-mumbai",
+    checkpointType: "post_toss",
+    snapshotTime: "2026-03-29T13:45:00.000Z",
+    stateVersion: 1,
+    sourceMarketSnapshotId: 102,
+    sourceCricketSnapshotId: 202,
+    inningsNumber: null,
+    battingTeamName: null,
+    bowlingTeamName: null,
+    runs: null,
+    wickets: null,
+    overs: null,
+    targetRuns: null,
+    currentRunRate: null,
+    requiredRunRate: null,
+    statePayload: {},
+  },
+} as const;
+
+export const validInningsBreakCheckpoint = {
+  checkpointType: "innings_break",
+  match: {
+    competition: "IPL",
+    matchSlug: "ipl-2026-chennai-vs-mumbai",
+    sourceMatchId: "polymarket-event-001",
+    season: 2026,
+    scheduledStart: "2026-03-29T14:00:00.000Z",
+    teamAName: "Chennai Super Kings",
+    teamBName: "Mumbai Indians",
+    venueName: "Wankhede Stadium",
+    status: "in_progress",
+    tossWinnerTeamName: "Mumbai Indians",
+    tossDecision: "bowl",
+    winningTeamName: null,
+    resultType: null,
+  },
+  state: {
+    matchSlug: "ipl-2026-chennai-vs-mumbai",
+    checkpointType: "innings_break",
+    snapshotTime: "2026-03-29T15:15:00.000Z",
+    stateVersion: 1,
+    sourceMarketSnapshotId: 103,
+    sourceCricketSnapshotId: 203,
+    inningsNumber: 1,
+    battingTeamName: "Chennai Super Kings",
+    bowlingTeamName: "Mumbai Indians",
+    runs: 176,
+    wickets: 5,
+    overs: 20,
+    targetRuns: 177,
+    currentRunRate: 8.8,
+    requiredRunRate: 8.85,
+    statePayload: {},
+  },
+} as const;
+
+export const invalidPreMatchCheckpoint = {
+  ...validPreMatchCheckpoint,
+  match: {
+    ...validPreMatchCheckpoint.match,
+    tossWinnerTeamName: "Mumbai Indians",
+    tossDecision: "bowl",
+  },
+  state: {
+    ...validPreMatchCheckpoint.state,
+    runs: 176,
+    wickets: 5,
+    overs: 20,
+    targetRuns: 177,
+    currentRunRate: 8.8,
+    requiredRunRate: 8.85,
+  },
+};
+
+export const invalidPostTossCheckpoint = {
+  ...validPostTossCheckpoint,
+  state: {
+    ...validPostTossCheckpoint.state,
+    runs: 176,
+    wickets: 5,
+    overs: 20,
+  },
+};
+
+export const invalidInningsBreakCheckpoint = {
+  ...validInningsBreakCheckpoint,
+  match: {
+    ...validInningsBreakCheckpoint.match,
+    resultType: "super_over",
+  },
+  state: {
+    ...validInningsBreakCheckpoint.state,
+    statePayload: {
+      dlsApplied: true,
+    },
+  },
+};

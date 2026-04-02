@@ -1,0 +1,27 @@
+export {
+  normalizePolymarketIplWinnerMarket,
+  normalizePolymarketIplWinnerMarkets,
+  type PolymarketClobReadClient,
+  type PolymarketGammaMarketQuery,
+  type PolymarketGammaReadClient,
+  type PolymarketIplWinnerMarketDiscovery,
+} from "./client.js";
+
+export {
+  createPolymarketGammaReadClient,
+  createSnapshotDedupeKey,
+  ingestPolymarketIplWinnerMarkets,
+  polymarketDefaults,
+  runPolymarketIplWinnerIngestion,
+  toPolymarketIplWinnerDiscovery,
+} from "./ingest.js";
+
+export type {
+  PolymarketFetch,
+  PolymarketGammaHttpClientOptions,
+  PolymarketIngestionCommandOptions,
+  PolymarketIngestionOptions,
+  PolymarketIngestionSummary,
+  PolymarketResponseLike,
+  PolymarketRetryPolicy,
+} from "./ingest.js";
