@@ -1,0 +1,965 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - navigation [ref=e5]:
+        - generic [ref=e6]:
+          - link "Polymarket Logo" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img "Polymarket" [ref=e9]
+          - generic [ref=e12]:
+            - generic [ref=e14]:
+              - img [ref=e16]
+              - textbox "Search polymarkets..." [ref=e19]
+            - button "How it works" [ref=e20] [cursor=pointer]:
+              - img
+              - generic [ref=e21]: How it works
+          - generic [ref=e23]:
+            - generic [ref=e25]:
+              - button "Log In" [ref=e26] [cursor=pointer]:
+                - generic [ref=e27]: Log In
+              - button "Sign Up" [ref=e28] [cursor=pointer]:
+                - generic [ref=e29]: Sign Up
+            - button "Open user menu" [ref=e31] [cursor=pointer]:
+              - img [ref=e33]
+        - generic [ref=e39]:
+          - link "Trending" [ref=e40] [cursor=pointer]:
+            - /url: /
+            - img [ref=e41]
+            - generic [ref=e44]: Trending
+          - link "Breaking" [ref=e45] [cursor=pointer]:
+            - /url: /breaking
+          - link "New" [ref=e46] [cursor=pointer]:
+            - /url: /new
+          - link "Politics" [ref=e48] [cursor=pointer]:
+            - /url: /politics
+          - link "Sports" [ref=e49] [cursor=pointer]:
+            - /url: /sports/live
+          - link "Crypto" [ref=e50] [cursor=pointer]:
+            - /url: /crypto
+          - link "Esports" [ref=e51] [cursor=pointer]:
+            - /url: /esports/live
+          - link "Iran" [ref=e52] [cursor=pointer]:
+            - /url: /iran
+          - link "Finance" [ref=e53] [cursor=pointer]:
+            - /url: /finance
+          - link "Geopolitics" [ref=e54] [cursor=pointer]:
+            - /url: /geopolitics
+          - link "Tech" [ref=e55] [cursor=pointer]:
+            - /url: /tech
+          - link "Culture" [ref=e56] [cursor=pointer]:
+            - /url: /pop-culture
+          - link "Economy" [ref=e57] [cursor=pointer]:
+            - /url: /economy
+          - link "Weather" [ref=e58] [cursor=pointer]:
+            - /url: /weather
+          - link "Mentions" [ref=e59] [cursor=pointer]:
+            - /url: /mentions
+          - link "Elections" [ref=e60] [cursor=pointer]:
+            - /url: /elections
+          - button "Open more navigation links" [ref=e61] [cursor=pointer]:
+            - text: More
+            - img [ref=e62]
+      - generic [ref=e64]:
+        - generic [ref=e67]:
+          - generic [ref=e69]:
+            - link "Live" [ref=e70] [cursor=pointer]:
+              - /url: /sports/live
+              - generic [ref=e71]:
+                - img [ref=e74]
+                - paragraph [ref=e81]: Live
+            - link "Futures" [ref=e82] [cursor=pointer]:
+              - /url: /sports/futures/nba
+              - generic [ref=e83]:
+                - img [ref=e85]
+                - paragraph [ref=e87]: Futures
+            - paragraph [ref=e90]: All Sports
+            - link "NBA 30" [ref=e91] [cursor=pointer]:
+              - /url: /sports/nba/games
+              - generic [ref=e92]:
+                - img [ref=e94]
+                - paragraph [ref=e97]: NBA
+              - generic [ref=e98]: "30"
+            - link "NCAAB 21" [ref=e99] [cursor=pointer]:
+              - /url: /sports/cbb/games
+              - generic [ref=e100]:
+                - img [ref=e102]
+                - paragraph [ref=e105]: NCAAB
+              - generic [ref=e106]: "21"
+            - link "UCL 16" [ref=e107] [cursor=pointer]:
+              - /url: /sports/ucl/games
+              - generic [ref=e108]:
+                - img [ref=e110]
+                - paragraph [ref=e112]: UCL
+              - generic [ref=e113]: "16"
+            - link "NHL 52" [ref=e114] [cursor=pointer]:
+              - /url: /sports/nhl/games
+              - generic [ref=e115]:
+                - img [ref=e117]
+                - paragraph [ref=e119]: NHL
+              - generic [ref=e120]: "52"
+            - link "UFC 36" [ref=e121] [cursor=pointer]:
+              - /url: /sports/ufc/games
+              - generic [ref=e122]:
+                - img [ref=e125]
+                - paragraph [ref=e127]: UFC
+              - generic [ref=e128]: "36"
+            - link "Football" [ref=e130] [cursor=pointer]:
+              - /url: /sports/football/props
+              - generic [ref=e131]:
+                - img [ref=e134]
+                - paragraph [ref=e136]: Football
+              - img [ref=e137]
+            - link "Soccer" [ref=e140] [cursor=pointer]:
+              - /url: /sports/soccer/games
+              - generic [ref=e141]:
+                - img [ref=e144]
+                - paragraph [ref=e146]: Soccer
+              - img [ref=e147]
+            - link "Tennis" [ref=e150] [cursor=pointer]:
+              - /url: /sports/tennis/games
+              - generic [ref=e151]:
+                - img [ref=e154]
+                - paragraph [ref=e156]: Tennis
+              - img [ref=e157]
+            - generic [ref=e159]:
+              - link "Cricket" [ref=e160] [cursor=pointer]:
+                - /url: /sports/cricket/games
+                - generic [ref=e161]:
+                  - img [ref=e164]
+                  - paragraph [ref=e166]: Cricket
+                - img [ref=e167]
+              - generic [ref=e171]:
+                - link "ind IPL 36" [ref=e172] [cursor=pointer]:
+                  - /url: /sports/cricipl/games
+                  - generic [ref=e173]:
+                    - generic [ref=e174]:
+                      - img "ind" [ref=e176]
+                      - paragraph [ref=e177]: IPL
+                    - generic [ref=e178]: "36"
+                - link "International 58" [ref=e179] [cursor=pointer]:
+                  - /url: /sports/crint/games
+                  - generic [ref=e180]:
+                    - generic [ref=e181]:
+                      - img [ref=e183]
+                      - paragraph [ref=e185]: International
+                    - generic [ref=e186]: "58"
+                - link "Legends 26" [ref=e187] [cursor=pointer]:
+                  - /url: /sports/criclcl/games
+                  - generic [ref=e188]:
+                    - generic [ref=e189]:
+                      - img [ref=e191]
+                      - paragraph [ref=e193]: Legends
+                    - generic [ref=e194]: "26"
+                - link "pak PSL 32" [ref=e195] [cursor=pointer]:
+                  - /url: /sports/cricpsl/games
+                  - generic [ref=e196]:
+                    - generic [ref=e197]:
+                      - img "pak" [ref=e199]
+                      - paragraph [ref=e200]: PSL
+                    - generic [ref=e201]: "32"
+            - link "Basketball" [ref=e203] [cursor=pointer]:
+              - /url: /sports/basketball/games
+              - generic [ref=e204]:
+                - img [ref=e207]
+                - paragraph [ref=e210]: Basketball
+              - img [ref=e211]
+            - link "Baseball 87" [ref=e213] [cursor=pointer]:
+              - /url: /sports/mlb/games
+              - generic [ref=e214]:
+                - img [ref=e217]
+                - paragraph [ref=e219]: Baseball
+              - generic [ref=e220]: "87"
+            - link "Hockey" [ref=e222] [cursor=pointer]:
+              - /url: /sports/hockey/games
+              - generic [ref=e223]:
+                - img [ref=e226]
+                - paragraph [ref=e228]: Hockey
+              - img [ref=e229]
+            - link "Rugby" [ref=e232] [cursor=pointer]:
+              - /url: /sports/rugby/games
+              - generic [ref=e233]:
+                - img [ref=e236]
+                - paragraph [ref=e238]: Rugby
+              - img [ref=e239]
+            - link "Table Tennis 5" [ref=e241] [cursor=pointer]:
+              - /url: /sports/wtt-mens-singles/games
+              - generic [ref=e242]:
+                - img [ref=e245]
+                - paragraph [ref=e248]: Table Tennis
+              - generic [ref=e249]: "5"
+            - link "Golf 1" [ref=e250] [cursor=pointer]:
+              - /url: /sports/golf/props
+              - generic [ref=e251]:
+                - img [ref=e254]
+                - paragraph [ref=e256]: Golf
+              - generic [ref=e257]: "1"
+            - link "Formula 1 1" [ref=e258] [cursor=pointer]:
+              - /url: /sports/f1/props
+              - generic [ref=e259]:
+                - img [ref=e262]
+                - paragraph [ref=e264]: Formula 1
+              - generic [ref=e265]: "1"
+            - link "Chess 8" [ref=e266] [cursor=pointer]:
+              - /url: /sports/chess/games
+              - generic [ref=e267]:
+                - img [ref=e270]
+                - paragraph [ref=e272]: Chess
+              - generic [ref=e273]: "8"
+            - link "Boxing 1" [ref=e274] [cursor=pointer]:
+              - /url: /sports/boxing/props
+              - generic [ref=e275]:
+                - img [ref=e278]
+                - paragraph [ref=e280]: Boxing
+              - generic [ref=e281]: "1"
+            - link "Pickleball 1" [ref=e282] [cursor=pointer]:
+              - /url: /sports/pickleball/props
+              - generic [ref=e283]:
+                - img [ref=e286]
+                - paragraph [ref=e288]: Pickleball
+              - generic [ref=e289]: "1"
+            - link "Esports" [ref=e290] [cursor=pointer]:
+              - /url: /esports
+              - generic [ref=e291]:
+                - img [ref=e294]
+                - paragraph [ref=e296]: Esports
+          - main [ref=e297]:
+            - generic [ref=e301]:
+              - generic [ref=e302]:
+                - generic [ref=e303]:
+                  - generic [ref=e304]:
+                    - link "Sports" [ref=e305] [cursor=pointer]:
+                      - /url: /sports/live
+                    - generic [ref=e306]: ·
+                    - link "IPL" [ref=e307] [cursor=pointer]:
+                      - /url: /sports/cricipl/games
+                  - heading "Kolkata Knight Riders vs Lucknow Super Giants" [level=1] [ref=e308]
+                - generic [ref=e309]:
+                  - generic [ref=e310]:
+                    - button "Odds format settings" [ref=e311] [cursor=pointer]:
+                      - generic [ref=e312]:
+                        - img "sliders"
+                    - button [ref=e313] [cursor=pointer]:
+                      - img
+                  - button "Add to favorites" [ref=e314] [cursor=pointer]
+                  - button [ref=e316] [cursor=pointer]:
+                    - generic [ref=e318]:
+                      - img
+              - generic [ref=e319]:
+                - generic [ref=e320]:
+                  - img "Polymarket" [ref=e323]
+                  - generic [ref=e328]:
+                    - link "kol KOL" [ref=e329] [cursor=pointer]:
+                      - /url: /teams/cricipl/kolkata-knight-riders
+                      - img "kol" [ref=e331]
+                      - generic [ref=e332]: KOL
+                    - generic [ref=e334]:
+                      - generic [ref=e335]:
+                        - generic [ref=e337]: "181"
+                        - generic [ref=e340]: "182"
+                      - generic [ref=e341]: FINAL
+                    - link "luc LUC" [ref=e342] [cursor=pointer]:
+                      - /url: /teams/cricipl/lucknow-super-giants
+                      - img "luc" [ref=e344]
+                      - generic [ref=e345]: LUC
+                - generic [ref=e346]:
+                  - generic [ref=e347]: $3.05M Vol.
+                  - img "Polymarket" [ref=e348]
+                - generic [ref=e355]:
+                  - img [ref=e356]:
+                    - generic [ref=e358]:
+                      - generic [ref=e361]:
+                        - img [ref=e363]:
+                          - generic [ref=e364]: Apr 4
+                        - img [ref=e366]:
+                          - generic [ref=e367]: Apr 5
+                        - img [ref=e369]:
+                          - generic [ref=e370]: Apr 6
+                        - img [ref=e372]:
+                          - generic [ref=e373]: Apr 7
+                        - img [ref=e375]:
+                          - generic [ref=e376]: Apr 8
+                        - img [ref=e378]:
+                          - generic [ref=e379]: Apr 9
+                      - generic [ref=e382]:
+                        - img [ref=e384]:
+                          - generic [ref=e385]: 30%
+                        - img [ref=e387]:
+                          - generic [ref=e388]: 35%
+                        - img [ref=e390]:
+                          - generic [ref=e391]: 40%
+                        - img [ref=e393]:
+                          - generic [ref=e394]: 45%
+                        - img [ref=e396]:
+                          - generic [ref=e397]: 50%
+                        - img [ref=e399]:
+                          - generic [ref=e400]: 55%
+                        - img [ref=e402]:
+                          - generic [ref=e403]: 60%
+                  - generic:
+                    - generic:
+                      - generic:
+                        - generic: Lucknow Super Giants
+                        - generic: 56.5%
+                    - generic:
+                      - generic:
+                        - generic: Kolkata Knight Riders
+                        - generic: 32.5%
+              - generic [ref=e412]:
+                - generic [ref=e413]:
+                  - generic [ref=e418] [cursor=pointer]:
+                    - heading "Moneyline" [level=3] [ref=e419]
+                    - paragraph [ref=e420]: $3M Vol.
+                  - generic [ref=e426] [cursor=pointer]:
+                    - heading "Team Top Batter" [level=3] [ref=e427]
+                    - paragraph [ref=e428]: $2.3K Vol.
+                  - generic [ref=e434] [cursor=pointer]:
+                    - heading "Most Sixes" [level=3] [ref=e435]
+                    - paragraph [ref=e436]: $2.1K Vol.
+                  - generic [ref=e442] [cursor=pointer]:
+                    - heading "Toss Match Double" [level=3] [ref=e443]
+                    - paragraph [ref=e444]: $359 Vol.
+                  - generic [ref=e450] [cursor=pointer]:
+                    - heading "Toss Winner" [level=3] [ref=e451]
+                    - paragraph [ref=e452]: $3.8K Vol.
+                  - generic [ref=e458] [cursor=pointer]:
+                    - heading "Completed Match" [level=3] [ref=e459]
+                    - paragraph [ref=e460]: $5.7K Vol.
+                - generic [ref=e462]:
+                  - generic [ref=e463]: This market refers to which team's player records the highest individual run total in the cricket match between Kolkata Knight Riders and Lucknow Super Giants scheduled for 2026-04-09 in Indian Premier League. This market resolves according to the finalized match statistics as published by https://www.espncricinfo.com/. The outcome corresponding to Kolkata Knight Riders will be considered correct if the highest individual score in the match is recorded exclusively by a player from Kolkata Knight Riders. The outcome corresponding to Lucknow Super Giants will be considered correct if the highest individual score is recorded exclusively by a player from Lucknow Super Giants. If the highest individual score is shared by at least one player from each team, the market will resolve to Draw. The market will resolve according to which team's player records the highest individual run total regardless of if the match is not competed (e.g. Due to weather conditions). DLS/DRS adjustments and any other on-field rulings affecting batting statistics are treated as ordinary data. If the match is permanently canceled, abandoned, or otherwise completed without official batting statistics being recorded, the market will resolve Draw. If the match is postponed or rescheduled, the market remains open until the listed fixture is completed and official statistics are available.
+                  - generic [ref=e464]: This market refers to which team hits the greater number of sixes in the cricket match between Kolkata Knight Riders and Lucknow Super Giants scheduled for 2026-04-09 in Indian Premier League. This market resolves according to the finalized match statistics as published by https://www.espncricinfo.com/. The outcome corresponding to Kolkata Knight Riders will be considered correct if Kolkata Knight Riders is officially recorded as hitting more sixes than Lucknow Super Giants.The outcome corresponding to Lucknow Super Giants will be considered correct if Lucknow Super Giants is officially recorded as hitting more sixes than Kolkata Knight Riders. If both teams record the same number of sixes, the market will resolve to "Draw". The market will resolve according to the team that hits the greater number of sixes in the match regardless of if the match is not competed (e.g. Due to weather conditions)/ Only sixes scored from the bat (off any delivery- legal or not) will count towards the total sixes. Overthrows and extras do not count. Sixes scored in a super over do not count. In First Class games, only first innings sixes will count. If the match is permanently canceled, abandoned, or otherwise completed without official sixes statistics being recorded, the market will resolve "Draw". If the match is postponed or rescheduled, the market remains open until the listed fixture is completed and official statistics are available.
+                  - generic [ref=e465]: This market refers to the combination of the pre-match coin toss and the final match result for the cricket match between Kolkata Knight Riders and Lucknow Super Giants scheduled for 2026-04-09 in Indian Premier League. This market resolves according to (1) the official toss result and (2) the finalized match result as published by https://www.espncricinfo.com/. The outcome corresponding to Kolkata Knight Riders will be considered correct if Kolkata Knight Riders is officially recorded as winning both the toss and the match. The outcome corresponding to Lucknow Super Giants will be considered correct if Lucknow Super Giants is officially recorded as winning both the toss and the match. In all other cases - including where the toss and match winners differ, or where no match winner is recorded - the market will resolve to Neither. DLS/DRS adjustments, over-rate penalties, forfeit/walkover, Super Over, or any other on-field ruling that leads the competition to declare a match winner are treated as ordinary wins. If the match ends tied and the playing conditions provide an on-field tiebreak (e.g., Super Over), the tiebreak winner will be considered the match winner for this market. If the match ends tied with no tiebreak used or available, no team will be considered to have won the match and the market will resolve to Neither. If the match is permanently canceled, abandoned, or otherwise completed without an official match winner being declared, the market will resolve to Neither. If the match is postponed or rescheduled, the market remains open until the listed fixture is completed and will then resolve as described above.
+                  - generic [ref=e466]: This market refers to the cricket match between Kolkata Knight Riders and Lucknow Super Giants scheduled for April 9 2026 in Indian Premier League. This market resolves according to the finalized match result as published by https://www.espncricinfo.com/. DLS/DRS, over-rate penalties, forfeit/walkover, or any other on-field ruling that leads the competition to declare a winner are treated as ordinary wins. If the match ends tied and the playing conditions provide an on-field tiebreak (e.g., Super Over), the winner determined by that tiebreak will be used for resolution. If the match ends tied and no on-field tiebreak is used or available under the playing conditions (e.g., group-stage ODI with no Super Over), the market will resolve 50-50. If the match is postponed/rescheduled, the market remains open until the listed fixture is completed. If the match is permanently canceled or abandoned or otherwise is completed without a winner, the market resolves 50-50. The primary resolution source for this market is the official statistics of the event as recognized by the governing body or event organizers. However, if the governing body or event organizers have not published final match statistics within 2 hours after the event's conclusion, a consensus of credible reporting may be used instead.
+                  - generic [ref=e467]: This market refers to the pre-match coin toss for the cricket match between Kolkata Knight Riders and Lucknow Super Giants scheduled for 2026-04-09 in Indian Premier League. This market resolves according to the official coin toss result (the team recorded as having won the toss) as published by https://www.espncricinfo.com/. If an official toss winner is recorded, the market will resolve based on that result even if the match is subsequently delayed, relocated, abandoned, or no ball is bowled. If the match is postponed or rescheduled, the market will remain open and resolve according to the toss result for the listed fixture when it is eventually played. If the fixture is permanently canceled, forfeited before any toss is conducted, or otherwise completed without an official toss winner being recorded, the market will resolve 50-50.
+                  - generic [ref=e468]: This market refers to whether the cricket match between Kolkata Knight Riders and Lucknow Super Giants scheduled for 2026-04-09 in Indian Premier League is completed under the competition's official playing conditions. This market resolves according to the finalized match status as published by https://www.espncricinfo.com/. Any match where an official result is declared — including results decided by DLS/DRS, over-rate penalties, a Super Over, forfeit/walkover, or any other on-field ruling — will resolve Yes. (Draws count as completed results when recognized by the competition.) If the match is abandoned, ends in No Result, is permanently canceled, or otherwise concludes without an official result, the market will resolve No. If the match is postponed or rescheduled, the market remains open until the listed fixture is completed or permanently canceled, after which it will resolve as described above.
+                  - generic [ref=e469]: Lucknow Super Giants enter this IPL clash at Eden Gardens as favorites against a winless Kolkata Knight Riders, who sit near the bottom of the points table after two losses and a no-result, hampered by injuries to spinner Varun Chakravarthy (hand) and Sunil Narine's recent illness recovery. KKR's top order, led by captain Ajinkya Rahane, faces pressure amid bowling struggles, while LSG's potent pace attack featuring Mohammed Shami and Avesh Khan exploits early swing on the batting-friendly pitch, where dew often aids chasing—LSG won the toss and opted to bowl first. KKR's home advantage and returning Narine provide upset potential in a must-win for their campaign momentum.
+                  - tablist "Market information" [ref=e470]:
+                    - generic [ref=e473]:
+                      - heading "Rules" [level=2] [ref=e474]:
+                        - button "Rules" [ref=e475] [cursor=pointer]
+                      - heading "Market Context" [level=2] [ref=e476]:
+                        - button "Market Context" [ref=e477] [cursor=pointer]
+                  - tabpanel "Rules" [ref=e479]:
+                    - generic [ref=e482]:
+                      - generic [ref=e483]:
+                        - text: This market refers to the cricket match between Kolkata Knight Riders and Lucknow Super Giants scheduled for April 9 2026 in Indian Premier League.
+                        - text: This market resolves according to the finalized match result as published by
+                        - link "https://www.espncricinfo.com/" [ref=e484] [cursor=pointer]:
+                          - /url: https://www.espncricinfo.com/
+                        - text: .
+                        - text: DLS/DRS, over-rate penalties, forfeit/walkover, or any other on-field ruling that leads the competition to declare a winner are treated as ordinary wins.
+                        - text: If the match ends tied and the playing conditions provide an on-field tiebreak (e.g., Super Over), the winner determined by that tiebreak will be used for resolution. If the match ends tied and no on-field tiebreak is used or available under the playing conditions (e.g., group-stage ODI with no Super Over), the market will resolve 50-50.
+                        - text: If the match is postponed/rescheduled, the market remains open until the listed fixture is completed. If the match is permanently canceled or abandoned or otherwise is completed without a winner, the market resolves 50-50.
+                        - text: The primary resolution source for this market is the official statistics of the event as recognized by the governing body or event organizers. However, if the governing body or event organizers have not published final match statistics within 2 hours after the event's conclusion, a consensus of credible reporting may be used instead.
+                        - paragraph [ref=e486]: "Market Opened: Apr 2, 2026, 12:02 PM ET"
+                        - generic [ref=e488]:
+                          - generic [ref=e489]:
+                            - img [ref=e491]
+                            - generic:
+                              - paragraph: Resolution Source
+                              - link "https://www.espncricinfo.com/":
+                                - /url: https://www.espncricinfo.com/
+                          - generic [ref=e494]:
+                            - img [ref=e496]
+                            - generic:
+                              - paragraph: Resolver
+                              - link "0x65070BE91...":
+                                - /url: https://polygonscan.com/address/0x65070BE91477460D8A7AeEb94ef92fe056C2f2A7
+                      - generic [ref=e501]:
+                        - text: This market refers to the cricket match between Kolkata Knight Riders and Lucknow Super Giants scheduled for April 9 2026 in Indian Premier League. This market resolves according to the finalized match result as published by
+                        - link "https://www.espncricinfo.com/" [ref=e502] [cursor=pointer]:
+                          - /url: https://www.espncricinfo.com/
+                        - text: . DLS/DRS, over-rate penalties, forfeit/walkover, or any other on-field r...
+                        - button "Show more" [ref=e503] [cursor=pointer]
+                - generic [ref=e504]:
+                  - generic [ref=e507]:
+                    - heading "Comments" [level=2] [ref=e508]:
+                      - button "Comments" [ref=e509] [cursor=pointer]
+                    - heading "Top Holders" [level=2] [ref=e510]:
+                      - button "Top Holders" [ref=e511] [cursor=pointer]
+                    - heading "Positions" [level=2] [ref=e512]:
+                      - button "Positions" [ref=e513] [cursor=pointer]
+                    - heading "Activity" [level=2] [ref=e514]:
+                      - button "Activity" [ref=e515] [cursor=pointer]
+                  - generic [ref=e519]:
+                    - generic [ref=e520]:
+                      - generic [ref=e523]:
+                        - textbox "Add a comment..." [ref=e524]
+                        - generic [ref=e525]:
+                          - button [ref=e526] [cursor=pointer]:
+                            - img [ref=e527]
+                          - button [ref=e532] [cursor=pointer]:
+                            - img [ref=e533]
+                          - button "Post" [disabled]
+                      - generic [ref=e539]:
+                        - button "sort-comments-by" [ref=e541] [cursor=pointer]:
+                          - generic [ref=e542]: Newest
+                          - img [ref=e543]
+                        - generic [ref=e547]:
+                          - img [ref=e548]
+                          - paragraph [ref=e550]: Beware of external links.
+                      - generic [ref=e551]:
+                        - article [ref=e552]:
+                          - generic [ref=e553]:
+                            - link "JAY-MAHAKAL" [ref=e554] [cursor=pointer]:
+                              - /url: /profile/0x5c68723a64177c7b14125a5d0c01e1870216c9b3
+                              - generic "JAY-MAHAKAL" [ref=e555]:
+                                - img "JAY-MAHAKAL" [ref=e557]
+                            - generic [ref=e558]:
+                              - generic [ref=e559]:
+                                - generic [ref=e560]:
+                                  - link "JAY-MAHAKAL" [ref=e562] [cursor=pointer]:
+                                    - /url: /profile/0x5c68723a64177c7b14125a5d0c01e1870216c9b3
+                                  - time [ref=e563]: 2h ago
+                                - button [ref=e565] [cursor=pointer]:
+                                  - img [ref=e566]
+                              - generic [ref=e572]: today raj loss 1st game
+                              - button "0" [ref=e574] [cursor=pointer]:
+                                - img
+                                - generic [ref=e575]: "0"
+                              - button "2 Replies" [ref=e576] [cursor=pointer]:
+                                - text: 2 Replies
+                                - img
+                              - article [ref=e577]:
+                                - generic [ref=e578]:
+                                  - link [ref=e579] [cursor=pointer]:
+                                    - /url: /profile/0x4c48e191bff01230b4309a566ef17da3f566eba9
+                                    - generic "iloveyield" [ref=e580]
+                                  - generic [ref=e582]:
+                                    - generic [ref=e583]:
+                                      - generic [ref=e584]:
+                                        - link "iloveyield" [ref=e586] [cursor=pointer]:
+                                          - /url: /profile/0x4c48e191bff01230b4309a566ef17da3f566eba9
+                                        - time [ref=e587]: 37m ago
+                                      - button [ref=e589] [cursor=pointer]:
+                                        - img [ref=e590]
+                                    - generic [ref=e595]:
+                                      - link "@JAY-MAHAKAL" [ref=e596] [cursor=pointer]:
+                                        - /url: /profile/0x5c68723a64177c7b14125a5d0c01e1870216c9b3
+                                      - generic [ref=e597]: bro you keep making bad predictions.. maybe you should stop it?
+                                    - button "0" [ref=e599] [cursor=pointer]:
+                                      - img
+                                      - generic [ref=e600]: "0"
+                              - article [ref=e601]:
+                                - generic [ref=e602]:
+                                  - link [ref=e603] [cursor=pointer]:
+                                    - /url: /profile/0xa0abf8be8acc282ad0b039338783f451715a2744
+                                    - generic "Degenfarmer69" [ref=e604]
+                                  - generic [ref=e606]:
+                                    - generic [ref=e607]:
+                                      - generic [ref=e608]:
+                                        - link "Degenfarmer69" [ref=e610] [cursor=pointer]:
+                                          - /url: /profile/0xa0abf8be8acc282ad0b039338783f451715a2744
+                                        - time [ref=e611]: 3m ago
+                                      - button [ref=e613] [cursor=pointer]:
+                                        - img [ref=e614]
+                                    - generic [ref=e619]:
+                                      - link "@iloveyield" [ref=e620] [cursor=pointer]:
+                                        - /url: /profile/0x4c48e191bff01230b4309a566ef17da3f566eba9
+                                      - generic [ref=e621]: He he
+                                    - button "0" [ref=e623] [cursor=pointer]:
+                                      - img
+                                      - generic [ref=e624]: "0"
+                        - article [ref=e625]:
+                          - generic [ref=e626]:
+                            - link "thefarlax" [ref=e627] [cursor=pointer]:
+                              - /url: /profile/0x2cea52fedd328f648b366cd33c078a6abccde05a
+                              - generic "thefarlax" [ref=e628]:
+                                - img "thefarlax" [ref=e630]
+                            - generic [ref=e631]:
+                              - generic [ref=e632]:
+                                - generic [ref=e633]:
+                                  - link "thefarlax" [ref=e635] [cursor=pointer]:
+                                    - /url: /profile/0x2cea52fedd328f648b366cd33c078a6abccde05a
+                                  - time [ref=e636]: 3h ago
+                                - button [ref=e638] [cursor=pointer]:
+                                  - img [ref=e639]
+                              - generic [ref=e645]: Kaun jeetega bhai aaj
+                              - button "0" [ref=e647] [cursor=pointer]:
+                                - img
+                                - generic [ref=e648]: "0"
+                        - article [ref=e649]:
+                          - generic [ref=e650]:
+                            - link [ref=e651] [cursor=pointer]:
+                              - /url: /profile/0x9787a6be3084166b32c0eb40e69ee1e3e4c1174d
+                              - generic "dibyen" [ref=e652]
+                            - generic [ref=e654]:
+                              - generic [ref=e655]:
+                                - generic [ref=e656]:
+                                  - link "dibyen" [ref=e658] [cursor=pointer]:
+                                    - /url: /profile/0x9787a6be3084166b32c0eb40e69ee1e3e4c1174d
+                                  - time [ref=e659]: 15h ago
+                                - button [ref=e661] [cursor=pointer]:
+                                  - img [ref=e662]
+                              - generic [ref=e668]: Yes, i have
+                              - button "0" [ref=e670] [cursor=pointer]:
+                                - img
+                                - generic [ref=e671]: "0"
+                        - article [ref=e672]:
+                          - generic [ref=e673]:
+                            - link [ref=e674] [cursor=pointer]:
+                              - /url: /profile/0x1fb3a8e44c52fa9ae38727047660e11a092eceea
+                              - generic "0x1fB3A8E44C52FA9Ae38727047660E11a092eCeEA-1772597470702" [ref=e675]
+                            - generic [ref=e677]:
+                              - generic [ref=e678]:
+                                - generic [ref=e679]:
+                                  - link "Crooked-Device" [ref=e681] [cursor=pointer]:
+                                    - /url: /profile/0x1fb3a8e44c52fa9ae38727047660e11a092eceea
+                                  - time [ref=e682]: 15h ago
+                                - button [ref=e684] [cursor=pointer]:
+                                  - img [ref=e685]
+                              - generic [ref=e691]: i cashed out on 32 but my cash is 0 now ,does anyone have the same problem??
+                              - button "0" [ref=e693] [cursor=pointer]:
+                                - img
+                                - generic [ref=e694]: "0"
+                        - article [ref=e695]:
+                          - generic [ref=e696]:
+                            - link [ref=e697] [cursor=pointer]:
+                              - /url: /profile/0x3e83e22a8b0ae9ddab9958e6cbbbefdb3bf48c34
+                              - generic "Junaidanwar" [ref=e698]
+                            - generic [ref=e700]:
+                              - generic [ref=e701]:
+                                - generic [ref=e702]:
+                                  - link "Junaidanwar" [ref=e704] [cursor=pointer]:
+                                    - /url: /profile/0x3e83e22a8b0ae9ddab9958e6cbbbefdb3bf48c34
+                                  - time [ref=e705]: 16h ago
+                                - button [ref=e707] [cursor=pointer]:
+                                  - img [ref=e708]
+                              - generic [ref=e714]: How much it time take to claim my reward
+                              - button "1" [ref=e716] [cursor=pointer]:
+                                - img
+                                - generic [ref=e717]: "1"
+                        - article [ref=e718]:
+                          - generic [ref=e719]:
+                            - link [ref=e720] [cursor=pointer]:
+                              - /url: /profile/0x15331464f48b17e33123d71e4e7a5f98177c1995
+                              - generic "0x15331464F48B17E33123d71E4e7A5f98177c1995-1761206893153" [ref=e721]
+                            - generic [ref=e723]:
+                              - generic [ref=e724]:
+                                - generic [ref=e725]:
+                                  - link "White-Dew" [ref=e727] [cursor=pointer]:
+                                    - /url: /profile/0x15331464f48b17e33123d71e4e7a5f98177c1995
+                                  - time [ref=e728]: 17h ago
+                                - button [ref=e730] [cursor=pointer]:
+                                  - img [ref=e731]
+                              - generic [ref=e736]:
+                                - generic [ref=e737]: I lost nearly 400$ :( Just tried to fill in the the bonding and bought kol at 96c. my mental mind is fked rn gonna take some break from here (maybe might "STOP GAMBLING")
+                                - button "Read more" [ref=e739] [cursor=pointer]
+                              - button "4" [ref=e741] [cursor=pointer]:
+                                - img
+                                - generic [ref=e742]: "4"
+                              - button "4 Replies" [ref=e743] [cursor=pointer]:
+                                - text: 4 Replies
+                                - img
+                        - article [ref=e744]:
+                          - generic [ref=e745]:
+                            - link [ref=e746] [cursor=pointer]:
+                              - /url: /profile/0x069867034669753d6bd55d7107b1ed1348ebf599
+                              - generic "Deyoot" [ref=e747]
+                            - generic [ref=e749]:
+                              - generic [ref=e750]:
+                                - generic [ref=e751]:
+                                  - link "Deyoot" [ref=e753] [cursor=pointer]:
+                                    - /url: /profile/0x069867034669753d6bd55d7107b1ed1348ebf599
+                                  - time [ref=e754]: 17h ago
+                                - button [ref=e756] [cursor=pointer]:
+                                  - img [ref=e757]
+                              - generic [ref=e763]: gg
+                              - button "0" [ref=e765] [cursor=pointer]:
+                                - img
+                                - generic [ref=e766]: "0"
+                        - article [ref=e767]:
+                          - generic [ref=e768]:
+                            - link [ref=e769] [cursor=pointer]:
+                              - /url: /profile/0x83103011d26652b00e210942d7ff54ea45f3ac48
+                              - generic "madbeanshooper" [ref=e770]
+                            - generic [ref=e772]:
+                              - generic [ref=e773]:
+                                - generic [ref=e774]:
+                                  - link "madbeanshooper" [ref=e776] [cursor=pointer]:
+                                    - /url: /profile/0x83103011d26652b00e210942d7ff54ea45f3ac48
+                                  - time [ref=e777]: 17h ago
+                                - button [ref=e779] [cursor=pointer]:
+                                  - img [ref=e780]
+                              - generic [ref=e786]: I won lmao
+                              - button "5" [ref=e788] [cursor=pointer]:
+                                - img
+                                - generic [ref=e789]: "5"
+                              - button "1 Replies" [ref=e790] [cursor=pointer]:
+                                - text: 1 Replies
+                                - img
+                              - article [ref=e791]:
+                                - generic [ref=e792]:
+                                  - link "vikas3790" [ref=e793] [cursor=pointer]:
+                                    - /url: /profile/0x3b5e80fb039c9d95596f4ef20e5be29f67f0e4ea
+                                    - generic "vikas3790" [ref=e794]:
+                                      - img "vikas3790" [ref=e796]
+                                  - generic [ref=e797]:
+                                    - generic [ref=e798]:
+                                      - generic [ref=e799]:
+                                        - link "vikas3790" [ref=e801] [cursor=pointer]:
+                                          - /url: /profile/0x3b5e80fb039c9d95596f4ef20e5be29f67f0e4ea
+                                        - time [ref=e802]: 17h ago
+                                      - button [ref=e804] [cursor=pointer]:
+                                        - img [ref=e805]
+                                    - generic [ref=e810]:
+                                      - link "@madbeanshoop..." [ref=e811] [cursor=pointer]:
+                                        - /url: /profile/0x83103011d26652b00e210942d7ff54ea45f3ac48
+                                      - generic [ref=e812]: mukul choudhary saved you
+                                    - button "1" [ref=e814] [cursor=pointer]:
+                                      - img
+                                      - generic [ref=e815]: "1"
+                        - article [ref=e816]:
+                          - generic [ref=e817]:
+                            - link [ref=e818] [cursor=pointer]:
+                              - /url: /profile/0x6818cb54c8e3187a3217c117441bc610745e13ae
+                              - generic "jettrades" [ref=e819]
+                            - generic [ref=e821]:
+                              - generic [ref=e822]:
+                                - generic [ref=e823]:
+                                  - link "jettrades" [ref=e825] [cursor=pointer]:
+                                    - /url: /profile/0x6818cb54c8e3187a3217c117441bc610745e13ae
+                                  - time [ref=e826]: 17h ago
+                                - button [ref=e828] [cursor=pointer]:
+                                  - img [ref=e829]
+                              - generic [ref=e835]: bhagwan ne ye kya
+                              - button "2" [ref=e837] [cursor=pointer]:
+                                - img
+                                - generic [ref=e838]: "2"
+                        - article [ref=e839]:
+                          - generic [ref=e840]:
+                            - link [ref=e841] [cursor=pointer]:
+                              - /url: /profile/0x984976afc18a4852b5042a569300f32518219d90
+                              - generic "Kanishk7" [ref=e842]
+                            - generic [ref=e844]:
+                              - generic [ref=e845]:
+                                - generic [ref=e846]:
+                                  - link "Kanishk7" [ref=e848] [cursor=pointer]:
+                                    - /url: /profile/0x984976afc18a4852b5042a569300f32518219d90
+                                  - time [ref=e849]: 17h ago
+                                - button [ref=e851] [cursor=pointer]:
+                                  - img [ref=e852]
+                              - generic [ref=e858]: i loose all my money guys good bye 122 dollars to 0 in 2 days
+                              - button "0" [ref=e860] [cursor=pointer]:
+                                - img
+                                - generic [ref=e861]: "0"
+                              - button "6 Replies" [ref=e862] [cursor=pointer]:
+                                - text: 6 Replies
+                                - img
+                      - button "Show more comments" [ref=e864] [cursor=pointer]
+                    - generic [ref=e865]:
+                      - heading "Frequently Asked Questions" [level=2] [ref=e866]
+                      - generic [ref=e867]:
+                        - generic [ref=e868]:
+                          - heading "What is the “Giants vs. Riders” prediction market?" [level=3] [ref=e869]:
+                            - button "What is the “Giants vs. Riders” prediction market?" [ref=e870] [cursor=pointer]:
+                              - text: What is the “Giants vs. Riders” prediction market?
+                              - img [ref=e871]
+                          - region "What is the “Giants vs. Riders” prediction market?":
+                            - generic [ref=e873]: The “Giants vs. Riders” market on Polymarket lets you trade on the outcome of the Indian Premier League game between the Lucknow Super Giants and the Kolkata Knight Riders, scheduled for April 9, 2026 at 10:00 AM ET. The primary market is the moneyline — which team will win the game — where Giants is currently priced at 100¢ (100% implied probability) and Riders at 0¢ (0%). Beyond the moneyline, sports markets on Polymarket may feature spreads, totals (over/under), and player props, giving you multiple ways to trade on this game. Prices reflect real-time crowd-sourced probabilities. Shares in the correct outcome pay out $1 each when the market resolves after the game ends.
+                        - generic [ref=e874]:
+                          - heading "How much trading activity has “Giants vs. Riders” generated on Polymarket?" [level=3] [ref=e875]:
+                            - button "How much trading activity has “Giants vs. Riders” generated on Polymarket?" [ref=e876] [cursor=pointer]:
+                              - text: How much trading activity has “Giants vs. Riders” generated on Polymarket?
+                              - img [ref=e877]
+                          - region "How much trading activity has “Giants vs. Riders” generated on Polymarket?":
+                            - generic [ref=e879]: As of now, the “Giants vs. Riders” market has generated $3 million in total trading volume across all market types (moneyline, spreads, totals, and player props). This volume reflects active engagement from the Polymarket trading community, and a deeper pool of traders generally means more informative, reliable odds. You can track live price movements and trade on any market directly on this page.
+                        - generic [ref=e880]:
+                          - heading "How do I trade on “Giants vs. Riders”?" [level=3] [ref=e881]:
+                            - button "How do I trade on “Giants vs. Riders”?" [ref=e882] [cursor=pointer]:
+                              - text: How do I trade on “Giants vs. Riders”?
+                              - img [ref=e883]
+                          - region "How do I trade on “Giants vs. Riders”?":
+                            - generic [ref=e885]: "To trade on “Giants vs. Riders,” start by choosing the market type you want to trade: Moneyline (which team wins), Spreads (margin of victory), Totals (combined score over/under), or Player Props (individual player stat lines). Each market shows the current price for each side — for example, the moneyline shows LUC at 100¢ and KOL at 0¢. Select the side you want to trade, choose Buy to take a position or Sell to close an existing one, enter your amount, and click Trade. If your chosen side is correct when the game ends and the market resolves, your shares pay out $1 each. If it’s incorrect, they pay out $0. You can also sell your shares at any time before the game ends to lock in a profit or cut a loss."
+                        - generic [ref=e886]:
+                          - heading "What are the current odds for “Giants vs. Riders”?" [level=3] [ref=e887]:
+                            - button "What are the current odds for “Giants vs. Riders”?" [ref=e888] [cursor=pointer]:
+                              - text: What are the current odds for “Giants vs. Riders”?
+                              - img [ref=e889]
+                          - region "What are the current odds for “Giants vs. Riders”?":
+                            - generic [ref=e891]: The current moneyline odds for “Giants vs. Riders” show Lucknow Super Giants at 100¢ (100% implied probability) and Kolkata Knight Riders at 0¢ (0%). All odds update in real-time as traders buy and sell shares, reflecting the latest collective view of how this game will play out. Check back frequently or bookmark this page to follow how the odds shift as game time approaches.
+                        - generic [ref=e892]:
+                          - heading "How will “Giants vs. Riders” be resolved?" [level=3] [ref=e893]:
+                            - button "How will “Giants vs. Riders” be resolved?" [ref=e894] [cursor=pointer]:
+                              - text: How will “Giants vs. Riders” be resolved?
+                              - img [ref=e895]
+                          - region "How will “Giants vs. Riders” be resolved?":
+                            - generic [ref=e897]: The “Giants vs. Riders” market resolves based on the official final score of the Indian Premier League game as reported by Indian Premier League’s official results, including overtime if applicable. Moneyline markets resolve to the team that wins the game. Spread markets resolve based on the final margin of victory relative to the posted line. Totals (over/under) markets resolve based on the combined final score of both teams. Player prop markets resolve based on official box score statistics. If the game is postponed or canceled, the market resolution rules (available in the Rules section on this page) specify how that scenario is handled. We recommend reviewing the full resolution criteria before trading.
+                      - button "View more" [ref=e898] [cursor=pointer]:
+                        - generic [ref=e899]: View more
+                        - img [ref=e900]
+          - generic [ref=e905]:
+            - generic [ref=e907]:
+              - img [ref=e908]
+              - paragraph [ref=e910]: "Outcome: Lucknow Super Giants"
+              - paragraph [ref=e911]: "Indian Premier League: Kolkata Knight Riders vs Lucknow Super Giants"
+            - button "By trading, you agree to the Terms of Use." [ref=e913]:
+              - text: By trading, you agree to the
+              - link "Terms of Use" [ref=e914] [cursor=pointer]:
+                - /url: /tos
+              - text: .
+        - contentinfo [ref=e915]:
+          - generic [ref=e917]:
+            - generic [ref=e918]:
+              - link "Polymarket" [ref=e919] [cursor=pointer]:
+                - /url: /
+                - img "Polymarket" [ref=e920]
+              - paragraph [ref=e921]: The World's Largest Prediction Market™
+            - generic [ref=e922]:
+              - generic [ref=e924]:
+                - heading "Related topics" [level=3] [ref=e925]
+                - generic [ref=e926]:
+                  - link "Games Predictions" [ref=e927] [cursor=pointer]:
+                    - /url: /predictions/games
+                    - text: Games
+                    - generic [ref=e928]: Predictions
+                  - link "Basketball Predictions" [ref=e929] [cursor=pointer]:
+                    - /url: /predictions/basketball
+                    - text: Basketball
+                    - generic [ref=e930]: Predictions
+                  - link "Soccer Predictions" [ref=e931] [cursor=pointer]:
+                    - /url: /predictions/soccer
+                    - text: Soccer
+                    - generic [ref=e932]: Predictions
+                  - link "NBA Predictions" [ref=e933] [cursor=pointer]:
+                    - /url: /predictions/nba
+                    - text: NBA
+                    - generic [ref=e934]: Predictions
+                  - link "Tennis Predictions" [ref=e935] [cursor=pointer]:
+                    - /url: /predictions/tennis
+                    - text: Tennis
+                    - generic [ref=e936]: Predictions
+                  - link "Baseball Predictions" [ref=e937] [cursor=pointer]:
+                    - /url: /predictions/baseball
+                    - text: Baseball
+                    - generic [ref=e938]: Predictions
+                  - link "Hockey Predictions" [ref=e939] [cursor=pointer]:
+                    - /url: /predictions/hockey
+                    - text: Hockey
+                    - generic [ref=e940]: Predictions
+                  - link "NHL Predictions" [ref=e941] [cursor=pointer]:
+                    - /url: /predictions/nhl
+                    - text: NHL
+                    - generic [ref=e942]: Predictions
+                  - link "UEFA Champions League Predictions" [ref=e943] [cursor=pointer]:
+                    - /url: /predictions/uefa-champions-league
+                    - text: UEFA Champions League
+                    - generic [ref=e944]: Predictions
+                  - link "NCAA Predictions" [ref=e945] [cursor=pointer]:
+                    - /url: /predictions/ncaa
+                    - text: NCAA
+                    - generic [ref=e946]: Predictions
+                  - generic [ref=e947]:
+                    - generic [ref=e949]:
+                      - link [ref=e950] [cursor=pointer]:
+                        - /url: /predictions/golf
+                        - text: Golf
+                        - generic [ref=e951]: Predictions
+                      - link [ref=e952] [cursor=pointer]:
+                        - /url: /predictions/cricket
+                        - text: Cricket
+                        - generic [ref=e953]: Predictions
+                      - link [ref=e954] [cursor=pointer]:
+                        - /url: /predictions/ufc
+                        - text: UFC
+                        - generic [ref=e955]: Predictions
+                      - link [ref=e956] [cursor=pointer]:
+                        - /url: /predictions/mls
+                        - text: MLS
+                        - generic [ref=e957]: Predictions
+                      - link [ref=e958] [cursor=pointer]:
+                        - /url: /predictions/peru
+                        - text: Peru
+                        - generic [ref=e959]: Predictions
+                      - link [ref=e960] [cursor=pointer]:
+                        - /url: /predictions/cbb
+                        - text: CBB
+                        - generic [ref=e961]: Predictions
+                      - link [ref=e962] [cursor=pointer]:
+                        - /url: /predictions/cba
+                        - text: CBA
+                        - generic [ref=e963]: Predictions
+                      - link [ref=e964] [cursor=pointer]:
+                        - /url: /predictions/mvp
+                        - text: Mvp
+                        - generic [ref=e965]: Predictions
+                      - link [ref=e966] [cursor=pointer]:
+                        - /url: /predictions/uefa-europa-league
+                        - text: UEFA Europa League
+                        - generic [ref=e967]: Predictions
+                      - link [ref=e968] [cursor=pointer]:
+                        - /url: /predictions/pga
+                        - text: PGA
+                        - generic [ref=e969]: Predictions
+                    - button "View more" [ref=e970] [cursor=pointer]:
+                      - generic [ref=e971]: View more
+                      - img [ref=e972]
+              - generic [ref=e975]:
+                - heading "Popular Cricipl markets" [level=3] [ref=e976]
+                - generic [ref=e977]:
+                  - link "The Masters - Winner" [ref=e978] [cursor=pointer]:
+                    - /url: /event/the-masters-winner-2026
+                  - link "2026 FIFA World Cup Winner" [ref=e979] [cursor=pointer]:
+                    - /url: /event/2026-fifa-world-cup-winner-595
+                  - link "2026 NBA Champion" [ref=e980] [cursor=pointer]:
+                    - /url: /event/2026-nba-champion
+                  - 'link "LoL: DN SOOPers vs T1 (BO3) - LCK Rounds 1-2" [ref=e981] [cursor=pointer]':
+                    - /url: /event/lol-dnf-t1-2026-04-10
+                  - link "F1 Drivers' Champion" [ref=e982] [cursor=pointer]:
+                    - /url: /event/2026-f1-drivers-champion
+                  - 'link "LoL: Hanwha Life Esports vs BNK FEARX (BO3) - LCK Rounds 1-2" [ref=e983] [cursor=pointer]':
+                    - /url: /event/lol-hle1-fox1-2026-04-10
+                  - 'link "LoL: LNG Esports vs EDward Gaming (BO3) - LPL Group Nirvana" [ref=e984] [cursor=pointer]':
+                    - /url: /event/lol-lng-edg-2026-04-10
+                  - link "UEFA Champions League Winner" [ref=e985] [cursor=pointer]:
+                    - /url: /event/uefa-champions-league-winner
+                  - 'link "Rolex Monte Carlo Masters: Joao Fonseca vs Alexander Zverev" [ref=e986] [cursor=pointer]':
+                    - /url: /event/atp-fonseca-zverev-2026-04-10
+                  - link "2026 NHL Stanley Cup Champion" [ref=e987] [cursor=pointer]:
+                    - /url: /event/2026-nhl-stanley-cup-champion
+                  - generic [ref=e988]:
+                    - generic [ref=e990]:
+                      - link [ref=e991] [cursor=pointer]:
+                        - /url: /event/cricipl-raj-roy-2026-04-10
+                        - text: "Indian Premier League: Rajasthan Royals vs Royal Challengers Bangalore"
+                      - link [ref=e992] [cursor=pointer]:
+                        - /url: /event/2026-mens-french-open-winner
+                        - text: 2026 Men's French Open Winner
+                      - link [ref=e993] [cursor=pointer]:
+                        - /url: /event/dota2-ngx-liquid-2026-04-10
+                        - text: "Dota 2: Nigma Galaxy vs Team Liquid (BO3) - PREMIER SERIES Playoffs"
+                      - link [ref=e994] [cursor=pointer]:
+                        - /url: /event/mls-cup-winner-2026
+                        - text: MLS Cup Winner 2026
+                      - link [ref=e995] [cursor=pointer]:
+                        - /url: /event/nba-mvp-694
+                        - text: NBA MVP
+                      - link [ref=e996] [cursor=pointer]:
+                        - /url: /event/mlb-world-series-champion-2026
+                        - text: MLB World Series Champion 2026
+                      - link [ref=e997] [cursor=pointer]:
+                        - /url: /event/lal-rea-gir-2026-04-10
+                        - text: Real Madrid CF vs. Girona FC
+                      - link [ref=e998] [cursor=pointer]:
+                        - /url: /event/atp-augeral-sinner-2026-04-10
+                        - text: "Rolex Monte Carlo Masters: Felix Auger-Aliassime vs Jannik Sinner"
+                      - link [ref=e999] [cursor=pointer]:
+                        - /url: /event/english-premier-league-winner
+                        - text: English Premier League Winner
+                      - link [ref=e1000] [cursor=pointer]:
+                        - /url: /event/lol-nsea-drxc-2026-04-10
+                        - text: "LoL: Nongshim Esports Academy vs Kiwoom DRX Challengers (BO3) - LCK Challengers League Rounds 1-2"
+                    - button "View more" [ref=e1001] [cursor=pointer]:
+                      - generic [ref=e1002]: View more
+                      - img [ref=e1003]
+              - generic [ref=e1006]:
+                - heading "New Cricipl markets" [level=3] [ref=e1007]
+                - generic [ref=e1008]:
+                  - 'link "WTT - Women''s Singles: Yuxuan Qin vs Xunyao Shi" [ref=e1009] [cursor=pointer]':
+                    - /url: /event/wttwom-qin-shi-2026-04-11
+                  - 'link "Madrid: Lisa Pigato vs Lina Gjorcheska" [ref=e1010] [cursor=pointer]':
+                    - /url: /event/wta-pigato-gjorche-2026-04-10
+                  - 'link "Wuning: Harry Wendelken vs Li Tu" [ref=e1011] [cursor=pointer]':
+                    - /url: /event/atp-wendelk-tu-2026-04-10
+                  - 'link "WTT - Men''s Singles: Yukiya Uda vs Maharu Yoshimura" [ref=e1012] [cursor=pointer]':
+                    - /url: /event/wttmen-uda-yoshimu-2026-04-11
+                  - 'link "Wuning: Fajing Sun vs Pavel Kotov" [ref=e1013] [cursor=pointer]':
+                    - /url: /event/atp-su-kotov-2026-04-10
+                  - link "Salford City FC vs. Bromley FC - More Markets" [ref=e1014] [cursor=pointer]:
+                    - /url: /event/el2-sal-bro-2026-04-23-more-markets
+                  - link "Salford City FC vs. Bromley FC" [ref=e1015] [cursor=pointer]:
+                    - /url: /event/el2-sal-bro-2026-04-23
+                  - 'link "LoL: Top Esports vs Bilibili Gaming (BO3) - LPL Group Ascend" [ref=e1016] [cursor=pointer]':
+                    - /url: /event/lol-tes-blg-2026-04-16
+                  - 'link "LoL: Top Esports vs Invictus Gaming (BO3) - LPL Group Ascend" [ref=e1017] [cursor=pointer]':
+                    - /url: /event/lol-tes-ig1-2026-04-19
+                  - 'link "LoL: Ninjas in Pyjamas vs JD Gaming (BO3) - LPL Group Ascend" [ref=e1018] [cursor=pointer]':
+                    - /url: /event/lol-nip-jdg-2026-04-17
+                  - generic [ref=e1019]:
+                    - generic [ref=e1021]:
+                      - link [ref=e1022] [cursor=pointer]:
+                        - /url: /event/lol-tt-omg-2026-04-17
+                        - text: "LoL: ThunderTalk Gaming vs Oh My God (BO3) - LPL Group Nirvana"
+                      - link [ref=e1023] [cursor=pointer]:
+                        - /url: /event/lol-up-tt-2026-04-15
+                        - text: "LoL: Ultra Prime vs ThunderTalk Gaming (BO3) - LPL Group Nirvana"
+                      - link [ref=e1024] [cursor=pointer]:
+                        - /url: /event/lol-ig1-blg-2026-04-18
+                        - text: "LoL: Invictus Gaming vs Bilibili Gaming (BO3) - LPL Group Ascend"
+                      - link [ref=e1025] [cursor=pointer]:
+                        - /url: /event/lol-wb-jdg-2026-04-18
+                        - text: "LoL: Weibo Gaming vs JD Gaming (BO3) - LPL Group Ascend"
+                      - link [ref=e1026] [cursor=pointer]:
+                        - /url: /event/lol-blg-al-2026-04-19
+                        - text: "LoL: Bilibili Gaming vs Anyone's Legend (BO3) - LPL Group Ascend"
+                      - link [ref=e1027] [cursor=pointer]:
+                        - /url: /event/lol-wb-ig1-2026-04-15
+                        - text: "LoL: Weibo Gaming vs Invictus Gaming (BO3) - LPL Group Ascend"
+                      - link [ref=e1028] [cursor=pointer]:
+                        - /url: /event/cs2-r2-mw-2026-04-12
+                        - text: "Counter-Strike: R2 Esports Club vs METANOIA WOLVES (BO3) - CCT South America Challengers #1 Playoffs"
+                      - link [ref=e1029] [cursor=pointer]:
+                        - /url: /event/cs2-mibra-paina-2026-04-12
+                        - text: "Counter-Strike: MIBR Academy vs paiN Academy (BO3) - CCT South America Challengers #1 Playoffs"
+                      - link [ref=e1030] [cursor=pointer]:
+                        - /url: /event/cs2-fdb-quin-2026-04-11
+                        - text: "Counter-Strike: Fake do Biru vs QUINTESSÊNCIA (BO3) - CCT South America Challengers #1 Playoffs"
+                      - link [ref=e1031] [cursor=pointer]:
+                        - /url: /event/cs2-vsc-alkaa-2026-04-12
+                        - text: "Counter-Strike: Vasco Esports vs ALKA (BO3) - CCT South America Challengers #1 Playoffs"
+                    - button "View more" [ref=e1032] [cursor=pointer]:
+                      - generic [ref=e1033]: View more
+                      - img [ref=e1034]
+            - generic [ref=e1036]:
+              - generic [ref=e1037]:
+                - generic [ref=e1038]:
+                  - link "Email" [ref=e1039] [cursor=pointer]:
+                    - /url: mailto:hello@polymarket.com
+                    - img [ref=e1040]
+                  - link "X (Twitter)" [ref=e1044] [cursor=pointer]:
+                    - /url: https://x.com/Polymarket
+                    - img [ref=e1045]
+                  - link "Instagram" [ref=e1047] [cursor=pointer]:
+                    - /url: https://www.instagram.com/polymarket
+                    - img [ref=e1048]
+                  - link "Discord" [ref=e1053] [cursor=pointer]:
+                    - /url: https://discord.gg/Polymarket
+                    - img [ref=e1054]
+                  - link "TikTok" [ref=e1056] [cursor=pointer]:
+                    - /url: https://www.tiktok.com/@polymarket
+                    - img [ref=e1057]
+                - generic [ref=e1059]:
+                  - generic [ref=e1060]: Adventure One QSS Inc. © 2026
+                  - generic [ref=e1061]: ·
+                  - link "Privacy" [ref=e1062] [cursor=pointer]:
+                    - /url: /privacy
+                  - generic [ref=e1063]: ·
+                  - link "Terms of Use" [ref=e1064] [cursor=pointer]:
+                    - /url: https://polymarket.com/tos
+                  - generic [ref=e1065]: ·
+                  - link "Market Integrity" [ref=e1066] [cursor=pointer]:
+                    - /url: /market-integrity
+                  - generic [ref=e1067]: ·
+                  - link "Help Center" [ref=e1068] [cursor=pointer]:
+                    - /url: https://help.polymarket.com
+                  - generic [ref=e1069]: ·
+                  - link "Docs" [ref=e1070] [cursor=pointer]:
+                    - /url: https://docs.polymarket.com
+                - button "English" [ref=e1071] [cursor=pointer]:
+                  - img [ref=e1072]
+                  - generic [ref=e1075]: English
+                  - img [ref=e1076]
+              - paragraph [ref=e1078]:
+                - text: Polymarket operates globally through separate legal entities.
+                - link "Polymarket US" [ref=e1079] [cursor=pointer]:
+                  - /url: https://polymarket.us/
+                - text: is operated by QCX LLC d/b/a Polymarket US, a CFTC-regulated Designated Contract Market. This international platform is not regulated by the CFTC and operates independently. Trading involves substantial risk of loss. See our
+                - link "Terms of Service" [ref=e1080] [cursor=pointer]:
+                  - /url: https://polymarket.com/tos
+                - text: "&"
+                - link "Privacy Policy" [ref=e1081] [cursor=pointer]:
+                  - /url: https://polymarket.com/privacy
+                - text: .
+    - region "Notifications (F8)":
+      - list
+  - alert [ref=e1082]
+  - generic [ref=e1083]: 60%

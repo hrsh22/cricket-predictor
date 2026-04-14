@@ -1,0 +1,1076 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e4]:
+    - navigation [ref=e7]:
+      - generic [ref=e10]:
+        - link "ESPNcricinfo" [ref=e12] [cursor=pointer]:
+          - /url: /
+          - img "ESPNcricinfo" [ref=e13]
+        - generic [ref=e14]:
+          - generic [ref=e15]:
+            - link "Live Scores" [ref=e17] [cursor=pointer]:
+              - /url: /live-cricket-score
+            - link "IPL 2026" [ref=e19] [cursor=pointer]:
+              - /url: https://www.espncricinfo.com/series/indian-premier-league-2025-26-1510719
+            - link "Series" [ref=e21] [cursor=pointer]:
+              - /url: /cricket-fixtures
+            - link "Teams" [ref=e23] [cursor=pointer]:
+              - /url: /team
+            - link "News" [ref=e25] [cursor=pointer]:
+              - /url: /cricket-news
+            - link "Features" [ref=e27] [cursor=pointer]:
+              - /url: /cricket-features
+            - link "Videos" [ref=e29] [cursor=pointer]:
+              - /url: /cricket-videos/
+            - link "Stats" [ref=e31] [cursor=pointer]:
+              - /url: https://www.espncricinfo.com/records
+          - generic [ref=e32]:
+            - generic [ref=e34] [cursor=pointer]:
+              - text: Edition IN
+              - generic [ref=e35]: 
+            - generic [ref=e37] [cursor=pointer]: 
+            - generic [ref=e40] [cursor=pointer]: 
+            - generic [ref=e42] [cursor=pointer]: 
+            - generic [ref=e44]: 
+    - generic [ref=e46]:
+      - generic [ref=e48]:
+        - generic [ref=e53] [cursor=pointer]:
+          - text: Matches
+          - generic [ref=e54]: (16)
+        - generic [ref=e59] [cursor=pointer]:
+          - text: IPL
+          - generic [ref=e60]: (1)
+        - generic [ref=e65] [cursor=pointer]:
+          - text: PSL
+          - generic [ref=e66]: (3)
+        - generic [ref=e71] [cursor=pointer]:
+          - text: CAN PM Cup
+          - generic [ref=e72]: (2)
+        - generic [ref=e77] [cursor=pointer]:
+          - text: WCL 2
+          - generic [ref=e78]: (1)
+        - generic [ref=e83] [cursor=pointer]:
+          - text: County DIV1
+          - generic [ref=e84]: (5)
+        - generic [ref=e89] [cursor=pointer]:
+          - text: County DIV2
+          - generic [ref=e90]: (4)
+      - generic [ref=e93]:
+        - text: 
+        - generic [ref=e95]:
+          - generic [ref=e99]:
+            - link "Upcoming IPL • Guwahati RR Flag RR RCB Flag RCB Today 7:30 PM Match starts in 2 hrs 3 mins" [ref=e100] [cursor=pointer]:
+              - /url: /series/ipl-2026-1510719/rajasthan-royals-vs-royal-challengers-bengaluru-16th-match-1527689/match-preview
+              - generic [ref=e102]:
+                - generic [ref=e103]:
+                  - generic [ref=e105]: Upcoming
+                  - generic [ref=e106]:
+                    - generic [ref=e107]: IPL •
+                    - generic [ref=e108]: Guwahati
+                - generic [ref=e110]:
+                  - generic [ref=e111]:
+                    - generic "RR" [ref=e113]:
+                      - img "RR Flag" [ref=e114]
+                      - paragraph [ref=e115]: RR
+                    - generic "RCB" [ref=e117]:
+                      - img "RCB Flag" [ref=e118]
+                      - paragraph [ref=e119]: RCB
+                  - generic [ref=e121]:
+                    - generic [ref=e122]: Today
+                    - generic [ref=e124]: 7:30 PM
+                - paragraph [ref=e126]:
+                  - generic [ref=e128]: Match starts in 2 hrs 3 mins
+            - generic [ref=e129]:
+              - link "Schedule" [ref=e130] [cursor=pointer]:
+                - /url: /series/ipl-2026-1510719/match-schedule-fixtures-and-results
+                - generic [ref=e131]: Schedule
+              - link "Table" [ref=e132] [cursor=pointer]:
+                - /url: /series/ipl-2026-1510719/points-table-standings
+                - generic [ref=e133]: Table
+          - generic [ref=e137]:
+            - link "Upcoming PSL • Karachi QG Flag QG RWP Flag RWP Today 7:30 PM Match starts in 2 hrs 3 mins" [ref=e138] [cursor=pointer]:
+              - /url: /series/pakistan-super-league-2026-1515734/quetta-gladiators-vs-rawalpindiz-18th-match-1527569/live-cricket-score
+              - generic [ref=e140]:
+                - generic [ref=e141]:
+                  - generic [ref=e143]: Upcoming
+                  - generic [ref=e144]:
+                    - generic [ref=e145]: PSL •
+                    - generic [ref=e146]: Karachi
+                - generic [ref=e148]:
+                  - generic [ref=e149]:
+                    - generic "QG" [ref=e151]:
+                      - img "QG Flag" [ref=e152]
+                      - paragraph [ref=e153]: QG
+                    - generic "RWP" [ref=e155]:
+                      - img "RWP Flag" [ref=e156]
+                      - paragraph [ref=e157]: RWP
+                  - generic [ref=e159]:
+                    - generic [ref=e160]: Today
+                    - generic [ref=e162]: 7:30 PM
+                - paragraph [ref=e164]:
+                  - generic [ref=e166]: Match starts in 2 hrs 3 mins
+            - generic [ref=e167]:
+              - link "Schedule" [ref=e168] [cursor=pointer]:
+                - /url: /series/pakistan-super-league-2026-1515734/match-schedule-fixtures-and-results
+                - generic [ref=e169]: Schedule
+              - link "Table" [ref=e170] [cursor=pointer]:
+                - /url: /series/pakistan-super-league-2026-1515734/points-table-standings
+                - generic [ref=e171]: Table
+          - generic [ref=e175]:
+            - link [ref=e176] [cursor=pointer]:
+              - /url: /series/men-s-pm-cup-2025-26-1527930/armed-police-force-club-vs-koshi-province-36th-match-1527966/live-cricket-score
+              - generic [ref=e178]:
+                - generic [ref=e179]:
+                  - generic [ref=e181]: RESULT
+                  - generic [ref=e182]:
+                    - generic [ref=e183]: CAN PM Cup •
+                    - generic [ref=e184]: Janakpur
+                - generic [ref=e187]:
+                  - generic [ref=e188]:
+                    - generic [ref=e189]:
+                      - img [ref=e190]
+                      - paragraph [ref=e191]: APFC
+                    - generic [ref=e192]: "225"
+                  - generic [ref=e193]:
+                    - generic [ref=e194]:
+                      - img [ref=e195]
+                      - paragraph [ref=e196]: KP
+                    - generic [ref=e197]: (49.5/50 ov, T:226) 220
+                - paragraph [ref=e199]:
+                  - generic [ref=e200]: Armed Police won by 5 runs
+            - generic [ref=e201]:
+              - link [ref=e202] [cursor=pointer]:
+                - /url: /series/men-s-pm-cup-2025-26-1527930/match-schedule-fixtures-and-results
+                - generic [ref=e203]: Schedule
+              - link [ref=e204] [cursor=pointer]:
+                - /url: /series/men-s-pm-cup-2025-26-1527930/points-table-standings
+                - generic [ref=e205]: Table
+          - generic [ref=e209]:
+            - link [ref=e210] [cursor=pointer]:
+              - /url: /series/men-s-pm-cup-2025-26-1527930/bagmati-province-vs-madhesh-province-37th-match-1527967/live-cricket-score
+              - generic [ref=e212]:
+                - generic [ref=e213]:
+                  - generic [ref=e215]: RESULT
+                  - generic [ref=e216]:
+                    - generic [ref=e217]: CAN PM Cup •
+                    - generic [ref=e218]: Birgunj
+                - generic [ref=e221]:
+                  - generic [ref=e222]:
+                    - generic [ref=e223]:
+                      - img [ref=e224]
+                      - paragraph [ref=e225]: BP
+                    - generic [ref=e226]: "208"
+                  - generic [ref=e227]:
+                    - generic [ref=e228]:
+                      - img [ref=e229]
+                      - paragraph [ref=e230]: MDH
+                    - generic [ref=e231]: (34.3/50 ov, T:209) 173
+                - paragraph [ref=e233]:
+                  - generic [ref=e234]: Bagmati won by 35 runs
+            - generic [ref=e235]:
+              - link [ref=e236] [cursor=pointer]:
+                - /url: /series/men-s-pm-cup-2025-26-1527930/match-schedule-fixtures-and-results
+                - generic [ref=e237]: Schedule
+              - link [ref=e238] [cursor=pointer]:
+                - /url: /series/men-s-pm-cup-2025-26-1527930/points-table-standings
+                - generic [ref=e239]: Table
+          - generic [ref=e243]:
+            - link [ref=e244] [cursor=pointer]:
+              - /url: /series/icc-men-s-cricket-world-cup-league-2-2023-24-2027-1420525/namibia-vs-oman-95th-match-1529143/live-cricket-score
+              - generic [ref=e246]:
+                - generic [ref=e247]:
+                  - generic [ref=e250]: Live
+                  - generic [ref=e251]:
+                    - generic [ref=e252]: WCL 2 •
+                    - generic [ref=e253]: Windhoek
+                - generic [ref=e256]:
+                  - generic [ref=e257]:
+                    - generic [ref=e258]:
+                      - img [ref=e259]
+                      - paragraph [ref=e260]: OMA
+                    - generic [ref=e261]: 218/9
+                  - generic [ref=e262]:
+                    - generic [ref=e263]:
+                      - img [ref=e264]
+                      - paragraph [ref=e265]: NAM
+                    - generic [ref=e266]: (4.1/50 ov, T:219) 8/0
+                - paragraph [ref=e268]:
+                  - generic [ref=e269]: Namibia need 211 runs from 45.5 overs.
+            - generic [ref=e270]:
+              - link [ref=e271] [cursor=pointer]:
+                - /url: /series/icc-men-s-cricket-world-cup-league-2-2023-24-2027-1420525/match-schedule-fixtures-and-results
+                - generic [ref=e272]: Schedule
+              - link [ref=e273] [cursor=pointer]:
+                - /url: /series/icc-men-s-cricket-world-cup-league-2-2023-24-2027-1420525/points-table-standings
+                - generic [ref=e274]: Table
+          - generic [ref=e278]:
+            - link [ref=e279] [cursor=pointer]:
+              - /url: /series/county-championship-division-one-2026-1513323/essex-vs-somerset-6th-match-1513331/live-cricket-score
+              - generic [ref=e281]:
+                - generic [ref=e282]:
+                  - generic [ref=e285]: Live
+                  - generic [ref=e286]:
+                    - generic [ref=e287]: County DIV1 •
+                    - generic [ref=e288]: Chelmsford
+                - generic [ref=e291]:
+                  - generic [ref=e292]:
+                    - generic [ref=e293]:
+                      - img [ref=e294]
+                      - paragraph [ref=e295]: ESS
+                    - generic [ref=e296]: (29.4 ov) 77/3
+                  - generic [ref=e298]:
+                    - img [ref=e299]
+                    - paragraph [ref=e300]: SOM
+                - paragraph [ref=e302]:
+                  - generic [ref=e303]: Day 1 - Somerset chose to field.
+            - generic [ref=e304]:
+              - link [ref=e305] [cursor=pointer]:
+                - /url: /series/county-championship-division-one-2026-1513323/match-schedule-fixtures-and-results
+                - generic [ref=e306]: Schedule
+              - link [ref=e307] [cursor=pointer]:
+                - /url: /series/county-championship-division-one-2026-1513323/points-table-standings
+                - generic [ref=e308]: Table
+          - generic [ref=e312]:
+            - link [ref=e313] [cursor=pointer]:
+              - /url: /series/county-championship-division-one-2026-1513323/sussex-vs-warwickshire-7th-match-1513332/live-cricket-score
+              - generic [ref=e315]:
+                - generic [ref=e316]:
+                  - generic [ref=e319]: Live
+                  - generic [ref=e320]:
+                    - generic [ref=e321]: County DIV1 •
+                    - generic [ref=e322]: Hove
+                - generic [ref=e325]:
+                  - generic [ref=e326]:
+                    - generic [ref=e327]:
+                      - img [ref=e328]
+                      - paragraph [ref=e329]: WAR
+                    - generic [ref=e330]: (27.2 ov) 62/3
+                  - generic [ref=e332]:
+                    - img [ref=e333]
+                    - paragraph [ref=e334]: SUS
+                - paragraph [ref=e336]:
+                  - generic [ref=e337]: Day 1 - Warwickshire chose to bat.
+            - generic [ref=e338]:
+              - link [ref=e339] [cursor=pointer]:
+                - /url: /series/county-championship-division-one-2026-1513323/match-schedule-fixtures-and-results
+                - generic [ref=e340]: Schedule
+              - link [ref=e341] [cursor=pointer]:
+                - /url: /series/county-championship-division-one-2026-1513323/points-table-standings
+                - generic [ref=e342]: Table
+          - generic [ref=e346]:
+            - link [ref=e347] [cursor=pointer]:
+              - /url: /series/county-championship-division-one-2026-1513323/yorkshire-vs-hampshire-8th-match-1513333/live-cricket-score
+              - generic [ref=e349]:
+                - generic [ref=e350]:
+                  - generic [ref=e353]: Live
+                  - generic [ref=e354]:
+                    - generic [ref=e355]: County DIV1 •
+                    - generic [ref=e356]: Leeds
+                - generic [ref=e359]:
+                  - generic [ref=e360]:
+                    - generic [ref=e361]:
+                      - img [ref=e362]
+                      - paragraph [ref=e363]: HAM
+                    - generic [ref=e364]: (27 ov) 76/2
+                  - generic [ref=e366]:
+                    - img [ref=e367]
+                    - paragraph [ref=e368]: YOR
+                - paragraph [ref=e370]:
+                  - generic [ref=e371]: Day 1 - Yorkshire chose to field.
+            - generic [ref=e372]:
+              - link [ref=e373] [cursor=pointer]:
+                - /url: /series/county-championship-division-one-2026-1513323/match-schedule-fixtures-and-results
+                - generic [ref=e374]: Schedule
+              - link [ref=e375] [cursor=pointer]:
+                - /url: /series/county-championship-division-one-2026-1513323/points-table-standings
+                - generic [ref=e376]: Table
+          - generic [ref=e380]:
+            - link [ref=e381] [cursor=pointer]:
+              - /url: /series/county-championship-division-one-2026-1513323/surrey-vs-leicestershire-9th-match-1513334/live-cricket-score
+              - generic [ref=e383]:
+                - generic [ref=e384]:
+                  - generic [ref=e387]: Live
+                  - generic [ref=e388]:
+                    - generic [ref=e389]: County DIV1 •
+                    - generic [ref=e390]: The Oval
+                - generic [ref=e393]:
+                  - generic [ref=e394]:
+                    - generic [ref=e395]:
+                      - img [ref=e396]
+                      - paragraph [ref=e397]: SUR
+                    - generic [ref=e398]: (29 ov) 107/2
+                  - generic [ref=e400]:
+                    - img [ref=e401]
+                    - paragraph [ref=e402]: LEI
+                - paragraph [ref=e404]:
+                  - generic [ref=e405]: Day 1 - Leics chose to field.
+            - generic [ref=e406]:
+              - link [ref=e407] [cursor=pointer]:
+                - /url: /series/county-championship-division-one-2026-1513323/match-schedule-fixtures-and-results
+                - generic [ref=e408]: Schedule
+              - link [ref=e409] [cursor=pointer]:
+                - /url: /series/county-championship-division-one-2026-1513323/points-table-standings
+                - generic [ref=e410]: Table
+          - generic [ref=e414]:
+            - link [ref=e415] [cursor=pointer]:
+              - /url: /series/county-championship-division-one-2026-1513323/nottinghamshire-vs-glamorgan-10th-match-1513335/live-cricket-score
+              - generic [ref=e417]:
+                - generic [ref=e418]:
+                  - generic [ref=e421]: Live
+                  - generic [ref=e422]:
+                    - generic [ref=e423]: County DIV1 •
+                    - generic [ref=e424]: Nottingham
+                - generic [ref=e427]:
+                  - generic [ref=e428]:
+                    - generic [ref=e429]:
+                      - img [ref=e430]
+                      - paragraph [ref=e431]: NOT
+                    - generic [ref=e432]: (23.4 ov) 100/5
+                  - generic [ref=e434]:
+                    - img [ref=e435]
+                    - paragraph [ref=e436]: GLA
+                - paragraph [ref=e438]:
+                  - generic [ref=e439]: Day 1 - Glamorgan chose to field.
+            - generic [ref=e440]:
+              - link [ref=e441] [cursor=pointer]:
+                - /url: /series/county-championship-division-one-2026-1513323/match-schedule-fixtures-and-results
+                - generic [ref=e442]: Schedule
+              - link [ref=e443] [cursor=pointer]:
+                - /url: /series/county-championship-division-one-2026-1513323/points-table-standings
+                - generic [ref=e444]: Table
+          - generic [ref=e448]:
+            - link [ref=e449] [cursor=pointer]:
+              - /url: /series/county-championship-division-two-2026-1513324/middlesex-vs-worcestershire-5th-match-1513400/live-cricket-score
+              - generic [ref=e451]:
+                - generic [ref=e452]:
+                  - generic [ref=e455]: Live
+                  - generic [ref=e456]:
+                    - generic [ref=e457]: County DIV2 •
+                    - generic [ref=e458]: Lord's
+                - generic [ref=e461]:
+                  - generic [ref=e462]:
+                    - generic [ref=e463]:
+                      - img [ref=e464]
+                      - paragraph [ref=e465]: WOR
+                    - generic [ref=e466]: (27 ov) 78/5
+                  - generic [ref=e468]:
+                    - img [ref=e469]
+                    - paragraph [ref=e470]: MID
+                - paragraph [ref=e472]:
+                  - generic [ref=e473]: Day 1 - Middlesex chose to field.
+            - generic [ref=e474]:
+              - link [ref=e475] [cursor=pointer]:
+                - /url: /series/county-championship-division-two-2026-1513324/match-schedule-fixtures-and-results
+                - generic [ref=e476]: Schedule
+              - link [ref=e477] [cursor=pointer]:
+                - /url: /series/county-championship-division-two-2026-1513324/points-table-standings
+                - generic [ref=e478]: Table
+          - generic [ref=e482]:
+            - link [ref=e483] [cursor=pointer]:
+              - /url: /series/county-championship-division-two-2026-1513324/gloucestershire-vs-durham-6th-match-1513401/live-cricket-score
+              - generic [ref=e485]:
+                - generic [ref=e486]:
+                  - generic [ref=e489]: Live
+                  - generic [ref=e490]:
+                    - generic [ref=e491]: County DIV2 •
+                    - generic [ref=e492]: Bristol
+                - generic [ref=e495]:
+                  - generic [ref=e496]:
+                    - generic [ref=e497]:
+                      - img [ref=e498]
+                      - paragraph [ref=e499]: DUR
+                    - generic [ref=e500]: (28.3 ov) 139/0
+                  - generic [ref=e502]:
+                    - img [ref=e503]
+                    - paragraph [ref=e504]: GLO
+                - paragraph [ref=e506]:
+                  - generic [ref=e507]: Day 1 - Gloucs chose to field.
+            - generic [ref=e508]:
+              - link [ref=e509] [cursor=pointer]:
+                - /url: /series/county-championship-division-two-2026-1513324/match-schedule-fixtures-and-results
+                - generic [ref=e510]: Schedule
+              - link [ref=e511] [cursor=pointer]:
+                - /url: /series/county-championship-division-two-2026-1513324/points-table-standings
+                - generic [ref=e512]: Table
+          - generic [ref=e516]:
+            - link [ref=e517] [cursor=pointer]:
+              - /url: /series/county-championship-division-two-2026-1513324/kent-vs-northamptonshire-7th-match-1513402/live-cricket-score
+              - generic [ref=e519]:
+                - generic [ref=e520]:
+                  - generic [ref=e523]: Live
+                  - generic [ref=e524]:
+                    - generic [ref=e525]: County DIV2 •
+                    - generic [ref=e526]: Canterbury
+                - generic [ref=e529]:
+                  - generic [ref=e530]:
+                    - generic [ref=e531]:
+                      - img [ref=e532]
+                      - paragraph [ref=e533]: NOR
+                    - generic [ref=e534]: (29 ov) 123/0
+                  - generic [ref=e536]:
+                    - img [ref=e537]
+                    - paragraph [ref=e538]: KEN
+                - paragraph [ref=e540]:
+                  - generic [ref=e541]: Day 1 - Northants chose to bat.
+            - generic [ref=e542]:
+              - link [ref=e543] [cursor=pointer]:
+                - /url: /series/county-championship-division-two-2026-1513324/match-schedule-fixtures-and-results
+                - generic [ref=e544]: Schedule
+              - link [ref=e545] [cursor=pointer]:
+                - /url: /series/county-championship-division-two-2026-1513324/points-table-standings
+                - generic [ref=e546]: Table
+          - generic [ref=e550]:
+            - link [ref=e551] [cursor=pointer]:
+              - /url: /series/county-championship-division-two-2026-1513324/lancashire-vs-derbyshire-8th-match-1513403/live-cricket-score
+              - generic [ref=e553]:
+                - generic [ref=e554]:
+                  - generic [ref=e557]: Live
+                  - generic [ref=e558]:
+                    - generic [ref=e559]: County DIV2 •
+                    - generic [ref=e560]: Manchester
+                - generic [ref=e563]:
+                  - generic [ref=e564]:
+                    - generic [ref=e565]:
+                      - img [ref=e566]
+                      - paragraph [ref=e567]: LAN
+                    - generic [ref=e568]: (28.5 ov) 84/2
+                  - generic [ref=e570]:
+                    - img [ref=e571]
+                    - paragraph [ref=e572]: DER
+                - paragraph [ref=e574]:
+                  - generic [ref=e575]: Day 1 - Derbyshire chose to field.
+            - generic [ref=e576]:
+              - link [ref=e577] [cursor=pointer]:
+                - /url: /series/county-championship-division-two-2026-1513324/match-schedule-fixtures-and-results
+                - generic [ref=e578]: Schedule
+              - link [ref=e579] [cursor=pointer]:
+                - /url: /series/county-championship-division-two-2026-1513324/points-table-standings
+                - generic [ref=e580]: Table
+          - generic [ref=e584]:
+            - link [ref=e585] [cursor=pointer]:
+              - /url: /series/pakistan-super-league-2026-1515734/karachi-kings-vs-peshawar-zalmi-17th-match-1527568/full-scorecard
+              - generic [ref=e587]:
+                - generic [ref=e588]:
+                  - generic [ref=e590]: RESULT
+                  - generic [ref=e591]:
+                    - generic [ref=e592]: PSL •
+                    - generic [ref=e593]: Karachi
+                - generic [ref=e596]:
+                  - generic [ref=e597]:
+                    - generic [ref=e598]:
+                      - img [ref=e599]
+                      - paragraph [ref=e600]: PZ
+                    - generic [ref=e601]: 246/3
+                  - generic [ref=e602]:
+                    - generic [ref=e603]:
+                      - img [ref=e604]
+                      - paragraph [ref=e605]: KK
+                    - generic [ref=e606]: (16.1/20 ov, T:247) 87
+                - paragraph [ref=e608]:
+                  - generic [ref=e609]: Zalmi won by 159 runs
+            - generic [ref=e610]:
+              - link [ref=e611] [cursor=pointer]:
+                - /url: /series/pakistan-super-league-2026-1515734/match-schedule-fixtures-and-results
+                - generic [ref=e612]: Schedule
+              - link [ref=e613] [cursor=pointer]:
+                - /url: /series/pakistan-super-league-2026-1515734/points-table-standings
+                - generic [ref=e614]: Table
+          - generic [ref=e618]:
+            - link [ref=e619] [cursor=pointer]:
+              - /url: /series/pakistan-super-league-2026-1515734/islamabad-united-vs-lahore-qalandars-16th-match-1527567/full-scorecard
+              - generic [ref=e621]:
+                - generic [ref=e622]:
+                  - generic [ref=e624]: RESULT
+                  - generic [ref=e625]:
+                    - generic [ref=e626]: PSL •
+                    - generic [ref=e627]: Karachi
+                - generic [ref=e630]:
+                  - generic [ref=e631]:
+                    - generic [ref=e632]:
+                      - img [ref=e633]
+                      - paragraph [ref=e634]: LQ
+                    - generic [ref=e635]: "100"
+                  - generic [ref=e636]:
+                    - generic [ref=e637]:
+                      - img [ref=e638]
+                      - paragraph [ref=e639]: IU
+                    - generic [ref=e640]: (10.2/20 ov, T:101) 104/1
+                - paragraph [ref=e642]:
+                  - generic [ref=e643]: United won by 9 wickets (with 58 balls remaining)
+            - generic [ref=e644]:
+              - link [ref=e645] [cursor=pointer]:
+                - /url: /series/pakistan-super-league-2026-1515734/match-schedule-fixtures-and-results
+                - generic [ref=e646]: Schedule
+              - link [ref=e647] [cursor=pointer]:
+                - /url: /series/pakistan-super-league-2026-1515734/points-table-standings
+                - generic [ref=e648]: Table
+        - button " Next" [ref=e649] [cursor=pointer]
+    - generic [ref=e650]:
+      - generic [ref=e651]:
+        - generic [ref=e653]:
+          - complementary
+        - generic [ref=e657]:
+          - heading "KKR vs LSG, 15th Match at Kolkata, IPL, Apr 09 2026 - Ball by Ball Commentary" [level=1] [ref=e658]
+          - generic [ref=e659]:
+            - generic [ref=e660]:
+              - generic [ref=e661]:
+                - generic [ref=e662]:
+                  - generic [ref=e664]:
+                    - generic [ref=e665]:
+                      - generic [ref=e667]: RESULT
+                      - generic [ref=e668]:
+                        - text: 15th Match (N), Eden Gardens, April 09, 2026,
+                        - link "Indian Premier League" [ref=e669] [cursor=pointer]:
+                          - /url: /series/ipl-2026-1510719
+                          - generic [ref=e670]: Indian Premier League
+                    - generic [ref=e671]:
+                      - generic [ref=e672]:
+                        - link " Prev" [ref=e673] [cursor=pointer]:
+                          - /url: /series/ipl-2026-1510719/delhi-capitals-vs-gujarat-titans-14th-match-1527687/full-scorecard
+                          - button " Prev" [ref=e674]:
+                            - generic [ref=e675]: 
+                            - generic [ref=e676]: Prev
+                        - link "Next " [ref=e677] [cursor=pointer]:
+                          - /url: /series/ipl-2026-1510719/rajasthan-royals-vs-royal-challengers-bengaluru-16th-match-1527689/live-cricket-score
+                          - button "Next " [ref=e678]:
+                            - generic [ref=e679]: Next
+                            - generic [ref=e680]: 
+                      - generic [ref=e681]:
+                        - generic [ref=e685] [cursor=pointer]: 
+                        - generic [ref=e688] [cursor=pointer]: 
+                  - generic [ref=e689]:
+                    - generic [ref=e692]:
+                      - generic [ref=e694]:
+                        - generic [ref=e695]:
+                          - generic "KKR" [ref=e696]:
+                            - img "KKR Flag" [ref=e697]
+                            - link "KKR" [ref=e698] [cursor=pointer]:
+                              - /url: /team/kolkata-knight-riders-335971
+                              - generic [ref=e699]: KKR
+                            - paragraph [ref=e702] [cursor=pointer]: "#9"
+                          - generic [ref=e703]: 181/4
+                        - generic [ref=e704]:
+                          - generic "LSG" [ref=e705]:
+                            - img "LSG Flag" [ref=e706]
+                            - link "LSG" [ref=e707] [cursor=pointer]:
+                              - /url: /team/lucknow-super-giants-1298768
+                              - generic [ref=e708]: LSG
+                            - paragraph [ref=e711] [cursor=pointer]: "#5"
+                          - generic [ref=e712]: (20 ov, T:182) 182/7
+                      - paragraph [ref=e713]:
+                        - generic [ref=e714]: LSG won by 3 wickets (with 0 balls remaining)
+                    - generic [ref=e715]:
+                      - generic [ref=e717]:
+                        - link "mukul-choudhary " [ref=e719] [cursor=pointer]:
+                          - /url: /cricketers/mukul-choudhary-1354217
+                          - generic [ref=e720]:
+                            - img "mukul-choudhary" [ref=e722]
+                            - generic [ref=e724]: 
+                        - generic [ref=e725]:
+                          - generic [ref=e727]:
+                            - generic [ref=e728]: Player Of The Match
+                            - generic [ref=e729]:
+                              - link "Mukul Choudhary" [ref=e731] [cursor=pointer]:
+                                - /url: /cricketers/mukul-choudhary-1354217
+                                - generic [ref=e732]: Mukul Choudhary
+                              - generic [ref=e733]: ", LSG"
+                          - generic [ref=e734]: 54* (27)
+                      - generic [ref=e736]:
+                        - link "mukul-choudhary " [ref=e738] [cursor=pointer]:
+                          - /url: /cricketers/mukul-choudhary-1354217
+                          - generic [ref=e739]:
+                            - img "mukul-choudhary" [ref=e741]
+                            - generic [ref=e743]: 
+                        - generic [ref=e744]:
+                          - generic [ref=e746]:
+                            - generic [ref=e747]: Cricinfo's MVP
+                            - generic [ref=e748]:
+                              - link "Mukul Choudhary" [ref=e750] [cursor=pointer]:
+                                - /url: /cricketers/mukul-choudhary-1354217
+                                - generic [ref=e751]: Mukul Choudhary
+                              - generic [ref=e752]: ", LSG"
+                          - generic [ref=e754]:
+                            - generic [ref=e755]: 84.33 pts
+                            - link "Impact List " [ref=e756] [cursor=pointer]:
+                              - /url: /series/ipl-2026-1510719/kolkata-knight-riders-vs-lucknow-super-giants-15th-match-1527688/match-impact-player
+                              - generic [ref=e757]: Impact List
+                              - generic [ref=e758]: 
+                - generic [ref=e759]:
+                  - generic [ref=e761] [cursor=pointer]: 
+                  - generic [ref=e762]:
+                    - link "Summary" [ref=e764] [cursor=pointer]:
+                      - /url: /series/ipl-2026-1510719/kolkata-knight-riders-vs-lucknow-super-giants-15th-match-1527688/live-cricket-score
+                      - generic [ref=e766]: Summary
+                    - link "Scorecard" [ref=e768] [cursor=pointer]:
+                      - /url: /series/ipl-2026-1510719/kolkata-knight-riders-vs-lucknow-super-giants-15th-match-1527688/full-scorecard
+                      - generic [ref=e770]: Scorecard
+                    - link "MVP" [ref=e772] [cursor=pointer]:
+                      - /url: /series/ipl-2026-1510719/kolkata-knight-riders-vs-lucknow-super-giants-15th-match-1527688/match-impact-player
+                      - generic [ref=e774]: MVP
+                    - link "Report" [ref=e776] [cursor=pointer]:
+                      - /url: /series/ipl-2026-1510719/kolkata-knight-riders-vs-lucknow-super-giants-15th-match-1527688/match-report
+                      - generic [ref=e778]: Report
+                    - link "Commentary" [ref=e780] [cursor=pointer]:
+                      - /url: /series/ipl-2026-1510719/kolkata-knight-riders-vs-lucknow-super-giants-15th-match-1527688/ball-by-ball-commentary
+                      - generic [ref=e782]: Commentary
+                    - link "Stats" [ref=e784] [cursor=pointer]:
+                      - /url: /series/ipl-2026-1510719/kolkata-knight-riders-vs-lucknow-super-giants-15th-match-1527688/match-statistics
+                      - generic [ref=e786]: Stats
+                    - link "Overs" [ref=e788] [cursor=pointer]:
+                      - /url: /series/ipl-2026-1510719/kolkata-knight-riders-vs-lucknow-super-giants-15th-match-1527688/match-overs-comparison
+                      - generic [ref=e790]: Overs
+                    - link "Table" [ref=e792] [cursor=pointer]:
+                      - /url: /series/ipl-2026-1510719/kolkata-knight-riders-vs-lucknow-super-giants-15th-match-1527688/points-table-standings
+                      - generic [ref=e794]: Table
+                    - link "Blog" [ref=e796] [cursor=pointer]:
+                      - /url: /series/ipl-2026-1510719/kolkata-knight-riders-vs-lucknow-super-giants-15th-match-1527688/live-match-blog
+                      - generic [ref=e798]: Blog
+                    - link "News" [ref=e800] [cursor=pointer]:
+                      - /url: /series/ipl-2026-1510719/kolkata-knight-riders-vs-lucknow-super-giants-15th-match-1527688/match-news
+                      - generic [ref=e802]: News
+                    - link "Videos" [ref=e804] [cursor=pointer]:
+                      - /url: /series/ipl-2026-1510719/kolkata-knight-riders-vs-lucknow-super-giants-15th-match-1527688/match-videos
+                      - generic [ref=e806]: Videos
+                    - link "Photos" [ref=e808] [cursor=pointer]:
+                      - /url: /series/ipl-2026-1510719/kolkata-knight-riders-vs-lucknow-super-giants-15th-match-1527688/match-photo
+                      - generic [ref=e810]: Photos
+                    - link "Fan Ratings" [ref=e812] [cursor=pointer]:
+                      - /url: /series/ipl-2026-1510719/kolkata-knight-riders-vs-lucknow-super-giants-15th-match-1527688/match-fan-ratings
+                      - generic [ref=e814]: Fan Ratings
+              - generic [ref=e817]:
+                - generic [ref=e819]:
+                  - generic [ref=e821] [cursor=pointer]:
+                    - generic [ref=e822]: New
+                    - generic [ref=e823]: 
+                  - button "LSG " [ref=e826] [cursor=pointer]:
+                    - generic [ref=e827]: LSG
+                    - generic [ref=e828]: 
+                  - button "Full commentary " [ref=e831] [cursor=pointer]:
+                    - generic [ref=e832]: Full commentary
+                    - generic [ref=e833]: 
+                - generic [ref=e834]:
+                  - generic [ref=e836]:
+                    - generic [ref=e838]:
+                      - generic [ref=e841]:
+                        - generic [ref=e842]:
+                          - generic [ref=e843]:
+                            - generic [ref=e844]: Over
+                            - generic [ref=e845]: "20"
+                          - generic [ref=e847]: 14 runs
+                          - generic [ref=e848]:
+                            - generic [ref=e849]: LSG 182/7
+                            - generic [ref=e850]: "CRR: 9.10"
+                        - generic [ref=e851]:
+                          - generic [ref=e852]:
+                            - generic [ref=e853]:
+                              - generic [ref=e854]: Mukul Choudhary
+                              - text: 54 (27b 2x4 7x6)
+                            - generic [ref=e855]:
+                              - generic [ref=e856]: Avesh Khan
+                              - text: 1 (3b)
+                          - generic [ref=e858]:
+                            - generic [ref=e859]: Vaibhav Arora
+                            - generic [ref=e860]: 4-0-38-2
+                      - generic [ref=e861]:
+                        - paragraph [ref=e864]:
+                          - strong [ref=e865]: 11:46pm
+                          - text: And...breathe. A bona-fide IPL classic, headlined by a youngster the IPL is designed to throw up into the imagination. LSG go back-to-back with their wins; KKR remain without one, and this tournament is now shaping up rather nicely. We hope you enjoyed our coverage. More post-match stuff will come your way, so stay tuned to ESPNcricinfo. Until next time, from all of us here, it is goodbye!
+                        - paragraph [ref=e868]: "Mukul Choudhary, Player of the Match: (On his journey) Even before my dad got married, it was his dream that his son would play cricket. Financial condition was not very good at the start. Began playing at 12-13 years. There were not a lot of academies (in Jhunjhunu) and then I moved to Jaipur. I saw how much T20 cricket is growing, so I moved to Gurgaon and stayed there for 3-4 months. (On when he or his father knew he would make it) My dad tells me there was an U-19 match against UP. It was a low-scoring match but I scored runs and that is when he knew I would make it big. Second match (under lights). Pressure is always there. But God has given us this opportunity, and I try to do what I can do. I see it as an opportunity, rather than taking pressure. My plan was to play till the end, and I believe in myself that much that I knew if I batted till the end, I could make the team win. (On his favourite six) The first six. I had not hit a six before today, so that was special. (On what he was feeling when 7 were needed off 2) I knew one ball would be in my area and I knew I needed to hit just one six. (On his preparation and confidence about power-hitting) I have always been hitting, since I have been young. If it is in my area, I smash it."
+                        - paragraph [ref=e871]: "Rishabh Pant, LSG captain: (On Mukul) I do not have words to describe but what a fantastic effort. One thing I made sure is that personally, that trust and when you believe in someone, a player can do wonders. The character, with each and every match like this, it shows something is building. We don't want to talk much about it but something is cooking inside. (On Badoni) He is now a senior pro in our team. That is the role we have given him. In a situation like him, when we talk about Badoni, these are the kind (of contributions) you want to see from Badoni. (On Shami) He is not getting any young. But the experience he brings to the side is invaluable. Having someone like him is amazing. Whole bowling unit is doing an amazing job."
+                        - paragraph [ref=e874]: "Ajinkya Rahane, KKR captain: Tough one to take. Really proud of the boys, the way we played. Mukul's knock was defining. The way he played his shots…in games like this, you do not want to pinpoint too many things. Execution here and there can happen, but credit to Mukul and that partnership. Those (slower balls into the pitch) deliveries did work. They (LSG) had nothing to lose. It was about swinging (every ball). There were brilliant shots. The way he (Mukul) batted was amazing. Thought our bowlers did their job. When you lose a game, you think about how you could have done better. 180-185 was a very good total on this wicket. In the end, I thought, let's give credit to the (LSG) batters and the way they batted. (On bringing the field up for the first ball of the 20th) We wanted to keep him on strike, but we had to keep five inside. It is tough for the bowlers (bowling the last over with five up)."
+                        - paragraph [ref=e877]: "Here is Sampath with a stat: Only batter before Mukul Choudhary to score 50+ runs in death overs (52 off 21) in a successful IPL chase was Kieron Pollard against SRH in 2013. Pollard scored 57 off 17 balls (from being 9 off 10 to 64 off 27) at the death when MI needed 62 off 24."
+                        - paragraph [ref=e880]: 11:22pm Incredible. Just incredible. It is one of the most overused words. In sport. In the IPL. In almost all walks of life. But you can search through and through, and you might not find a better word to describe all that transpired at the Eden Gardens. KKR had it. They had it right in the centre of their palms. But then, came the Mukul Choudhary storm. With wrists of steel, with fire in his belly and ultimately, with ice in his veins. And this will now be an evening that he will remember and rejoice forever.
+                        - paragraph [ref=e883]: KKR, of course, will be at the other end of that emotional spectrum. They utilized the conditions well and made LSG toil for every run. But just when it mattered, they were trumped by someone who handled the big moments better. A few more runs may have been handy but tonight is not about what KKR did not do right. Rather, it is about what Mukul did right, and what he kept doing right, even when put into a cauldron of pressure.
+                        - paragraph [ref=e886]: "Santosh : \"Lesson: \"Never Turn off the TV when Avesh Khan is batting\" \""
+                      - generic [ref=e888]:
+                        - generic [ref=e889]:
+                          - generic [ref=e890]: "19.6"
+                          - generic [ref=e893]: 1b
+                        - generic [ref=e894]:
+                          - generic [ref=e896]:
+                            - generic [ref=e897]: Arora to Choudhary, 1 bye
+                            - paragraph [ref=e899]:
+                              - strong [ref=e900]: a missed swish, and a missed throw too! And the Super Giants have scraped through! Oh, what drama. Avesh does not have his helmet on but he does have his skates on, and good for LSG that he did!
+                              - text: Mukul falls down to the turf. He thanks the heavens. And he then gets mobbed by his LSG teammates. What a moment for the youngster. This was a short ball outside off. Mukul, for a change, swung and missed, but Avesh, famously part of another such thriller while batting once upon a time in Bengaluru, scrambles across with every sinew. Raghuvanshi took a split second extra to line up his throw but missed his mark. KKR do not know what has hit them. KKR do not know where to look. But they only need to look at that youngster wearing number 15 in red and blue, and that is who denied KKR. And based on today's evidence, they might not be the only side he denies in the IPL!
+                          - generic [ref=e902]:
+                            - generic [ref=e904]:
+                              - text: 
+                              - generic [ref=e906]:
+                                - img "Mukul Choudhary says a prayer after the biggest night of his life" [ref=e911] [cursor=pointer]
+                                - img "Everybody wants a piece of Mukul Choudhary" [ref=e916] [cursor=pointer]
+                              - text: 
+                            - link "Photos" [ref=e918] [cursor=pointer]:
+                              - /url: /series/ipl-2026-1510719/kolkata-knight-riders-vs-lucknow-super-giants-15th-match-1527688/match-photo
+                              - generic [ref=e919]: Photos
+                      - paragraph [ref=e923]: 1 off 1. Surely not a Super Over? Everyone up, apart from deep third and deep mid wicket
+                    - generic [ref=e926]:
+                      - generic [ref=e928]:
+                        - generic [ref=e929]:
+                          - generic [ref=e930]: "19.5"
+                          - generic [ref=e933]: "6"
+                        - generic [ref=e936]:
+                          - generic [ref=e937]: Arora to Choudhary, SIX runs
+                          - paragraph [ref=e939]:
+                            - strong [ref=e940]: oh my good lord - what is this boy made of?! Hang that in the Louvre!
+                            - text: Wow. Just wow. There are no more superlatives left. Missed yorker. Just by a touch, though. Outside off and Mukul's bat is there to meet it. Swishes at it with all he has and he creams it over deep cover. One of the all-time great shots in the IPL!
+                      - paragraph [ref=e944]: 7 off 2
+                    - generic [ref=e947]:
+                      - generic [ref=e949]:
+                        - generic [ref=e950]:
+                          - generic [ref=e951]: "19.4"
+                          - generic [ref=e954]: •
+                        - generic [ref=e957]:
+                          - generic [ref=e958]: Arora to Choudhary, no run
+                          - paragraph [ref=e960]:
+                            - strong [ref=e961]: well well! Arora winning this battle now!
+                            - text: This is another sizzling yorker. A mile outside off. Mukul walks across his stumps, trying to scoop it. All he manages is a nutmeg, though, and that is another dot!
+                      - paragraph [ref=e965]: 7 off 3
+                    - generic [ref=e968]:
+                      - generic [ref=e970]:
+                        - generic [ref=e971]:
+                          - generic [ref=e972]: "19.3"
+                          - generic [ref=e975]: •
+                        - generic [ref=e978]:
+                          - generic [ref=e979]: Arora to Choudhary, no run
+                          - paragraph [ref=e981]: brilliant yorker outside off, and the crowd finds its voice. Right under the bat. Mukul wanted to go downtown but not much he could do with that. Exemplary execution under immense pressure!
+                      - paragraph [ref=e985]: How are the nerves now? For KKR? For Mukul? For both sets of fans? A proper humdinger this. Rahane and Arora now having a conference. 7 off 4. And KKR taking an age to set this field. Around the wicket. Long on, Long off and deep cover out, along with a very square deep third
+                    - generic [ref=e988]:
+                      - generic [ref=e990]:
+                        - generic [ref=e991]:
+                          - generic [ref=e992]: "19.2"
+                          - generic [ref=e995]: "6"
+                        - generic [ref=e998]:
+                          - generic [ref=e999]: Arora to Choudhary, SIX runs
+                          - paragraph [ref=e1001]:
+                            - strong [ref=e1002]: bam! Mukul is having a ball out there at the Eden G, and KKR do not know what has hit them!
+                            - text: Back of a length on middle and off. Mukul gets his front foot out of the way and smears it over deep backward square leg!
+                      - paragraph [ref=e1006]: Right. Mukul back on strike. 13 off 5. Where is this game headed?
+                    - generic [ref=e1009]:
+                      - generic [ref=e1011]:
+                        - generic [ref=e1012]:
+                          - generic [ref=e1013]: "19.1"
+                          - generic [ref=e1016]: "1"
+                        - generic [ref=e1019]:
+                          - generic [ref=e1020]: Arora to Avesh Khan, 1 run
+                          - paragraph [ref=e1022]: back of a length on middle and off. Avesh tucks it into the deep mid wicket region and brings Mukul back on strike
+                      - paragraph [ref=e1026]:
+                        - text: Right. Another final-over thriller, folks. 14 off 6. Avesh on strike. Arora to bowl.
+                        - strong [ref=e1027]: And KKR have incurred an over-rate penalty too - what drama. Just four allowed outside the ring
+                    - generic [ref=e1030]:
+                      - generic [ref=e1033]:
+                        - generic [ref=e1034]:
+                          - generic [ref=e1035]:
+                            - generic [ref=e1036]: Over
+                            - generic [ref=e1037]: "19"
+                          - generic [ref=e1038]:
+                            - generic [ref=e1039]: 16 runs
+                            - generic [ref=e1040]: Need 14 runs from 6b
+                          - generic [ref=e1041]:
+                            - generic [ref=e1042]: LSG 168/7
+                            - generic [ref=e1043]: "CRR: 8.84 RRR: 14.00"
+                        - generic [ref=e1044]:
+                          - generic [ref=e1045]:
+                            - generic [ref=e1046]:
+                              - generic [ref=e1047]: Mukul Choudhary
+                              - text: 42 (22b 2x4 5x6)
+                            - generic [ref=e1048]:
+                              - generic [ref=e1049]: Avesh Khan
+                              - text: 0 (2b)
+                          - generic [ref=e1051]:
+                            - generic [ref=e1052]: Cameron Green
+                            - generic [ref=e1053]: 2-0-28-1
+                      - generic [ref=e1055]:
+                        - generic [ref=e1056]:
+                          - generic [ref=e1057]: "18.6"
+                          - generic [ref=e1060]: "6"
+                        - generic [ref=e1063]:
+                          - generic [ref=e1064]: Green to Choudhary, SIX runs
+                          - paragraph [ref=e1066]:
+                            - strong [ref=e1067]: pick the bones out of this one! A crack off the bat, and LSG still believe!
+                            - text: Half-way down outside off. Mukul picks it in a flash and crrrrrrrrrunnnnnnnchhhhessssss it over deep mid wicket!
+                    - generic [ref=e1070]:
+                      - generic [ref=e1072]:
+                        - generic [ref=e1073]:
+                          - generic [ref=e1074]: "18.5"
+                          - generic [ref=e1077]: "4"
+                        - generic [ref=e1080]:
+                          - generic [ref=e1081]: Green to Choudhary, FOUR runs
+                          - paragraph [ref=e1083]:
+                            - strong [ref=e1084]: off the top edge but guess what, they all count!
+                            - text: Green tests out the middle of the track again. Gets a little big on the batter, who while swinging at it agriculturally, gets a top edge that loops over the keeper!
+                      - paragraph [ref=e1088]: 24 off 8
+                    - generic [ref=e1093]:
+                      - generic [ref=e1094]:
+                        - generic [ref=e1095]: "18.4"
+                        - generic [ref=e1098]: •
+                      - generic [ref=e1101]:
+                        - generic [ref=e1102]: Green to Choudhary, no run
+                        - paragraph [ref=e1104]:
+                          - strong [ref=e1105]: nicked but well short!
+                          - text: Off-pace on a length wide outside off. Mukul tries to fetch it but only seems to get a nick on it. On the bounce to the keeper
+                    - generic [ref=e1110]:
+                      - generic [ref=e1111]:
+                        - generic [ref=e1112]: "18.3"
+                        - generic [ref=e1115]: "6"
+                      - generic [ref=e1118]:
+                        - generic [ref=e1119]: Green to Choudhary, SIX runs
+                        - paragraph [ref=e1121]:
+                          - strong [ref=e1122]: flat six, and Mukul keeps LSG breathing!
+                          - text: Another slower short ball but Mukul has read this very early. He winds up and pummels it over the long leg fence!
+                    - generic [ref=e1127]:
+                      - generic [ref=e1128]:
+                        - generic [ref=e1129]: "18.2"
+                        - generic [ref=e1132]: •
+                      - generic [ref=e1135]:
+                        - generic [ref=e1136]: Green to Choudhary, no run
+                        - paragraph [ref=e1138]: slower bumper just outside off. Mukul has a wild swipe across the line and gets pinged near the right shoulder blade
+                    - generic [ref=e1141]:
+                      - generic [ref=e1143]:
+                        - generic [ref=e1144]:
+                          - generic [ref=e1145]: "18.1"
+                          - generic [ref=e1148]: •
+                        - generic [ref=e1151]:
+                          - generic [ref=e1152]: Green to Choudhary, no run
+                          - paragraph [ref=e1154]: oh, this has gone way up, and it lands into safety! Slower ball on a back of a length outside off. Mukul has a swish at it and mistimes it horribly. So much of a miscue that the ball lands right on the edge in the mid off region
+                      - paragraph [ref=e1158]: 30 off 12. Green, who had not bowled all season until today, to bowl the 19th
+                    - generic [ref=e1161]:
+                      - generic [ref=e1164]:
+                        - generic [ref=e1165]:
+                          - generic [ref=e1166]:
+                            - generic [ref=e1167]: Over
+                            - generic [ref=e1168]: "18"
+                          - generic [ref=e1169]:
+                            - generic [ref=e1170]: 13 runs
+                            - generic [ref=e1171]: Need 30 runs from 12b
+                          - generic [ref=e1172]:
+                            - generic [ref=e1173]: LSG 152/7
+                            - generic [ref=e1174]: "CRR: 8.44 RRR: 15.00"
+                        - generic [ref=e1175]:
+                          - generic [ref=e1176]:
+                            - generic [ref=e1177]:
+                              - generic [ref=e1178]: Avesh Khan
+                              - text: 0 (2b)
+                            - generic [ref=e1179]:
+                              - generic [ref=e1180]: Mukul Choudhary
+                              - text: 26 (16b 1x4 3x6)
+                          - generic [ref=e1182]:
+                            - generic [ref=e1183]: Kartik Tyagi
+                            - generic [ref=e1184]: 3-0-31-1
+                      - generic [ref=e1186]:
+                        - generic [ref=e1187]:
+                          - generic [ref=e1188]: "17.6"
+                          - generic [ref=e1191]: •
+                        - generic [ref=e1194]:
+                          - generic [ref=e1195]: Kartik Tyagi to Avesh Khan, no run
+                          - paragraph [ref=e1197]: back of a length delivery hung up wide outside off. Avesh swings like a rusty gate, and his bat ends up in a different postcode to the ball
+                      - paragraph [ref=e1201]: Avesh has to play in even numbers here
+                    - generic [ref=e1204]:
+                      - generic [ref=e1206]:
+                        - generic [ref=e1207]:
+                          - generic [ref=e1208]: "17.5"
+                          - generic [ref=e1211]: "1"
+                        - generic [ref=e1214]:
+                          - generic [ref=e1215]: Kartik Tyagi to Choudhary, 1 run
+                          - paragraph [ref=e1217]: shortish outside off. Mukul opens up his stance and heaves it to deep mid wicket. Takes the single this time, since it is the fifth ball of the over
+                      - paragraph [ref=e1221]: "Hari: \"17.1 Rathi was like \"What a shot\".\" -- He was not alone, Hari!"
+                    - generic [ref=e1224]:
+                      - generic [ref=e1226]:
+                        - generic [ref=e1227]:
+                          - generic [ref=e1228]: "17.4"
+                          - generic [ref=e1231]: "6"
+                        - generic [ref=e1234]:
+                          - generic [ref=e1235]: Kartik Tyagi to Choudhary, SIX runs
+                          - paragraph [ref=e1237]:
+                            - strong [ref=e1238]: this is a mighty hit! Into orbit!
+                            - text: Juicy full toss outside off. Mukul goes deep into his crease and wallops it a mile over long on!
+                      - paragraph [ref=e1242]: "Ak: \"That was like a mid air helicopter shot.\""
+                    - generic [ref=e1247]:
+                      - generic [ref=e1248]:
+                        - generic [ref=e1249]: "17.3"
+                        - generic [ref=e1252]: •
+                      - generic [ref=e1255]:
+                        - generic [ref=e1256]: Kartik Tyagi to Choudhary, no run
+                        - paragraph [ref=e1258]: dug in short outside off. Mukul sits deep in his crease and hacks it to deep mid wicket
+                    - generic [ref=e1261]:
+                      - generic [ref=e1263]:
+                        - generic [ref=e1264]:
+                          - generic [ref=e1265]: "17.2"
+                          - generic [ref=e1268]: •
+                        - generic [ref=e1271]:
+                          - generic [ref=e1272]: Kartik Tyagi to Choudhary, no run
+                          - paragraph [ref=e1274]: full toss outside off. Mukul powers it down the ground to long on, and opts not to take the single
+                      - paragraph [ref=e1278]: Mukul has an extraordinary whip through his shots. This game is not done yet
+                    - generic [ref=e1281]:
+                      - generic [ref=e1283]:
+                        - generic [ref=e1284]:
+                          - generic [ref=e1285]: "17.1"
+                          - generic [ref=e1288]: "6"
+                        - generic [ref=e1291]:
+                          - generic [ref=e1292]: Kartik Tyagi to Choudhary, SIX runs
+                          - paragraph [ref=e1294]:
+                            - strong [ref=e1295]: oh goodness gracious me - what is this hitting?!
+                            - text: This is pure strength. Raw power. Short and wide. Mukul reaches out for it, snaps his wrists into action and boshes it over long off!
+                      - paragraph [ref=e1299]: 43 off 18. What have you got for us now, Mukul Choudhary? Tyagi to bowl
+                    - generic [ref=e1302]:
+                      - generic [ref=e1305]:
+                        - generic [ref=e1306]:
+                          - generic [ref=e1307]:
+                            - generic [ref=e1308]: Over
+                            - generic [ref=e1309]: "17"
+                          - generic [ref=e1310]:
+                            - generic [ref=e1311]: 11 runs
+                            - generic [ref=e1312]: Need 43 runs from 18b
+                          - generic [ref=e1313]:
+                            - generic [ref=e1314]: LSG 139/7
+                            - generic [ref=e1315]: "CRR: 8.17 RRR: 14.33"
+                        - generic [ref=e1316]:
+                          - generic [ref=e1317]:
+                            - generic [ref=e1318]:
+                              - generic [ref=e1319]: Avesh Khan
+                              - text: 0 (1b)
+                            - generic [ref=e1320]:
+                              - generic [ref=e1321]: Mukul Choudhary
+                              - text: 13 (11b 1x4 1x6)
+                          - generic [ref=e1323]:
+                            - generic [ref=e1324]: Vaibhav Arora
+                            - generic [ref=e1325]: 3-0-25-2
+                      - generic [ref=e1327]:
+                        - generic [ref=e1328]:
+                          - generic [ref=e1329]: "16.6"
+                          - generic [ref=e1332]: •
+                        - generic [ref=e1335]:
+                          - generic [ref=e1336]: Arora to Avesh Khan, no run
+                          - paragraph [ref=e1338]: banged in short outside off. Avesh swings himself off his feet but gets nowhere close to the ball
+                    - generic [ref=e1341]:
+                      - generic [ref=e1343]:
+                        - generic [ref=e1344]:
+                          - generic [ref=e1345]: "16.5"
+                          - generic [ref=e1348]: "1"
+                        - generic [ref=e1351]:
+                          - generic [ref=e1352]: Arora to Choudhary, 1 run
+                          - paragraph [ref=e1354]: juicy full toss outside off. Mukul sits deep in his crease and hoicks it on the bounce to deep mid wicket
+                      - paragraph [ref=e1358]: 44 off 20. This game might not be done just yet. Not if Mukul keeps batting this way. Around the wicket now
+                  - button "" [ref=e1360] [cursor=pointer]:
+                    - generic [ref=e1361]: 
+            - generic [ref=e1362]:
+              - generic [ref=e1364]:
+                - generic [ref=e1365]:
+                  - generic [ref=e1366]:
+                    - text: Win Probability
+                    - generic [ref=e1368] [cursor=pointer]: 
+                  - generic [ref=e1371]: LSG 100%
+                - generic [ref=e1373]:
+                  - generic [ref=e1374]:
+                    - generic [ref=e1375]: KKR
+                    - generic [ref=e1376]: LSG
+                    - generic [ref=e1378]: 100%
+                    - generic [ref=e1379]: 50%
+                    - generic [ref=e1380]: 100%
+                    - img [ref=e1381]:
+                      - generic [ref=e1384]: KKR Innings
+                      - generic [ref=e1385]: LSG Innings
+                  - generic [ref=e1398]:
+                    - paragraph [ref=e1399]: Over 20 • LSG 182/7
+                    - text: LSG won by 3 wickets (with 0 balls remaining)
+              - complementary
+              - generic [ref=e1403]:
+                - generic [ref=e1404]:
+                  - text: Match Coverage
+                  - link "See all " [ref=e1405] [cursor=pointer]:
+                    - /url: /series/ipl-2026-1510719/kolkata-knight-riders-vs-lucknow-super-giants-15th-match-1527688/match-news
+                    - generic [ref=e1406]: See all
+                    - generic [ref=e1407]: 
+                - generic [ref=e1408]:
+                  - link "'A little bit of smart cricket…' - the missing ingredient in KKR's season so far 'A little bit of smart cricket…' - the missing ingredient in KKR's season so far" [ref=e1410] [cursor=pointer]:
+                    - /url: /story/ipl-2026-kkr-vs-lsg-dale-steyn-aaron-finch-and-rovman-powell-react-to-kkr-s-loss-against-lsg-1531208
+                    - generic [ref=e1412]:
+                      - img "'A little bit of smart cricket…' - the missing ingredient in KKR's season so far" [ref=e1415]
+                      - paragraph [ref=e1418]: "'A little bit of smart cricket…' - the missing ingredient in KKR's season so far"
+                  - 'link "Mukul Choudhary: ''I practise hitting 100-150 sixes every day'' Mukul Choudhary: ''I practise hitting 100-150 sixes every day''" [ref=e1420] [cursor=pointer]':
+                    - /url: /story/ipl-2026-kkr-vs-lsg-mukul-choudhary-brings-out-the-helicopter-and-soars-into-the-limelight-1531207
+                    - generic [ref=e1422]:
+                      - 'img "Mukul Choudhary: ''I practise hitting 100-150 sixes every day''" [ref=e1425]'
+                      - paragraph [ref=e1428]: "Mukul Choudhary: 'I practise hitting 100-150 sixes every day'"
+                  - link "KKR's Raghuvanshi, Rahane in top five in Orange Cap race KKR's Raghuvanshi, Rahane in top five in Orange Cap race" [ref=e1430] [cursor=pointer]:
+                    - /url: /story/ipl-2026-kkr-s-angkrish-raghuvanshi-ajinkya-rahane-in-top-five-of-orange-cap-race-1531200
+                    - generic [ref=e1432]:
+                      - img "KKR's Raghuvanshi, Rahane in top five in Orange Cap race" [ref=e1435]
+                      - paragraph [ref=e1438]: KKR's Raghuvanshi, Rahane in top five in Orange Cap race
+                  - link "'That one chance' - The making of Mukul Choudhary's magical night 'That one chance' - The making of Mukul Choudhary's magical night" [ref=e1440] [cursor=pointer]:
+                    - /url: /story/the-makings-of-mukul-choudhary-s-magical-night-1531198
+                    - generic [ref=e1442]:
+                      - img "'That one chance' - The making of Mukul Choudhary's magical night" [ref=e1445]
+                      - paragraph [ref=e1448]: "'That one chance' - The making of Mukul Choudhary's magical night"
+                  - link "Stats - Mukulmania in Kolkata Stats - Mukulmania in Kolkata" [ref=e1450] [cursor=pointer]:
+                    - /url: /story/ipl-2026-kkr-vs-lsg-stats-mukul-mania-in-kolkata-seven-sixes-staggering-impact-1531190
+                    - generic [ref=e1452]:
+                      - img "Stats - Mukulmania in Kolkata" [ref=e1455]
+                      - paragraph [ref=e1458]: Stats - Mukulmania in Kolkata
+              - complementary
+              - generic [ref=e1463]:
+                - link "AskESPNcricinfo Logo" [ref=e1465] [cursor=pointer]:
+                  - /url: https://www.espncricinfo.com/ask
+                  - img "AskESPNcricinfo Logo" [ref=e1466]
+                - generic [ref=e1468]: Instant answers to T20 questions
+              - generic [ref=e1470]:
+                - generic [ref=e1471]:
+                  - text: Videos
+                  - link "See all " [ref=e1473] [cursor=pointer]:
+                    - /url: /series/ipl-2026-1510719/kolkata-knight-riders-vs-lucknow-super-giants-15th-match-1527688/match-videos
+                    - generic [ref=e1474]: See all
+                    - generic [ref=e1475]: 
+                - generic [ref=e1476]:
+                  - 'link "Powell: ''Our bowlers could have gone a little bit wider'' to Mukul Choudhary  1:34 Powell: ''Our bowlers could have gone a little bit wider'' to Mukul Choudhary" [ref=e1478] [cursor=pointer]':
+                    - /url: /cricket-videos/ipl-2026-kkr-vs-lsg-rovman-powell-on-where-it-went-wrong-for-kkr-1531221
+                    - generic [ref=e1480]:
+                      - generic [ref=e1482]:
+                        - 'img "Powell: ''Our bowlers could have gone a little bit wider'' to Mukul Choudhary" [ref=e1484]'
+                        - generic [ref=e1485]:
+                          - generic [ref=e1487]: 
+                          - generic [ref=e1489]: 1:34
+                      - paragraph [ref=e1492]: "Powell: 'Our bowlers could have gone a little bit wider' to Mukul Choudhary"
+                  - 'link "Mukul Choudhary: ''If I can take the game deep, I know I can win it''  1:27 Mukul Choudhary: ''If I can take the game deep, I know I can win it''" [ref=e1494] [cursor=pointer]':
+                    - /url: /cricket-videos/ipl-2026-kkr-vs-lsg-mukul-choudhary-on-his-match-winning-innings-1531220
+                    - generic [ref=e1496]:
+                      - generic [ref=e1498]:
+                        - 'img "Mukul Choudhary: ''If I can take the game deep, I know I can win it''" [ref=e1500]'
+                        - generic [ref=e1501]:
+                          - generic [ref=e1503]: 
+                          - generic [ref=e1505]: 1:27
+                      - paragraph [ref=e1508]: "Mukul Choudhary: 'If I can take the game deep, I know I can win it'"
+                  - link "'It was decided to not restrict Mukul's natural six-hitting'  1:59 'It was decided to not restrict Mukul's natural six-hitting'" [ref=e1510] [cursor=pointer]:
+                    - /url: /cricket-videos/ipl-2026-mukul-choudhary-s-coaches-it-was-decided-to-not-restrict-mukul-s-natural-six-hitting-1531194
+                    - generic [ref=e1512]:
+                      - generic [ref=e1514]:
+                        - img "'It was decided to not restrict Mukul's natural six-hitting'" [ref=e1516]
+                        - generic [ref=e1517]:
+                          - generic [ref=e1519]: 
+                          - generic [ref=e1521]: 1:59
+                      - paragraph [ref=e1524]: "'It was decided to not restrict Mukul's natural six-hitting'"
+              - complementary
+      - generic [ref=e1529]:
+        - generic [ref=e1530]:
+          - generic [ref=e1531]:
+            - link "Terms of Use" [ref=e1532] [cursor=pointer]:
+              - /url: https://disneytermsofuse.com/
+              - generic [ref=e1533]: Terms of Use
+            - generic [ref=e1534]: "|"
+          - generic [ref=e1535]:
+            - link "Privacy Policy" [ref=e1536] [cursor=pointer]:
+              - /url: https://privacy.thewaltdisneycompany.com/en/
+              - generic [ref=e1537]: Privacy Policy
+            - generic [ref=e1538]: "|"
+          - generic [ref=e1539]:
+            - link "Interest-Based Ads" [ref=e1540] [cursor=pointer]:
+              - /url: https://privacy.thewaltdisneycompany.com/en/privacy-controls/online-tracking-and-advertising/
+              - generic [ref=e1541]: Interest-Based Ads
+            - generic [ref=e1542]: "|"
+          - generic [ref=e1543]:
+            - link "Addendum to the Global Privacy Policy" [ref=e1544] [cursor=pointer]:
+              - /url: https://privacy.thewaltdisneycompany.com/en/current-privacy-policy/addendum-to-the-global-privacy-policy/
+              - generic [ref=e1545]: Addendum to the Global Privacy Policy
+            - generic [ref=e1546]: "|"
+          - link "Feedback" [ref=e1548] [cursor=pointer]:
+            - /url: https://submit.espncricinfo.com/ci/content/submit/forms/feedback.html
+            - generic [ref=e1549]: Feedback
+        - generic [ref=e1550]: © 2026 ESPN Sports Media Ltd. All rights reserved
+  - alert [ref=e1551]

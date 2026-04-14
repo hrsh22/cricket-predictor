@@ -66,8 +66,49 @@ describe("postgres repositories", () => {
       payload: { score: "24/1" },
     });
 
+    const priceHistoryPoint =
+      await repositories.raw.savePolymarketPriceHistoryPoint({
+        sourceEventId: `event-${suffix}`,
+        sourceMarketId: marketSnapshot.sourceMarketId,
+        eventSlug: marketSnapshot.eventSlug ?? `event-${suffix}`,
+        marketSlug: marketSnapshot.marketSlug,
+        conditionId: `0xcondition-${suffix}`,
+        marketType: "moneyline",
+        tokenId: `token-yes-${suffix}`,
+        outcomeName: "Chennai Super Kings",
+        outcomeIndex: 0,
+        pointTime: "2026-03-29T13:19:00.000Z",
+        price: 0.52,
+        queryStartTime: "2026-03-22T13:00:00.000Z",
+        queryEndTime: "2026-03-29T14:00:00.000Z",
+        fidelityMinutes: 60,
+        payload: { source: "integration-test" },
+      });
+
+    const trade = await repositories.raw.savePolymarketTrade({
+      tradeKey: `trade-${suffix}`,
+      sourceEventId: `event-${suffix}`,
+      sourceMarketId: marketSnapshot.sourceMarketId,
+      eventSlug: marketSnapshot.eventSlug ?? `event-${suffix}`,
+      marketSlug: marketSnapshot.marketSlug,
+      conditionId: `0xcondition-${suffix}`,
+      marketType: "moneyline",
+      tokenId: `token-no-${suffix}`,
+      outcomeName: "Mumbai Indians",
+      outcomeIndex: 1,
+      tradeTime: "2026-03-29T13:19:30.000Z",
+      price: 0.48,
+      size: 42.5,
+      side: "SELL",
+      transactionHash: `0xhash-${suffix}`,
+      proxyWallet: `0xwallet-${suffix}`,
+      payload: { source: "integration-test" },
+    });
+
     expect(marketSnapshot.sourceMarketId).toBe(`market-${suffix}`);
     expect(cricketSnapshot.provider).toBe("espncricinfo");
+    expect(priceHistoryPoint.tokenId).toBe(`token-yes-${suffix}`);
+    expect(trade.tradeKey).toBe(`trade-${suffix}`);
 
     const canonicalMatch = await repositories.normalized.saveCanonicalMatch({
       competition: "IPL",

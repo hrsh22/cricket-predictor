@@ -57,7 +57,6 @@ function formatValuationCard(row: ReportRow): string[] {
   const yesEdge = row.spread;
   const noEdge = yesEdge !== null ? -yesEdge : null;
 
-  const col1Width = 8;
   const col2Width = 8;
   const col3Width = 8;
 

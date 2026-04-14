@@ -1,5 +1,6 @@
-import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, writeFile } from "node:fs/promises";
 import { join } from "node:path";
+import { pathToFileURL } from "node:url";
 import { tmpdir } from "node:os";
 import { spawn } from "node:child_process";
 
@@ -11,6 +12,19 @@ interface CliOptions {
   commentaryUrl: string;
   limit: number | null;
   allowPartial: boolean;
+}
+
+export interface GenerateBallOddsTimelineOptions {
+  eventSlug: string;
+  commentaryUrl: string;
+  allowPartial?: boolean;
+  limit?: number | null;
+}
+
+export interface GenerateMatchBallTimelineOptions {
+  commentaryUrl: string;
+  allowPartial?: boolean;
+  limit?: number | null;
 }
 
 interface PricePointRow {
@@ -77,9 +91,34 @@ interface CricsheetDelivery {
   timestampSource: "exact" | "estimated";
 }
 
+export interface MatchBallTimelineRow {
+  inning: 1 | 2;
+  battingTeam: string;
+  bowlingTeam: string;
+  ball: string;
+  event: string;
+  runsTotal: number;
+  batsmanRuns: number;
+  wides: number;
+  noballs: number;
+  byes: number;
+  legbyes: number;
+  isWicket: boolean;
+  wicketKind: string | null;
+  commentary: string | null;
+  timestamp: string;
+  timestampSource: "exact" | "estimated";
+}
+
 interface PricingSnapshot {
   price: number | null;
   source: "trade" | "chart" | null;
+}
+
+interface UnifiedMarketEvent {
+  timeMs: number;
+  primaryPrice: number;
+  source: "trade" | "chart";
 }
 
 interface TimelineRow {
@@ -88,17 +127,43 @@ interface TimelineRow {
   bowlingTeam: string;
   ball: string;
   event: string;
+  runsTotal: number;
+  batsmanRuns: number;
+  wides: number;
+  noballs: number;
+  byes: number;
+  legbyes: number;
+  isWicket: boolean;
+  wicketKind: string | null;
   commentary: string | null;
   timestamp: string;
   timestampSource: "exact" | "estimated";
-  kkrBefore: number | null;
-  kkrAfter: number | null;
-  kkrDelta: number | null;
-  lsgBefore: number | null;
-  lsgAfter: number | null;
-  lsgDelta: number | null;
+  primaryTeam: string;
+  primaryBefore: number | null;
+  primaryAfter: number | null;
+  primaryDelta: number | null;
+  secondaryTeam: string;
+  secondaryBefore: number | null;
+  secondaryAfter: number | null;
+  secondaryDelta: number | null;
   pricingSourceBefore: "trade" | "chart" | null;
   pricingSourceAfter: "trade" | "chart" | null;
+}
+
+export interface GenerateBallOddsTimelineResult {
+  databaseName: string;
+  eventSlug: string;
+  commentaryUrl: string;
+  deliverySourceMode: "full_cricsheet" | "partial_espn";
+  deliveryCount: number;
+  rows: TimelineRow[];
+}
+
+export interface GenerateMatchBallTimelineResult {
+  commentaryUrl: string;
+  deliverySourceMode: "full_cricsheet" | "partial_espn";
+  deliveryCount: number;
+  rows: MatchBallTimelineRow[];
 }
 
 interface CricsheetMatch {
@@ -115,80 +180,131 @@ interface CricsheetMatch {
   }>;
 }
 
+let cachedCricsheetArchivePathPromise: Promise<string> | null = null;
+
 async function main(): Promise<void> {
   const options = parseCliArgs(process.argv.slice(2));
+  const result = await generateBallOddsTimeline(options);
+  process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
+}
+
+export async function generateMatchBallTimeline(
+  options: GenerateMatchBallTimelineOptions,
+): Promise<GenerateMatchBallTimelineResult> {
+  const deliveries = await resolveDeliveriesFromCommentary(options);
+  const limitedRows =
+    options.limit === undefined || options.limit === null
+      ? deliveries.deliveries
+      : deliveries.deliveries.slice(0, options.limit);
+
+  return {
+    commentaryUrl: options.commentaryUrl,
+    deliverySourceMode: deliveries.sourceMode,
+    deliveryCount: deliveries.deliveries.length,
+    rows: limitedRows.map((delivery) => ({
+      inning: delivery.inningNumber,
+      battingTeam: delivery.battingTeam,
+      bowlingTeam: delivery.bowlingTeam,
+      ball: delivery.displayBall,
+      event: delivery.eventCode,
+      runsTotal: delivery.runsTotal,
+      batsmanRuns: delivery.batsmanRuns,
+      wides: delivery.wides,
+      noballs: delivery.noballs,
+      byes: delivery.byes,
+      legbyes: delivery.legbyes,
+      isWicket: delivery.wicket,
+      wicketKind: delivery.wicketKind,
+      commentary: delivery.commentary,
+      timestamp: delivery.timestamp,
+      timestampSource: delivery.timestampSource,
+    })),
+  };
+}
+
+export async function generateBallOddsTimeline(
+  options: GenerateBallOddsTimelineOptions,
+): Promise<GenerateBallOddsTimelineResult> {
   const config = loadAppConfig();
   const pool = createPgPool(config.databaseUrl);
 
   try {
-    const [seriesByOutcome, espnData] = await Promise.all([
+    const [seriesByOutcome, deliveryResult] = await Promise.all([
       loadMoneylineSeries(pool, options.eventSlug),
-      loadEspnData(options.commentaryUrl),
+      resolveDeliveriesFromCommentary(options),
     ]);
-
-    const deliveryResult = await loadCricsheetMatch(
-      extractMatchId(options.commentaryUrl),
-    )
-      .then((cricsheetMatch) => ({
-        sourceMode: "full_cricsheet" as const,
-        deliveries: buildDeliveries(cricsheetMatch, espnData.ballsByKey),
-      }))
-      .catch((error: unknown) => {
-        const message = error instanceof Error ? error.message : String(error);
-        if (!message.includes("filename not matched")) {
-          throw error;
-        }
-
-        return {
-          sourceMode: "partial_espn" as const,
-          deliveries: buildDeliveriesFromEspn(espnData),
-        };
-      });
-    if (deliveryResult.sourceMode === "partial_espn" && !options.allowPartial) {
-      throw new Error(
-        [
-          "❌ Full ball-by-ball coverage is not available yet.",
-          "",
-          "This typically occurs 1-2 weeks after match completion while Cricsheet publishes archived data.",
-          "",
-          "📖 See docs/CRICKET_DATA_SOURCES.md for details and alternative approaches.",
-          "",
-          "Current data sources:",
-          "  • Cricsheet: Not yet published (typically 1-2 week lag after match)",
-          "  • ESPN: Partial recent deliveries only (~50-80 balls available)",
-          "",
-          "Options:",
-          "  1. Use --allow-partial to output available ESPN data (incomplete)",
-          "  2. Wait 1-2 weeks for Cricsheet publication, then re-run without --allow-partial",
-          "  3. Pre-import historical Cricsheet: pnpm db:import-cricsheet-ipl --seasons <year>",
-          "",
-          "To proceed with incomplete partial data, add --allow-partial flag.",
-        ].join("\n"),
-      );
-    }
 
     const deliveries = deliveryResult.deliveries;
     const rows = buildTimelineRows(deliveries, seriesByOutcome);
     const limitedRows =
-      options.limit === null ? rows : rows.slice(0, options.limit);
+      options.limit === undefined || options.limit === null
+        ? rows
+        : rows.slice(0, options.limit);
 
-    process.stdout.write(
-      `${JSON.stringify(
-        {
-          databaseName: config.databaseName,
-          eventSlug: options.eventSlug,
-          commentaryUrl: options.commentaryUrl,
-          deliverySourceMode: deliveryResult.sourceMode,
-          deliveryCount: deliveries.length,
-          rows: limitedRows,
-        },
-        null,
-        2,
-      )}\n`,
-    );
+    return {
+      databaseName: config.databaseName,
+      eventSlug: options.eventSlug,
+      commentaryUrl: options.commentaryUrl,
+      deliverySourceMode: deliveryResult.sourceMode,
+      deliveryCount: deliveries.length,
+      rows: limitedRows,
+    };
   } finally {
     await closePgPool(pool);
   }
+}
+
+async function resolveDeliveriesFromCommentary(options: {
+  commentaryUrl: string;
+  allowPartial?: boolean;
+}): Promise<{
+  sourceMode: "full_cricsheet" | "partial_espn";
+  deliveries: CricsheetDelivery[];
+}> {
+  const espnData = await loadEspnData(options.commentaryUrl);
+  const deliveryResult = await loadCricsheetMatch(
+    extractMatchId(options.commentaryUrl),
+  )
+    .then((cricsheetMatch) => ({
+      sourceMode: "full_cricsheet" as const,
+      deliveries: buildDeliveries(cricsheetMatch, espnData.ballsByKey),
+    }))
+    .catch((error: unknown) => {
+      const message = error instanceof Error ? error.message : String(error);
+      if (!message.includes("filename not matched")) {
+        throw error;
+      }
+
+      return {
+        sourceMode: "partial_espn" as const,
+        deliveries: buildDeliveriesFromEspn(espnData),
+      };
+    });
+
+  if (deliveryResult.sourceMode === "partial_espn" && !options.allowPartial) {
+    throw new Error(
+      [
+        "❌ Full ball-by-ball coverage is not available yet.",
+        "",
+        "This typically occurs 1-2 weeks after match completion while Cricsheet publishes archived data.",
+        "",
+        "📖 See docs/CRICKET_DATA_SOURCES.md for details and alternative approaches.",
+        "",
+        "Current data sources:",
+        "  • Cricsheet: Not yet published (typically 1-2 week lag after match)",
+        "  • ESPN: Partial recent deliveries only (~50-80 balls available)",
+        "",
+        "Options:",
+        "  1. Use --allow-partial to output available ESPN data (incomplete)",
+        "  2. Wait 1-2 weeks for Cricsheet publication, then re-run without --allow-partial",
+        "  3. Pre-import historical Cricsheet: pnpm db:import-cricsheet-ipl --seasons <year>",
+        "",
+        "To proceed with incomplete partial data, add --allow-partial flag.",
+      ].join("\n"),
+    );
+  }
+
+  return deliveryResult;
 }
 
 function parseCliArgs(argv: readonly string[]): CliOptions {
@@ -274,7 +390,7 @@ async function loadMoneylineSeries(
       `
         select token_id as "tokenId", outcome_name as "outcomeName", point_time as "pointTime", price::float8 as price
         from raw_polymarket_price_history
-        where event_slug = $1 and market_type = 'moneyline'
+        where event_slug = $1 and (market_type = 'moneyline' or market_type is null)
         order by point_time asc
       `,
       [eventSlug],
@@ -283,7 +399,7 @@ async function loadMoneylineSeries(
       `
         select token_id as "tokenId", outcome_name as "outcomeName", trade_time as "tradeTime", price::float8 as price
         from raw_polymarket_trades
-        where event_slug = $1 and market_type = 'moneyline'
+        where event_slug = $1 and (market_type = 'moneyline' or market_type is null)
         order by trade_time asc
       `,
       [eventSlug],
@@ -293,9 +409,10 @@ async function loadMoneylineSeries(
   const map = new Map<string, PriceSeries>();
 
   for (const row of priceHistoryResult.rows) {
-    const existing = map.get(row.outcomeName) ?? {
+    const outcomeName = row.outcomeName.trim();
+    const existing = map.get(outcomeName) ?? {
       tokenId: row.tokenId,
-      outcomeName: row.outcomeName,
+      outcomeName,
       chart: [],
       trades: [],
     };
@@ -303,13 +420,14 @@ async function loadMoneylineSeries(
       timeMs: Date.parse(row.pointTime),
       price: row.price,
     });
-    map.set(row.outcomeName, existing);
+    map.set(outcomeName, existing);
   }
 
   for (const row of tradesResult.rows) {
-    const existing = map.get(row.outcomeName) ?? {
+    const outcomeName = row.outcomeName.trim();
+    const existing = map.get(outcomeName) ?? {
       tokenId: row.tokenId,
-      outcomeName: row.outcomeName,
+      outcomeName,
       chart: [],
       trades: [],
     };
@@ -317,7 +435,7 @@ async function loadMoneylineSeries(
       timeMs: Date.parse(row.tradeTime),
       price: row.price,
     });
-    map.set(row.outcomeName, existing);
+    map.set(outcomeName, existing);
   }
 
   return map;
@@ -415,7 +533,10 @@ function addEspnBall(map: Map<string, EspnBall>, value: unknown): void {
   const record = readObject(value, "espnBall");
   const inningNumber = readFiniteNumber(record["inningNumber"], "inningNumber");
   const oversActual = readFiniteNumber(record["oversActual"], "oversActual");
-  const timestamp = readString(record["timestamp"], "timestamp");
+  const timestamp = readNullableString(record["timestamp"]);
+  if (timestamp === null) {
+    return;
+  }
   const id = readFiniteNumber(record["id"], "id");
   const commentTextItems = Array.isArray(record["commentTextItems"])
     ? record["commentTextItems"]
@@ -497,10 +618,19 @@ function buildDeliveriesFromEspn(
 }
 
 async function loadCricsheetMatch(matchId: string): Promise<CricsheetMatch> {
-  const tempDir = await mkdtemp(join(tmpdir(), "polymarket-ball-odds-"));
-  const zipPath = join(tempDir, "ipl_json.zip");
+  const zipPath = await ensureCricsheetArchivePath();
+  const json = await unzipEntry(zipPath, `${matchId}.json`);
+  return JSON.parse(json) as CricsheetMatch;
+}
 
-  try {
+async function ensureCricsheetArchivePath(): Promise<string> {
+  if (cachedCricsheetArchivePathPromise !== null) {
+    return cachedCricsheetArchivePathPromise;
+  }
+
+  cachedCricsheetArchivePathPromise = (async () => {
+    const tempDir = await mkdtemp(join(tmpdir(), "polymarket-ball-odds-"));
+    const zipPath = join(tempDir, "ipl_json.zip");
     const response = await fetch(
       "https://cricsheet.org/downloads/ipl_json.zip",
       {
@@ -516,11 +646,10 @@ async function loadCricsheetMatch(matchId: string): Promise<CricsheetMatch> {
 
     const arrayBuffer = await response.arrayBuffer();
     await writeFile(zipPath, Buffer.from(arrayBuffer));
-    const json = await unzipEntry(zipPath, `${matchId}.json`);
-    return JSON.parse(json) as CricsheetMatch;
-  } finally {
-    await rm(tempDir, { recursive: true, force: true });
-  }
+    return zipPath;
+  })();
+
+  return cachedCricsheetArchivePathPromise;
 }
 
 async function unzipEntry(zipPath: string, entryName: string): Promise<string> {
@@ -813,8 +942,25 @@ function buildTimelineRows(
   deliveries: readonly CricsheetDelivery[],
   seriesByOutcome: Map<string, PriceSeries>,
 ): TimelineRow[] {
-  const kkrSeries = findSeries(seriesByOutcome, "Kolkata Knight Riders");
-  const lsgSeries = findSeries(seriesByOutcome, "Lucknow Super Giants");
+  const primaryTeam = deliveries[0]?.battingTeam;
+  const secondaryTeam = deliveries[0]?.bowlingTeam;
+
+  if (primaryTeam === undefined || secondaryTeam === undefined) {
+    throw new Error("No deliveries were available to derive team names.");
+  }
+
+  const primarySeries = findSeries(seriesByOutcome, primaryTeam);
+  const secondarySeries = findSeries(seriesByOutcome, secondaryTeam);
+  const unifiedTradeEvents = buildUnifiedMarketEvents(
+    primarySeries,
+    secondarySeries,
+    "trade",
+  );
+  const unifiedChartEvents = buildUnifiedMarketEvents(
+    primarySeries,
+    secondarySeries,
+    "chart",
+  );
 
   return deliveries.map((delivery, index) => {
     const ballTimeMs = Date.parse(delivery.timestamp);
@@ -822,10 +968,17 @@ function buildTimelineRows(
       index < deliveries.length - 1
         ? Date.parse(deliveries[index + 1]?.timestamp ?? delivery.timestamp)
         : ballTimeMs + 120_000;
-    const kkrBefore = getBeforePrice(kkrSeries, ballTimeMs);
-    const kkrAfter = getAfterPrice(kkrSeries, ballTimeMs, nextBallTimeMs);
-    const lsgBefore = getBeforePrice(lsgSeries, ballTimeMs);
-    const lsgAfter = getAfterPrice(lsgSeries, ballTimeMs, nextBallTimeMs);
+    const primaryBefore = getBeforePrice(
+      unifiedTradeEvents,
+      unifiedChartEvents,
+      ballTimeMs,
+    );
+    const primaryAfter = getAfterPrice(
+      unifiedTradeEvents,
+      unifiedChartEvents,
+      ballTimeMs,
+      nextBallTimeMs,
+    );
 
     return {
       inning: delivery.inningNumber,
@@ -833,22 +986,35 @@ function buildTimelineRows(
       bowlingTeam: delivery.bowlingTeam,
       ball: delivery.displayBall,
       event: delivery.eventCode,
+      runsTotal: delivery.runsTotal,
+      batsmanRuns: delivery.batsmanRuns,
+      wides: delivery.wides,
+      noballs: delivery.noballs,
+      byes: delivery.byes,
+      legbyes: delivery.legbyes,
+      isWicket: delivery.wicket,
+      wicketKind: delivery.wicketKind,
       commentary: delivery.commentary,
       timestamp: delivery.timestamp,
       timestampSource: delivery.timestampSource,
-      kkrBefore: asPercent(kkrBefore.price),
-      kkrAfter: asPercent(kkrAfter.price),
-      kkrDelta: asDelta(kkrBefore.price, kkrAfter.price),
-      lsgBefore: asPercent(lsgBefore.price),
-      lsgAfter: asPercent(lsgAfter.price),
-      lsgDelta: asDelta(lsgBefore.price, lsgAfter.price),
+      primaryTeam,
+      primaryBefore: asPercent(primaryBefore.price),
+      primaryAfter: asPercent(primaryAfter.price),
+      primaryDelta: asDelta(primaryBefore.price, primaryAfter.price),
+      secondaryTeam,
+      secondaryBefore: asPercent(complementPrice(primaryBefore.price)),
+      secondaryAfter: asPercent(complementPrice(primaryAfter.price)),
+      secondaryDelta: asDelta(
+        complementPrice(primaryBefore.price),
+        complementPrice(primaryAfter.price),
+      ),
       pricingSourceBefore: chooseCombinedSource(
-        kkrBefore.source,
-        lsgBefore.source,
+        primaryBefore.source,
+        primaryBefore.source,
       ),
       pricingSourceAfter: chooseCombinedSource(
-        kkrAfter.source,
-        lsgAfter.source,
+        primaryAfter.source,
+        primaryAfter.source,
       ),
     };
   });
@@ -858,90 +1024,171 @@ function findSeries(
   seriesByOutcome: Map<string, PriceSeries>,
   outcomeName: string,
 ): PriceSeries {
-  const series = seriesByOutcome.get(outcomeName);
+  const candidates = resolveTeamNameAliases(outcomeName);
+  const series = candidates
+    .map((candidate) => seriesByOutcome.get(candidate))
+    .find((value) => value !== undefined);
   if (series === undefined) {
     throw new Error(`Missing Polymarket moneyline series for ${outcomeName}.`);
   }
   return series;
 }
 
-function getBeforePrice(series: PriceSeries, timeMs: number): PricingSnapshot {
-  const trade = findLatestTradeBefore(series.trades, timeMs, 5 * 60 * 1000);
+function resolveTeamNameAliases(outcomeName: string): string[] {
+  const aliases = [outcomeName];
+  const normalized = outcomeName.toLowerCase();
+
+  if (outcomeName.includes("Bengaluru")) {
+    aliases.push(outcomeName.replace("Bengaluru", "Bangalore"));
+  }
+  if (outcomeName.includes("Bangalore")) {
+    aliases.push(outcomeName.replace("Bangalore", "Bengaluru"));
+  }
+  if (normalized === "delhi capitals") {
+    aliases.push("Delhi");
+  }
+  if (normalized === "mumbai indians") {
+    aliases.push("Mumbai");
+  }
+  if (normalized === "gujarat titans") {
+    aliases.push("Gujarat");
+  }
+  if (normalized === "rajasthan royals") {
+    aliases.push("Rajasthan");
+  }
+  if (normalized === "sunrisers hyderabad") {
+    aliases.push("Hyderabad");
+  }
+  if (normalized === "lucknow super giants") {
+    aliases.push("Lucknow");
+  }
+  if (normalized === "chennai super kings") {
+    aliases.push("Chennai");
+  }
+  if (normalized === "kolkata knight riders") {
+    aliases.push("Kolkata");
+  }
+  if (normalized === "punjab kings") {
+    aliases.push("Punjab");
+  }
+  if (
+    normalized === "royal challengers bengaluru" ||
+    normalized === "royal challengers bangalore"
+  ) {
+    aliases.push("Bangalore", "Bengaluru", "Royal Challengers Bangalore");
+  }
+  return aliases;
+}
+
+function buildUnifiedMarketEvents(
+  primarySeries: PriceSeries,
+  secondarySeries: PriceSeries,
+  source: "trade" | "chart",
+): UnifiedMarketEvent[] {
+  const primaryPoints =
+    source === "trade" ? primarySeries.trades : primarySeries.chart;
+  const secondaryPoints =
+    source === "trade" ? secondarySeries.trades : secondarySeries.chart;
+
+  return [
+    ...primaryPoints.map((point) => ({
+      timeMs: point.timeMs,
+      primaryPrice: point.price,
+      source,
+    })),
+    ...secondaryPoints.map((point) => ({
+      timeMs: point.timeMs,
+      primaryPrice: 1 - point.price,
+      source,
+    })),
+  ].sort((left, right) => left.timeMs - right.timeMs);
+}
+
+function getBeforePrice(
+  tradeEvents: readonly UnifiedMarketEvent[],
+  chartEvents: readonly UnifiedMarketEvent[],
+  timeMs: number,
+): PricingSnapshot {
+  const trade = findLatestEventBefore(tradeEvents, timeMs, 5 * 60 * 1000);
   if (trade !== null) {
-    return { price: trade.price, source: "trade" };
+    return { price: trade.primaryPrice, source: "trade" };
   }
 
-  const chart = findLatestPointAtOrBefore(series.chart, timeMs);
+  const chart = findLatestEventAtOrBefore(chartEvents, timeMs);
   return {
-    price: chart?.price ?? null,
+    price: chart?.primaryPrice ?? null,
     source: chart === null ? null : "chart",
   };
 }
 
 function getAfterPrice(
-  series: PriceSeries,
+  tradeEvents: readonly UnifiedMarketEvent[],
+  chartEvents: readonly UnifiedMarketEvent[],
   startMs: number,
   endMs: number,
 ): PricingSnapshot {
-  const trade = findLatestTradeInWindow(series.trades, startMs, endMs);
+  const trade = findEarliestEventInWindow(tradeEvents, startMs, endMs);
   if (trade !== null) {
-    return { price: trade.price, source: "trade" };
+    return { price: trade.primaryPrice, source: "trade" };
   }
 
-  const chart = findLatestPointAtOrBefore(series.chart, endMs);
+  const chart = findLatestEventAtOrBefore(chartEvents, endMs);
   return {
-    price: chart?.price ?? null,
+    price: chart?.primaryPrice ?? null,
     source: chart === null ? null : "chart",
   };
 }
 
-function findLatestTradeBefore(
-  trades: readonly { timeMs: number; price: number }[],
+function findLatestEventBefore(
+  events: readonly UnifiedMarketEvent[],
   timeMs: number,
   lookbackMs: number,
-): { timeMs: number; price: number } | null {
-  let candidate: { timeMs: number; price: number } | null = null;
-  for (const trade of trades) {
-    if (trade.timeMs >= timeMs) {
+): UnifiedMarketEvent | null {
+  let candidate: UnifiedMarketEvent | null = null;
+  for (const event of events) {
+    if (event.timeMs >= timeMs) {
       break;
     }
-    if (trade.timeMs >= timeMs - lookbackMs) {
-      candidate = trade;
+    if (event.timeMs >= timeMs - lookbackMs) {
+      candidate = event;
     }
   }
   return candidate;
 }
 
-function findLatestTradeInWindow(
-  trades: readonly { timeMs: number; price: number }[],
+function findEarliestEventInWindow(
+  events: readonly UnifiedMarketEvent[],
   startMs: number,
   endMs: number,
-): { timeMs: number; price: number } | null {
-  let candidate: { timeMs: number; price: number } | null = null;
-  for (const trade of trades) {
-    if (trade.timeMs <= startMs) {
+): UnifiedMarketEvent | null {
+  for (const event of events) {
+    if (event.timeMs <= startMs) {
       continue;
     }
-    if (trade.timeMs > endMs) {
+    if (event.timeMs > endMs) {
       break;
     }
-    candidate = trade;
+    return event;
+  }
+  return null;
+}
+
+function findLatestEventAtOrBefore(
+  events: readonly UnifiedMarketEvent[],
+  timeMs: number,
+): UnifiedMarketEvent | null {
+  let candidate: UnifiedMarketEvent | null = null;
+  for (const event of events) {
+    if (event.timeMs > timeMs) {
+      break;
+    }
+    candidate = event;
   }
   return candidate;
 }
 
-function findLatestPointAtOrBefore(
-  points: readonly { timeMs: number; price: number }[],
-  timeMs: number,
-): { timeMs: number; price: number } | null {
-  let candidate: { timeMs: number; price: number } | null = null;
-  for (const point of points) {
-    if (point.timeMs > timeMs) {
-      break;
-    }
-    candidate = point;
-  }
-  return candidate;
+function complementPrice(price: number | null): number | null {
+  return price === null ? null : 1 - price;
 }
 
 function asPercent(value: number | null): number | null {
@@ -1034,9 +1281,14 @@ function readNullableString(value: unknown): string | null {
   return typeof value === "string" && value.length > 0 ? value : null;
 }
 
-main().catch((error: unknown) => {
-  const message =
-    error instanceof Error ? (error.stack ?? error.message) : String(error);
-  process.stderr.write(`${message}\n`);
-  process.exitCode = 1;
-});
+if (
+  process.argv[1] !== undefined &&
+  import.meta.url === pathToFileURL(process.argv[1]).href
+) {
+  void main().catch((error: unknown) => {
+    const message =
+      error instanceof Error ? (error.stack ?? error.message) : String(error);
+    process.stderr.write(`${message}\n`);
+    process.exitCode = 1;
+  });
+}

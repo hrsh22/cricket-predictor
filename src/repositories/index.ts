@@ -53,6 +53,10 @@ export type {
   RawCricketSnapshotInsert,
   RawCricketSnapshotRecord,
   RawMarketSnapshotRecord,
+  RawPolymarketPriceHistoryInsert,
+  RawPolymarketPriceHistoryRecord,
+  RawPolymarketTradeInsert,
+  RawPolymarketTradeRecord,
   RawSnapshotRepository,
 } from "./raw.js";
 export type {

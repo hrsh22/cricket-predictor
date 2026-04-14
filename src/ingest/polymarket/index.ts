@@ -16,6 +16,12 @@ export {
   toPolymarketIplWinnerDiscovery,
 } from "./ingest.js";
 
+export {
+  backfillPolymarketEventHistoricalOdds,
+  createTradeKey,
+  runPolymarketHistoricalBackfill,
+} from "./historical.js";
+
 export type {
   PolymarketFetch,
   PolymarketGammaHttpClientOptions,
@@ -25,3 +31,9 @@ export type {
   PolymarketResponseLike,
   PolymarketRetryPolicy,
 } from "./ingest.js";
+
+export type {
+  PolymarketHistoricalBackfillCommandOptions,
+  PolymarketHistoricalBackfillOptions,
+  PolymarketHistoricalBackfillSummary,
+} from "./historical.js";

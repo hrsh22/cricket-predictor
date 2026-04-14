@@ -16,7 +16,7 @@ describe("database migration foundation", () => {
   it("loads paired up and down migration files", async () => {
     const migrations = await loadMigrations();
 
-    expect(migrations).toHaveLength(5);
+    expect(migrations).toHaveLength(6);
     expect(migrations[0]).toMatchObject({
       id: "001_initial_schema",
       upFilePath: `${MIGRATIONS_DIRECTORY}/001_initial_schema.up.sql`,
@@ -41,6 +41,11 @@ describe("database migration foundation", () => {
       id: "005_polymarket_historical_odds",
       upFilePath: `${MIGRATIONS_DIRECTORY}/005_polymarket_historical_odds.up.sql`,
       downFilePath: `${MIGRATIONS_DIRECTORY}/005_polymarket_historical_odds.down.sql`,
+    });
+    expect(migrations[5]).toMatchObject({
+      id: "006_team_season_squads",
+      upFilePath: `${MIGRATIONS_DIRECTORY}/006_team_season_squads.up.sql`,
+      downFilePath: `${MIGRATIONS_DIRECTORY}/006_team_season_squads.down.sql`,
     });
   });
 

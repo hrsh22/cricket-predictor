@@ -1,0 +1,27 @@
+[    1212ms] Uncaught Error: Minified React error #418; visit https://reactjs.org/docs/error-decoder.html?invariant=418 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    at lg (https://wassets.hscicdn.com/_next/static/chunks/framework-70f95e8fb8fe7028.js:8:46458)
+    at i (https://wassets.hscicdn.com/_next/static/chunks/framework-70f95e8fb8fe7028.js:8:121053)
+    at oO (https://wassets.hscicdn.com/_next/static/chunks/framework-70f95e8fb8fe7028.js:8:99020)
+    at <anonymous> (https://wassets.hscicdn.com/_next/static/chunks/framework-70f95e8fb8fe7028.js:8:98887)
+    at oF (https://wassets.hscicdn.com/_next/static/chunks/framework-70f95e8fb8fe7028.js:8:98894)
+    at oS (https://wassets.hscicdn.com/_next/static/chunks/framework-70f95e8fb8fe7028.js:8:93933)
+    at x (https://wassets.hscicdn.com/_next/static/chunks/framework-70f95e8fb8fe7028.js:32:1363)
+    at T (https://wassets.hscicdn.com/_next/static/chunks/framework-70f95e8fb8fe7028.js:32:1893)
+[    1257ms] Uncaught Error: Minified React error #423; visit https://reactjs.org/docs/error-decoder.html?invariant=423 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    at i (https://wassets.hscicdn.com/_next/static/chunks/framework-70f95e8fb8fe7028.js:8:120722)
+    at oO (https://wassets.hscicdn.com/_next/static/chunks/framework-70f95e8fb8fe7028.js:8:99020)
+    at <anonymous> (https://wassets.hscicdn.com/_next/static/chunks/framework-70f95e8fb8fe7028.js:8:98887)
+    at oF (https://wassets.hscicdn.com/_next/static/chunks/framework-70f95e8fb8fe7028.js:8:98894)
+    at ox (https://wassets.hscicdn.com/_next/static/chunks/framework-70f95e8fb8fe7028.js:8:95646)
+    at oS (https://wassets.hscicdn.com/_next/static/chunks/framework-70f95e8fb8fe7028.js:8:94201)
+    at x (https://wassets.hscicdn.com/_next/static/chunks/framework-70f95e8fb8fe7028.js:32:1363)
+    at T (https://wassets.hscicdn.com/_next/static/chunks/framework-70f95e8fb8fe7028.js:32:1893)
+[    1304ms] [ERROR] Failed to load resource: net::ERR_NAME_NOT_RESOLVED @ https://z.moatads.com/espnprebidheader738072710622/moatheader.js:0
+[    1658ms] [ERROR] Failed to load resource: net::ERR_NAME_NOT_RESOLVED @ https://sofia.trustx.org/hb?pt=net&auids=9701%2C9698&sizes=970x250%2C300x250&r=110c110945be69e&wrapperType=Prebid_js&wrapperVersion=4.30.0&u=https%3A%2F%2Fwww.espncricinfo.com%2Fseries%2Fipl-2026-1510719%2Fkolkata-knight-riders-vs-lucknow-super-giants-15th-match-1527688%2Fball-by-ball-commentary&wtimeout=1000:0
+[    6259ms] [ERROR] Failed to load resource: net::ERR_NAME_NOT_RESOLVED @ https://pxl.connexity.net/c/cse?a=R&A=22c&D=569a&V=9&I0k=ptnrid&I0v=6c6e8942-5e40-4c70-bc42-ea3bf1f40943-tuct10d266e7:0
+[    8700ms] [ERROR] Failed to load resource: net::ERR_NAME_NOT_RESOLVED @ https://sofia.trustx.org/push_sync:0
+[   11437ms] [ERROR] Failed to load resource: net::ERR_TOO_MANY_REDIRECTS @ https://c1.adform.net/serving/cookie/match?party=1135&callback=https%3A%2F%2Fid5-sync.com%2Fc%2F464%2F10%2F0%2F8.gif%3Fpuid%3D%5Badformuid%5D%26gdpr%3D0%26gdpr_consent%3D&gdpr_consent=&gdpr=0:0
+[   15149ms] [ERROR] Failed to load resource: net::ERR_NAME_NOT_RESOLVED @ https://match.rundsp.com/redirect?ex=openx:0
+[   30968ms] [LOG] Nielsen Log: Info - Max retry reached for sending sync ping: https://loadus.exelator.com/getid?p=1480&g=1&j=0&asid=PED8CDAC2-F114-41BE-8B98-AFA06FAEA06E @ https://cdn-gl.imrworldwide.com/novms/html/ls.html:139
+[   83944ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_TIMED_OUT @ https://pixel.advertising.com/ups/55973/sync?uid=6c6e8942-5e40-4c70-bc42-ea3bf1f40943-tuct10d266e7&_origin=1:0
+[   91243ms] [ERROR] Failed to load resource: net::ERR_NAME_NOT_RESOLVED @ https://sofia.trustx.org/hb?pt=net&auids=9701%2C9698&sizes=970x250%2C300x250&r=23989bf16d4a25f&wrapperType=Prebid_js&wrapperVersion=4.30.0&u=https%3A%2F%2Fwww.espncricinfo.com%2Fseries%2Fipl-2026-1510719%2Fkolkata-knight-riders-vs-lucknow-super-giants-15th-match-1527688%2Fball-by-ball-commentary&wtimeout=1000:0

@@ -60,12 +60,6 @@ interface TeamLineupMatch {
   players: string[];
 }
 
-interface TeamRoleLineupMatch {
-  teamName: string;
-  resultKnownAt: Date;
-  roles: string[];
-}
-
 export async function buildFeatureContextFromHistory(
   pool: Pool,
   asOfDate: Date,
@@ -599,123 +593,71 @@ async function computeTeamRoleCompositionContext(
     { matches: number; bowlerShare: number; allRounderShare: number }
   >
 > {
+  const activeSeason = asOfDate.getUTCFullYear();
   const result = await pool.query<{
     team_name: string;
-    result_known_at: Date;
     player_role: string | null;
-    lineup_order: number;
+    squad_role: string | null;
   }>(
     `
-      WITH first_completed_snapshot AS (
-        SELECT
-          source_match_id,
-          MIN(snapshot_time) AS result_known_at
-        FROM raw_cricket_snapshots
-        WHERE (
-          match_status IS NOT NULL
-          AND (
-            lower(match_status) IN ('completed', 'complete', 'result', 'finished', 'end', 'ended')
-            OR lower(match_status) LIKE '%won%'
-            OR lower(match_status) LIKE '%draw%'
-            OR lower(match_status) LIKE '%tie%'
-            OR lower(match_status) LIKE '%abandon%'
-            OR lower(match_status) LIKE '%no result%'
-          )
-        )
-        OR (
-          payload ->> 'status' IS NOT NULL
-          AND (
-            lower(payload ->> 'status') IN ('completed', 'complete', 'result', 'finished', 'end', 'ended')
-            OR lower(payload ->> 'status') LIKE '%won%'
-            OR lower(payload ->> 'status') LIKE '%draw%'
-            OR lower(payload ->> 'status') LIKE '%tie%'
-            OR lower(payload ->> 'status') LIKE '%abandon%'
-            OR lower(payload ->> 'status') LIKE '%no result%'
-          )
-        )
-        GROUP BY source_match_id
-      )
       SELECT
-        mpa.team_name,
-        COALESCE(
-          fcs.result_known_at,
-          cm.scheduled_start + INTERVAL '12 hours'
-        ) AS result_known_at,
-        pr.player_role,
-        mpa.lineup_order
-      FROM match_player_appearances mpa
-      JOIN canonical_matches cm ON cm.id = mpa.canonical_match_id
-      LEFT JOIN first_completed_snapshot fcs
-        ON fcs.source_match_id = cm.source_match_id
-      LEFT JOIN player_registry pr ON pr.id = mpa.player_registry_id
-      WHERE cm.competition = 'IPL'
-        AND cm.status = 'completed'
-        AND COALESCE(
-          fcs.result_known_at,
-          cm.scheduled_start + INTERVAL '12 hours'
-        ) < $1
-      ORDER BY mpa.team_name ASC, result_known_at ASC, mpa.lineup_order ASC
+        tss.team_name,
+        coalesce(psp.player_role, pr.player_role, normalized_role.player_role) as player_role,
+        tss.squad_role
+      FROM team_season_squads tss
+      LEFT JOIN player_registry pr ON pr.id = tss.player_registry_id
+      LEFT JOIN player_style_profiles psp ON psp.player_registry_id = tss.player_registry_id
+      LEFT JOIN LATERAL (
+        SELECT case lower(coalesce(tss.squad_role, ''))
+          when 'batter' then 'batter'
+          when 'wk-batter' then 'wicketkeeper_batter'
+          when 'all-rounder' then 'all_rounder'
+          when 'bowler' then 'bowler'
+          else null
+        end as player_role
+      ) normalized_role ON true
+      WHERE tss.season = $1
+      ORDER BY tss.team_name ASC, tss.source_player_name ASC
     `,
-    [asOfDate],
+    [activeSeason],
   );
 
-  const byTeam = new Map<string, TeamRoleLineupMatch[]>();
-  const lineupIndex = new Map<string, TeamRoleLineupMatch>();
+  const byTeam = new Map<string, string[]>();
 
   for (const row of result.rows) {
-    const lineupKey = `${row.team_name}::${row.result_known_at.toISOString()}`;
-    let lineup = lineupIndex.get(lineupKey);
-    if (lineup === undefined) {
-      lineup = {
-        teamName: row.team_name,
-        resultKnownAt: row.result_known_at,
-        roles: [],
-      };
-      lineupIndex.set(lineupKey, lineup);
-      const current = byTeam.get(row.team_name) ?? [];
-      current.push(lineup);
-      byTeam.set(row.team_name, current);
-    }
-
-    lineup.roles.push(row.player_role ?? "unknown");
+    const current = byTeam.get(row.team_name) ?? [];
+    current.push(row.player_role ?? "unknown");
+    byTeam.set(row.team_name, current);
   }
 
   const output: Record<
     string,
     { matches: number; bowlerShare: number; allRounderShare: number }
   > = {};
-  for (const [team, lineups] of byTeam.entries()) {
-    output[team] = summarizeRoleComposition(lineups.slice(-5));
+  for (const [team, roles] of byTeam.entries()) {
+    output[team] = summarizeRoleComposition(roles);
   }
 
   return output;
 }
 
-function summarizeRoleComposition(lineups: TeamRoleLineupMatch[]): {
+function summarizeRoleComposition(roles: string[]): {
   matches: number;
   bowlerShare: number;
   allRounderShare: number;
 } {
-  if (lineups.length === 0) {
+  if (roles.length === 0) {
     return { matches: 0, bowlerShare: 0.35, allRounderShare: 0.25 };
   }
 
-  let totalBowlerShare = 0;
-  let totalAllRounderShare = 0;
-  for (const lineup of lineups) {
-    const total = Math.max(1, lineup.roles.length);
-    const bowlers = lineup.roles.filter((role) => role === "bowler").length;
-    const allRounders = lineup.roles.filter(
-      (role) => role === "all_rounder",
-    ).length;
-    totalBowlerShare += bowlers / total;
-    totalAllRounderShare += allRounders / total;
-  }
+  const total = Math.max(1, roles.length);
+  const bowlers = roles.filter((role) => role === "bowler").length;
+  const allRounders = roles.filter((role) => role === "all_rounder").length;
 
   return {
-    matches: lineups.length,
-    bowlerShare: Number((totalBowlerShare / lineups.length).toFixed(6)),
-    allRounderShare: Number((totalAllRounderShare / lineups.length).toFixed(6)),
+    matches: roles.length,
+    bowlerShare: Number((bowlers / total).toFixed(6)),
+    allRounderShare: Number((allRounders / total).toFixed(6)),
   };
 }
 

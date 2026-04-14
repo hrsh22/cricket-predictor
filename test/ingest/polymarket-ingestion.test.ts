@@ -9,6 +9,10 @@ import type {
   RawCricketSnapshotInsert,
   RawCricketSnapshotRecord,
   RawMarketSnapshotRecord,
+  RawPolymarketPriceHistoryInsert,
+  RawPolymarketPriceHistoryRecord,
+  RawPolymarketTradeInsert,
+  RawPolymarketTradeRecord,
   RawSnapshotRepository,
 } from "../../src/repositories/index.js";
 import {
@@ -188,6 +192,20 @@ function createMemoryRawSnapshotRepository(): RawSnapshotRepository & {
     ): Promise<RawCricketSnapshotRecord> {
       throw new Error(
         `Unexpected cricket snapshot in market test: ${snapshot.sourceMatchId}`,
+      );
+    },
+    async savePolymarketPriceHistoryPoint(
+      point: RawPolymarketPriceHistoryInsert,
+    ): Promise<RawPolymarketPriceHistoryRecord> {
+      throw new Error(
+        `Unexpected Polymarket price history point in market test: ${point.tokenId}`,
+      );
+    },
+    async savePolymarketTrade(
+      trade: RawPolymarketTradeInsert,
+    ): Promise<RawPolymarketTradeRecord> {
+      throw new Error(
+        `Unexpected Polymarket trade in market test: ${trade.tokenId}`,
       );
     },
   };
