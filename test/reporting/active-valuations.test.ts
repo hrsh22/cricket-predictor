@@ -15,6 +15,17 @@ describe("active IPL valuation reporting", () => {
         marketProbability: 0.552,
         modelVersion: "v2",
         note: "Social adjustment applied toward yes outcome.",
+        tradeThesis: {
+          position: "bet_yes",
+          outcomeName: "Team A",
+          edgeCents: 2.8,
+          contractPriceCents: 55.2,
+          fairValueCents: 58,
+          conviction: "tradable",
+          mispricingSummary: "Rating edge leans Team A.",
+          counterpartySummary:
+            "Most likely the other side is ordinary balanced flow, which makes this edge fragile unless you get a better entry.",
+        },
       }),
       createReportItem({
         matchSlug: "ipl-match-a",
@@ -23,6 +34,18 @@ describe("active IPL valuation reporting", () => {
         marketProbability: 0.528,
         modelVersion: "v3",
         note: "Innings-break social adjustment +5.0%.",
+        tradeThesis: {
+          position: "bet_no",
+          outcomeName: "Team B",
+          edgeCents: 11.2,
+          contractPriceCents: 47.2,
+          fairValueCents: 58.4,
+          conviction: "strong",
+          mispricingSummary:
+            "Team A looks slightly overbid in the mid-favorite band.",
+          counterpartySummary:
+            "Most likely the other side is favorite-leaning or narrative-driven buyers, with passive counterparties willing to sell them this price.",
+        },
       }),
     ]);
 
@@ -38,6 +61,11 @@ describe("active IPL valuation reporting", () => {
     expect(rendered).toContain("Active IPL valuations");
     expect(rendered).toContain("spread: +11.2pp");
     expect(rendered).toContain("spread: +2.8pp");
+    expect(rendered).toContain("edge: 11.2c");
+    expect(rendered).toContain("why: Team A looks slightly overbid");
+    expect(rendered).toContain(
+      "other side: Most likely the other side is favorite-leaning",
+    );
     expect(rendered.indexOf("ipl-match-a")).toBeLessThan(
       rendered.indexOf("ipl-match-b"),
     );
@@ -84,6 +112,16 @@ function createReportItem(input: {
   marketProbability: number;
   modelVersion: string;
   note: string;
+  tradeThesis: {
+    position: "bet_yes" | "bet_no" | "hold";
+    outcomeName: string;
+    edgeCents: number;
+    contractPriceCents: number;
+    fairValueCents: number;
+    conviction: "fragile" | "tradable" | "strong";
+    mispricingSummary: string;
+    counterpartySummary: string;
+  };
 }) {
   return {
     matchSlug: input.matchSlug,
@@ -111,6 +149,7 @@ function createReportItem(input: {
       sourceProviderKey: "manual",
       sourceId: "social-1",
     },
+    tradeThesis: input.tradeThesis,
     explanationNote: input.note,
   };
 }

@@ -6,6 +6,7 @@ export function getWorkspaceStatus(): string {
 
 export * from "./domain/index.js";
 export * from "./ingest/cricket/index.js";
+export * from "./ingest/opticodds/index.js";
 export * from "./ingest/polymarket/index.js";
 export * from "./matching/index.js";
 export * from "./repositories/index.js";

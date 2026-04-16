@@ -45,6 +45,18 @@ describe("recurring run summary report", () => {
             spread: 0.05,
             note: "Social adjustment not applied (missing_signal).",
             scoredAt: "2026-03-29T13:00:00.000Z",
+            tradeThesis: {
+              position: "bet_yes",
+              outcomeName: "Chennai Super Kings",
+              edgeCents: 5,
+              contractPriceCents: 48,
+              fairValueCents: 53,
+              conviction: "tradable",
+              mispricingSummary:
+                "Rest differential and season strength lean Chennai Super Kings.",
+              counterpartySummary:
+                "Most likely the other side is thin-liquidity passive flow rather than a deeply informed sharp market.",
+            },
             teamAName: "Chennai Super Kings",
             teamBName: "Mumbai Indians",
             yesOutcomeName: "Chennai Super Kings",
@@ -69,7 +81,12 @@ describe("recurring run summary report", () => {
     expect(output).toContain("48.0%");
     expect(output).toContain("+5.0pp");
     expect(output).toContain("RECOMMENDATION: BET CHENNAI SUPER KINGS");
-    expect(output).toContain("Underpriced by 5.0pp");
+    expect(output).toContain("Underpriced by 5.0pp (5.0c)");
+    expect(output).toContain("Edge: 5.0c | Price: 48.0c | Fair: 53.0c");
+    expect(output).toContain("Why: Rest differential and season strength");
+    expect(output).toContain(
+      "Other side: Most likely the other side is thin-liquidity passive flow",
+    );
   });
 
   it("renders a clear empty-state when no valuations are scored", () => {

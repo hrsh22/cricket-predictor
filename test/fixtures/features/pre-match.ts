@@ -140,4 +140,18 @@ export const baselinePreMatchFeatureContext: PreMatchFeatureContext = {
       allRounderShare: 0.18,
     },
   },
+  teamStyleCompositionContext: {
+    "Royal Challengers Bengaluru": {
+      players: 25,
+      leftHandBatShare: 0.28,
+      paceBowlerShare: 0.44,
+      spinBowlerShare: 0.24,
+    },
+    "Kolkata Knight Riders": {
+      players: 25,
+      leftHandBatShare: 0.36,
+      paceBowlerShare: 0.4,
+      spinBowlerShare: 0.28,
+    },
+  },
 };

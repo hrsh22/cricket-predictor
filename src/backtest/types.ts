@@ -48,6 +48,27 @@ export interface ProbabilityMetrics {
   positiveRate: number;
 }
 
+export interface TradingThresholdSummary {
+  minimumEdge: number;
+  betCount: number;
+  winCount: number;
+  winRate: number | null;
+  totalStake: number;
+  totalProfit: number;
+  roi: number | null;
+  averageEntryPrice: number | null;
+  averageModelProbability: number | null;
+  averageEdge: number | null;
+  totalExpectedValue: number;
+}
+
+export interface TradingMetricsSummary {
+  marketSampleSize: number;
+  thresholds: TradingThresholdSummary[];
+  bestRoiThreshold: TradingThresholdSummary | null;
+  bestProfitThreshold: TradingThresholdSummary | null;
+}
+
 export interface CalibrationBinSummary {
   index: number;
   lowerBound: number;
@@ -94,6 +115,7 @@ export interface FoldBacktestSummary {
   strictChronology: true;
   primaryMetrics: ProbabilityMetrics;
   calibration: CalibrationSummary;
+  trading: TradingMetricsSummary | null;
   socialComparison: SocialComparisonSummary;
 }
 
@@ -131,6 +153,7 @@ export interface HistoricalBacktestResult {
   skippedRowCount: number;
   overallMetrics: ProbabilityMetrics;
   calibration: CalibrationSummary;
+  trading: TradingMetricsSummary | null;
   folds: FoldBacktestSummary[];
   skippedFolds: TimeSplitSkippedFold[];
   socialComparison: SocialComparisonSummary;

@@ -28,9 +28,13 @@ async function main(): Promise<void> {
           pr.bowling_type_group,
           count(*) as appearances
         from player_registry pr
-        join match_player_appearances mpa on mpa.player_registry_id = pr.id
-        join canonical_matches cm on cm.id = mpa.canonical_match_id
-        where cm.season between $1 and $2
+        left join match_player_appearances mpa on mpa.player_registry_id = pr.id
+        left join canonical_matches cm on cm.id = mpa.canonical_match_id
+        left join team_season_squads tss on tss.player_registry_id = pr.id
+        where (
+          cm.season between $1 and $2
+          or tss.season between $1 and $2
+        )
           and (
             pr.player_role is not null
             or pr.batting_style is not null

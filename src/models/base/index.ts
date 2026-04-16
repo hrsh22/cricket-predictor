@@ -9,3 +9,13 @@ export {
   type ModelWeights,
   type ScoreOptions,
 } from "./ipl-rating.js";
+
+export {
+  DEFAULT_PROFIT_FIRST_MARKET_MODEL_CONFIG,
+  PROFIT_FIRST_MARKET_MODEL_FAMILY,
+  PROFIT_FIRST_MARKET_MODEL_VERSION,
+  scoreProfitFirstPreMatch,
+  type ProfitFirstMarketModelConfig,
+  type ProfitFirstMarketScore,
+  type ProfitFirstMarketScoreOptions,
+} from "./profit-first-market.js";

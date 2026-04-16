@@ -59,6 +59,7 @@ const EMPTY_PRE_MATCH_CONTEXT: PreMatchFeatureContext = {
   venueTossDecisionWinRate: {},
   teamLineupContext: {},
   teamRoleCompositionContext: {},
+  teamStyleCompositionContext: {},
 };
 
 interface TransactionalRepositorySet {
@@ -115,6 +116,16 @@ export interface RecurringRunReportRow {
   spread: number | null;
   note: string;
   scoredAt: string;
+  tradeThesis?: {
+    position: "bet_yes" | "bet_no" | "hold";
+    outcomeName: string;
+    edgeCents: number;
+    contractPriceCents: number;
+    fairValueCents: number;
+    conviction: "fragile" | "tradable" | "strong";
+    mispricingSummary: string;
+    counterpartySummary: string;
+  };
 }
 
 export interface RecurringRunSummary {
@@ -578,13 +589,15 @@ function buildReportRowFromPreMatch(input: {
   teamAName: string;
   teamBName: string;
 }): RecurringRunReportRow {
+  const tradeThesis = extractRecurringTradeThesis(input.valuation.scorePayload);
+
   return {
     checkpointType: "pre_match",
     matchSlug: input.persistedScore.matchSlug,
     sourceMarketId: input.mapping.sourceMarketId,
     sourceMarketSnapshotId: input.mapping.sourceMarketSnapshotId,
     modelKey: input.persistedScore.modelKey,
-    modelVersion: input.modelRegistry.version,
+    modelVersion: input.valuation.modelVersion,
     teamAName: input.teamAName,
     teamBName: input.teamBName,
     yesOutcomeName: input.marketSnapshot.yesOutcomeName ?? input.teamAName,
@@ -593,6 +606,7 @@ function buildReportRowFromPreMatch(input: {
     spread: input.persistedScore.edge,
     note: input.valuation.socialAdjustmentNote,
     scoredAt: input.persistedScore.scoredAt,
+    ...(tradeThesis === undefined ? {} : { tradeThesis }),
   };
 }
 
@@ -623,6 +637,68 @@ function buildReportRowFromValuation(input: {
     note: input.note,
     scoredAt: input.persistedScore.scoredAt,
   };
+}
+
+function extractRecurringTradeThesis(
+  scorePayload: JsonObject,
+): RecurringRunReportRow["tradeThesis"] {
+  const tradeThesis = readJsonObject(scorePayload["tradeThesis"]);
+  if (tradeThesis === null) {
+    return undefined;
+  }
+
+  const position = tradeThesis["position"];
+  const outcomeName = readJsonString(tradeThesis["outcomeName"]);
+  const edgeCents = readJsonNumber(tradeThesis["edgeCents"]);
+  const contractPriceCents = readJsonNumber(tradeThesis["contractPriceCents"]);
+  const fairValueCents = readJsonNumber(tradeThesis["fairValueCents"]);
+  const conviction = tradeThesis["conviction"];
+  const mispricingSummary = readJsonString(tradeThesis["mispricingSummary"]);
+  const counterpartySummary = readJsonString(
+    tradeThesis["counterpartySummary"],
+  );
+
+  if (
+    (position !== "bet_yes" && position !== "bet_no" && position !== "hold") ||
+    outcomeName === null ||
+    edgeCents === null ||
+    contractPriceCents === null ||
+    fairValueCents === null ||
+    (conviction !== "fragile" &&
+      conviction !== "tradable" &&
+      conviction !== "strong") ||
+    mispricingSummary === null ||
+    counterpartySummary === null
+  ) {
+    return undefined;
+  }
+
+  return {
+    position,
+    outcomeName,
+    edgeCents,
+    contractPriceCents,
+    fairValueCents,
+    conviction,
+    mispricingSummary,
+    counterpartySummary,
+  };
+}
+
+function readJsonObject(value: unknown): JsonObject | null {
+  if (typeof value !== "object" || value === null || Array.isArray(value)) {
+    return null;
+  }
+
+  return value as JsonObject;
+}
+
+function readJsonString(value: unknown): string | null {
+  return typeof value === "string" && value.length > 0 ? value : null;
+}
+
+function readJsonNumber(value: unknown): number | null {
+  return typeof value === "number" && Number.isFinite(value) ? value : null;
 }
 
 function toCanonicalCheckpoint(

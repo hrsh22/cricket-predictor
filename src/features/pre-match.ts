@@ -44,6 +44,13 @@ export interface TeamRoleCompositionContext {
   allRounderShare: number;
 }
 
+export interface TeamStyleCompositionContext {
+  players: number;
+  leftHandBatShare: number;
+  paceBowlerShare: number;
+  spinBowlerShare: number;
+}
+
 export interface PreMatchFeatureContext {
   teamRatings: Record<string, number>;
   teamRatingDeviations: Record<string, number>;
@@ -55,6 +62,7 @@ export interface PreMatchFeatureContext {
   venueTossDecisionWinRate: Record<string, number>;
   teamLineupContext: Record<string, TeamLineupContext>;
   teamRoleCompositionContext: Record<string, TeamRoleCompositionContext>;
+  teamStyleCompositionContext: Record<string, TeamStyleCompositionContext>;
 }
 
 export function createVenueTossDecisionKey(
@@ -223,6 +231,43 @@ export function buildBaselinePreMatchFeatureRow(
     teamARoleComposition.allRounderShare - teamBRoleComposition.allRounderShare,
     6,
   );
+  const teamAStyleComposition = readTeamStyleCompositionContext(
+    context.teamStyleCompositionContext,
+    match.teamAName,
+  );
+  const teamBStyleComposition = readTeamStyleCompositionContext(
+    context.teamStyleCompositionContext,
+    match.teamBName,
+  );
+  const leftHandBatShareDiff = roundTo(
+    teamAStyleComposition.leftHandBatShare -
+      teamBStyleComposition.leftHandBatShare,
+    6,
+  );
+  const paceBowlerShareDiff = roundTo(
+    teamAStyleComposition.paceBowlerShare -
+      teamBStyleComposition.paceBowlerShare,
+    6,
+  );
+  const spinBowlerShareDiff = roundTo(
+    teamAStyleComposition.spinBowlerShare -
+      teamBStyleComposition.spinBowlerShare,
+    6,
+  );
+  const leftBatVsOppSpinDiff = roundTo(
+    teamAStyleComposition.leftHandBatShare *
+      teamBStyleComposition.spinBowlerShare -
+      teamBStyleComposition.leftHandBatShare *
+        teamAStyleComposition.spinBowlerShare,
+    6,
+  );
+  const leftBatVsOppPaceDiff = roundTo(
+    teamAStyleComposition.leftHandBatShare *
+      teamBStyleComposition.paceBowlerShare -
+      teamBStyleComposition.leftHandBatShare *
+        teamAStyleComposition.paceBowlerShare,
+    6,
+  );
 
   const scheduledDate = new Date(match.scheduledStart);
   const scheduledHourUtc = scheduledDate.getUTCHours();
@@ -281,6 +326,11 @@ export function buildBaselinePreMatchFeatureRow(
     lineupRotationEdge,
     bowlerShareDiff,
     allRounderShareDiff,
+    leftHandBatShareDiff,
+    paceBowlerShareDiff,
+    spinBowlerShareDiff,
+    leftBatVsOppSpinDiff,
+    leftBatVsOppPaceDiff,
     scheduledHourUtc,
     scheduledWeekdayUtc,
     isWeekendUtc,
@@ -304,6 +354,7 @@ export function buildBaselinePreMatchFeatureRow(
       teamSeasonSource: "provided_team_season_context",
       teamLineupSource: "historical_team_lineup_context",
       teamRoleCompositionSource: "historical_team_role_composition_context",
+      teamStyleCompositionSource: "historical_team_style_composition_context",
       venueSource: "provided_venue_strength",
       headToHeadSource: "provided_head_to_head_strength",
       venueConditionsSource: "computed_venue_conditions",
@@ -497,6 +548,28 @@ function readTeamRoleCompositionContext(
     matches: Math.max(0, Math.floor(rawRole.matches)),
     bowlerShare: clampUnitInterval(rawRole.bowlerShare),
     allRounderShare: clampUnitInterval(rawRole.allRounderShare),
+  };
+}
+
+function readTeamStyleCompositionContext(
+  styleByTeam: Record<string, TeamStyleCompositionContext>,
+  teamName: string,
+): TeamStyleCompositionContext {
+  const rawStyle = styleByTeam[teamName];
+  if (rawStyle === undefined) {
+    return {
+      players: 0,
+      leftHandBatShare: 0.3,
+      paceBowlerShare: 0.35,
+      spinBowlerShare: 0.2,
+    };
+  }
+
+  return {
+    players: Math.max(0, Math.floor(rawStyle.players)),
+    leftHandBatShare: clampUnitInterval(rawStyle.leftHandBatShare),
+    paceBowlerShare: clampUnitInterval(rawStyle.paceBowlerShare),
+    spinBowlerShare: clampUnitInterval(rawStyle.spinBowlerShare),
   };
 }
 

@@ -86,10 +86,10 @@ export async function buildFeatureContextFromHistory(
   const scheduleContext = computeScheduleContext(matches, asOfDate);
   const teamSeasonContext = computeTeamSeasonContext(matches, asOfDate);
   const teamLineupContext = await computeTeamLineupContext(pool, asOfDate);
-  const teamRoleCompositionContext = await computeTeamRoleCompositionContext(
-    pool,
-    asOfDate,
-  );
+  const teamRoleCompositionContext =
+    await computeTeamRoleCompositionContextWithFallback(pool, asOfDate);
+  const teamStyleCompositionContext =
+    await computeTeamStyleCompositionContextWithFallback(pool, asOfDate);
 
   return {
     teamRatings: eloRatings,
@@ -109,6 +109,7 @@ export async function buildFeatureContextFromHistory(
     venueTossDecisionWinRate,
     teamLineupContext,
     teamRoleCompositionContext,
+    teamStyleCompositionContext,
     teamSchedule: Object.fromEntries(
       Object.entries(scheduleContext).map(([team, ctx]) => [
         team,
@@ -641,6 +642,26 @@ async function computeTeamRoleCompositionContext(
   return output;
 }
 
+async function computeTeamRoleCompositionContextWithFallback(
+  pool: Pool,
+  asOfDate: Date,
+): Promise<
+  Record<
+    string,
+    { matches: number; bowlerShare: number; allRounderShare: number }
+  >
+> {
+  try {
+    return await computeTeamRoleCompositionContext(pool, asOfDate);
+  } catch (error) {
+    if (isMissingOptionalFeatureTableError(error)) {
+      return {};
+    }
+
+    throw error;
+  }
+}
+
 function summarizeRoleComposition(roles: string[]): {
   matches: number;
   bowlerShare: number;
@@ -658,6 +679,259 @@ function summarizeRoleComposition(roles: string[]): {
     matches: roles.length,
     bowlerShare: Number((bowlers / total).toFixed(6)),
     allRounderShare: Number((allRounders / total).toFixed(6)),
+  };
+}
+
+async function computeTeamStyleCompositionContext(
+  pool: Pool,
+  asOfDate: Date,
+): Promise<
+  Record<
+    string,
+    {
+      players: number;
+      leftHandBatShare: number;
+      paceBowlerShare: number;
+      spinBowlerShare: number;
+    }
+  >
+> {
+  const activeSeason = asOfDate.getUTCFullYear();
+  const result = await pool.query<{
+    squad_id: number;
+    team_name: string;
+    selection_count: number | null;
+    last_selected_at: Date | null;
+    batting_hand: string | null;
+    bowling_type_group: string | null;
+  }>(
+    `
+      with first_completed_snapshot as (
+        select
+          source_match_id,
+          min(snapshot_time) as result_known_at
+        from raw_cricket_snapshots
+        where (
+          match_status is not null
+          and (
+            lower(match_status) in ('completed', 'complete', 'result', 'finished', 'end', 'ended')
+            or lower(match_status) like '%won%'
+            or lower(match_status) like '%draw%'
+            or lower(match_status) like '%tie%'
+            or lower(match_status) like '%abandon%'
+            or lower(match_status) like '%no result%'
+          )
+        )
+        or (
+          payload ->> 'status' is not null
+          and (
+            lower(payload ->> 'status') in ('completed', 'complete', 'result', 'finished', 'end', 'ended')
+            or lower(payload ->> 'status') like '%won%'
+            or lower(payload ->> 'status') like '%draw%'
+            or lower(payload ->> 'status') like '%tie%'
+            or lower(payload ->> 'status') like '%abandon%'
+            or lower(payload ->> 'status') like '%no result%'
+          )
+        )
+        group by source_match_id
+      ),
+      season_selection as (
+        select
+          mpa.team_name,
+          mpa.player_registry_id,
+          mpa.source_player_name,
+          count(*)::int as selection_count,
+          max(coalesce(fcs.result_known_at, cm.scheduled_start + interval '12 hours')) as last_selected_at
+        from match_player_appearances mpa
+        join canonical_matches cm on cm.id = mpa.canonical_match_id
+        left join first_completed_snapshot fcs on fcs.source_match_id = cm.source_match_id
+        where cm.competition = 'IPL'
+          and cm.season = $1
+          and coalesce(fcs.result_known_at, cm.scheduled_start + interval '12 hours') < $2
+        group by mpa.team_name, mpa.player_registry_id, mpa.source_player_name
+      )
+      select
+        tss.id as squad_id,
+        tss.team_name,
+        ss.selection_count,
+        ss.last_selected_at,
+        psp.batting_hand,
+        psp.bowling_type_group
+      from team_season_squads tss
+      left join player_style_profiles psp on psp.player_registry_id = tss.player_registry_id
+      left join season_selection ss
+        on ss.team_name = tss.team_name
+       and (
+         ss.player_registry_id is not distinct from tss.player_registry_id
+         or (
+           ss.player_registry_id is null
+           and tss.player_registry_id is null
+           and lower(ss.source_player_name) = lower(tss.source_player_name)
+         )
+       )
+      where tss.season = $1
+      order by tss.team_name asc, tss.id asc
+    `,
+    [activeSeason, asOfDate],
+  );
+
+  const byTeam = new Map<
+    string,
+    Array<{
+      squadId: number;
+      selectionCount: number;
+      lastSelectedAt: Date | null;
+      battingHand: string | null;
+      bowlingTypeGroup: string | null;
+    }>
+  >();
+  for (const row of result.rows) {
+    const current = byTeam.get(row.team_name) ?? [];
+    current.push({
+      squadId: row.squad_id,
+      selectionCount: row.selection_count ?? 0,
+      lastSelectedAt: row.last_selected_at,
+      battingHand: row.batting_hand,
+      bowlingTypeGroup: row.bowling_type_group,
+    });
+    byTeam.set(row.team_name, current);
+  }
+
+  const output: Record<
+    string,
+    {
+      players: number;
+      leftHandBatShare: number;
+      paceBowlerShare: number;
+      spinBowlerShare: number;
+    }
+  > = {};
+  for (const [team, candidates] of byTeam.entries()) {
+    output[team] = summarizeExpectedStyleComposition(candidates);
+  }
+
+  return output;
+}
+
+async function computeTeamStyleCompositionContextWithFallback(
+  pool: Pool,
+  asOfDate: Date,
+): Promise<
+  Record<
+    string,
+    {
+      players: number;
+      leftHandBatShare: number;
+      paceBowlerShare: number;
+      spinBowlerShare: number;
+    }
+  >
+> {
+  try {
+    return await computeTeamStyleCompositionContext(pool, asOfDate);
+  } catch (error) {
+    if (isMissingOptionalFeatureTableError(error)) {
+      return {};
+    }
+
+    throw error;
+  }
+}
+
+function isMissingOptionalFeatureTableError(error: unknown): boolean {
+  if (typeof error !== "object" || error === null) {
+    return false;
+  }
+
+  const code = "code" in error ? error.code : undefined;
+  const message = "message" in error ? error.message : undefined;
+
+  if (code === "42P01") {
+    return true;
+  }
+
+  if (typeof message !== "string") {
+    return false;
+  }
+
+  return (
+    message.includes("team_season_squads") ||
+    message.includes("player_style_profiles")
+  );
+}
+
+function summarizeExpectedStyleComposition(
+  candidates: Array<{
+    squadId: number;
+    selectionCount: number;
+    lastSelectedAt: Date | null;
+    battingHand: string | null;
+    bowlingTypeGroup: string | null;
+  }>,
+): {
+  players: number;
+  leftHandBatShare: number;
+  paceBowlerShare: number;
+  spinBowlerShare: number;
+} {
+  if (candidates.length === 0) {
+    return {
+      players: 0,
+      leftHandBatShare: 0.3,
+      paceBowlerShare: 0.35,
+      spinBowlerShare: 0.2,
+    };
+  }
+
+  const sorted = [...candidates].sort((left, right) => {
+    if (right.selectionCount !== left.selectionCount) {
+      return right.selectionCount - left.selectionCount;
+    }
+    const leftTime = left.lastSelectedAt?.getTime() ?? 0;
+    const rightTime = right.lastSelectedAt?.getTime() ?? 0;
+    if (rightTime !== leftTime) {
+      return rightTime - leftTime;
+    }
+    return left.squadId - right.squadId;
+  });
+
+  const selected = sorted.slice(0, 11);
+  const battingHands = selected
+    .map((candidate) => candidate.battingHand)
+    .filter((value): value is string => value !== null);
+  const bowlingGroups = selected
+    .map((candidate) => candidate.bowlingTypeGroup)
+    .filter((value): value is string => value !== null);
+
+  return {
+    players: selected.length,
+    leftHandBatShare:
+      battingHands.length === 0
+        ? 0.3
+        : Number(
+            (
+              battingHands.filter((value) => value === "left").length /
+              battingHands.length
+            ).toFixed(6),
+          ),
+    paceBowlerShare:
+      bowlingGroups.length === 0
+        ? 0.35
+        : Number(
+            (
+              bowlingGroups.filter((value) => value === "pace").length /
+              bowlingGroups.length
+            ).toFixed(6),
+          ),
+    spinBowlerShare:
+      bowlingGroups.length === 0
+        ? 0.2
+        : Number(
+            (
+              bowlingGroups.filter((value) => value === "spin").length /
+              bowlingGroups.length
+            ).toFixed(6),
+          ),
   };
 }
 

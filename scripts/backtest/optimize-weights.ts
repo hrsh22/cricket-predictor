@@ -304,6 +304,9 @@ function generateWeightGrid(resolution: number): ModelWeights[] {
   const lineupRotationRange = generateRange(0.0, 0.8, resolution);
   const bowlerShareRange = generateRange(0.0, 0.8, resolution);
   const allRounderShareRange = generateRange(0.0, 0.8, resolution);
+  const leftHandBatShareRange = generateRange(0.0, 0.8, resolution);
+  const paceBowlerShareRange = generateRange(0.0, 0.8, resolution);
+  const spinBowlerShareRange = generateRange(0.0, 0.8, resolution);
   const seasonWinRateRange = generateRange(0.0, 0.8, resolution);
   const seasonMatchesPlayedRange = generateRange(0.0, 0.4, resolution);
   const seasonWinStrengthRange = generateRange(0.0, 1.0, resolution);
@@ -324,52 +327,81 @@ function generateWeightGrid(resolution: number): ModelWeights[] {
                   for (const lineupRotation of lineupRotationRange) {
                     for (const bowlerShare of bowlerShareRange) {
                       for (const allRounderShare of allRounderShareRange) {
-                        for (const seasonWinRate of seasonWinRateRange) {
-                          for (const seasonMatchesPlayed of seasonMatchesPlayedRange) {
-                            for (const seasonWinStrength of seasonWinStrengthRange) {
-                              for (const dewFactor of dewFactorRange) {
-                                for (const homeAdvantage of homeAdvantageRange) {
-                                  for (const pitchBattingIndex of pitchBattingIndexRange) {
-                                    grid.push({
-                                      rating: roundTo(rating, 2),
-                                      form: roundTo(form, 2),
-                                      venue: roundTo(venue, 2),
-                                      headToHead: roundTo(headToHead, 2),
-                                      rest: roundTo(rest, 2),
-                                      congestion: roundTo(congestion, 2),
-                                      lineupStability: roundTo(
-                                        lineupStability,
-                                        2,
-                                      ),
-                                      lineupContinuity: roundTo(
-                                        lineupContinuity,
-                                        2,
-                                      ),
-                                      lineupRotation: roundTo(
-                                        lineupRotation,
-                                        2,
-                                      ),
-                                      bowlerShare: roundTo(bowlerShare, 2),
-                                      allRounderShare: roundTo(
-                                        allRounderShare,
-                                        2,
-                                      ),
-                                      seasonWinRate: roundTo(seasonWinRate, 2),
-                                      seasonMatchesPlayed: roundTo(
-                                        seasonMatchesPlayed,
-                                        2,
-                                      ),
-                                      seasonWinStrength: roundTo(
-                                        seasonWinStrength,
-                                        2,
-                                      ),
-                                      dewFactor: roundTo(dewFactor, 2),
-                                      homeAdvantage: roundTo(homeAdvantage, 2),
-                                      pitchBattingIndex: roundTo(
-                                        pitchBattingIndex,
-                                        2,
-                                      ),
-                                    });
+                        for (const leftHandBatShare of leftHandBatShareRange) {
+                          for (const paceBowlerShare of paceBowlerShareRange) {
+                            for (const spinBowlerShare of spinBowlerShareRange) {
+                              for (const seasonWinRate of seasonWinRateRange) {
+                                for (const seasonMatchesPlayed of seasonMatchesPlayedRange) {
+                                  for (const seasonWinStrength of seasonWinStrengthRange) {
+                                    for (const dewFactor of dewFactorRange) {
+                                      for (const homeAdvantage of homeAdvantageRange) {
+                                        for (const pitchBattingIndex of pitchBattingIndexRange) {
+                                          grid.push({
+                                            rating: roundTo(rating, 2),
+                                            form: roundTo(form, 2),
+                                            venue: roundTo(venue, 2),
+                                            headToHead: roundTo(headToHead, 2),
+                                            rest: roundTo(rest, 2),
+                                            congestion: roundTo(congestion, 2),
+                                            lineupStability: roundTo(
+                                              lineupStability,
+                                              2,
+                                            ),
+                                            lineupContinuity: roundTo(
+                                              lineupContinuity,
+                                              2,
+                                            ),
+                                            lineupRotation: roundTo(
+                                              lineupRotation,
+                                              2,
+                                            ),
+                                            bowlerShare: roundTo(
+                                              bowlerShare,
+                                              2,
+                                            ),
+                                            allRounderShare: roundTo(
+                                              allRounderShare,
+                                              2,
+                                            ),
+                                            leftHandBatShare: roundTo(
+                                              leftHandBatShare,
+                                              2,
+                                            ),
+                                            paceBowlerShare: roundTo(
+                                              paceBowlerShare,
+                                              2,
+                                            ),
+                                            spinBowlerShare: roundTo(
+                                              spinBowlerShare,
+                                              2,
+                                            ),
+                                            leftBatVsOppSpin: 0,
+                                            leftBatVsOppPace: 0,
+                                            seasonWinRate: roundTo(
+                                              seasonWinRate,
+                                              2,
+                                            ),
+                                            seasonMatchesPlayed: roundTo(
+                                              seasonMatchesPlayed,
+                                              2,
+                                            ),
+                                            seasonWinStrength: roundTo(
+                                              seasonWinStrength,
+                                              2,
+                                            ),
+                                            dewFactor: roundTo(dewFactor, 2),
+                                            homeAdvantage: roundTo(
+                                              homeAdvantage,
+                                              2,
+                                            ),
+                                            pitchBattingIndex: roundTo(
+                                              pitchBattingIndex,
+                                              2,
+                                            ),
+                                          });
+                                        }
+                                      }
+                                    }
                                   }
                                 }
                               }

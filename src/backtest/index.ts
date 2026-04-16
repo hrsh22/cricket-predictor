@@ -6,6 +6,7 @@ export {
 export { loadStoredScoreBacktestDataset } from "./repository.js";
 export {
   calculateCalibrationSummary,
+  calculateTradingMetrics,
   calculateProbabilityMetrics,
   normalizeProbability,
 } from "./metrics.js";
@@ -28,6 +29,8 @@ export type {
   ProbabilityMetrics,
   SocialComparisonSummary,
   StoredScoreBacktestDataset,
+  TradingMetricsSummary,
+  TradingThresholdSummary,
   TimeSplitFold,
   TimeSplitSkippedFold,
 } from "./types.js";

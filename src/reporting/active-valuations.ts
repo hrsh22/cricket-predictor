@@ -29,6 +29,16 @@ export interface ActiveIplValuationReportItem {
     sourceProviderKey: string | null;
     sourceId: string | null;
   };
+  tradeThesis: {
+    position: "bet_yes" | "bet_no" | "hold";
+    outcomeName: string;
+    edgeCents: number;
+    contractPriceCents: number;
+    fairValueCents: number;
+    conviction: "fragile" | "tradable" | "strong";
+    mispricingSummary: string;
+    counterpartySummary: string;
+  } | null;
   explanationNote: string;
 }
 
@@ -137,6 +147,13 @@ export function formatActiveIplValuationReport(
     lines.push(
       `   model: ${item.model.key} | version: ${item.model.version} | family: ${item.model.family}`,
     );
+    if (item.tradeThesis !== null) {
+      lines.push(
+        `   thesis: ${formatTradePosition(item.tradeThesis.position)} ${item.tradeThesis.outcomeName} | edge: ${formatCents(item.tradeThesis.edgeCents)} | price: ${formatCents(item.tradeThesis.contractPriceCents)} | fair: ${formatCents(item.tradeThesis.fairValueCents)} | quality: ${item.tradeThesis.conviction}`,
+      );
+      lines.push(`   why: ${item.tradeThesis.mispricingSummary}`);
+      lines.push(`   other side: ${item.tradeThesis.counterpartySummary}`);
+    }
     lines.push(
       `   social: ${formatSocialSummary(item.social)} | note: ${item.explanationNote}`,
     );
@@ -154,6 +171,7 @@ function mapActiveIplValuationRow(
 ): ActiveIplValuationReportItem {
   const scorePayload = row.score_payload;
   const social = extractSocialMetadata(row.checkpoint_type, scorePayload);
+  const tradeThesis = extractTradeThesisMetadata(scorePayload);
 
   return {
     matchSlug: row.match_slug,
@@ -177,7 +195,52 @@ function mapActiveIplValuationRow(
         : Number(row.market_implied_probability),
     spread: row.edge === null ? null : Number(row.edge),
     social,
+    tradeThesis,
     explanationNote: social.note,
+  };
+}
+
+function extractTradeThesisMetadata(
+  scorePayload: JsonObject,
+): ActiveIplValuationReportItem["tradeThesis"] {
+  const tradeThesis = readRecord(scorePayload["tradeThesis"]);
+  if (tradeThesis === null) {
+    return null;
+  }
+
+  const position = tradeThesis["position"];
+  const outcomeName = readString(tradeThesis["outcomeName"]);
+  const edgeCents = readNumber(tradeThesis["edgeCents"]);
+  const contractPriceCents = readNumber(tradeThesis["contractPriceCents"]);
+  const fairValueCents = readNumber(tradeThesis["fairValueCents"]);
+  const conviction = tradeThesis["conviction"];
+  const mispricingSummary = readString(tradeThesis["mispricingSummary"]);
+  const counterpartySummary = readString(tradeThesis["counterpartySummary"]);
+
+  if (
+    (position !== "bet_yes" && position !== "bet_no" && position !== "hold") ||
+    outcomeName === null ||
+    edgeCents === null ||
+    contractPriceCents === null ||
+    fairValueCents === null ||
+    (conviction !== "fragile" &&
+      conviction !== "tradable" &&
+      conviction !== "strong") ||
+    mispricingSummary === null ||
+    counterpartySummary === null
+  ) {
+    return null;
+  }
+
+  return {
+    position,
+    outcomeName,
+    edgeCents,
+    contractPriceCents,
+    fairValueCents,
+    conviction,
+    mispricingSummary,
+    counterpartySummary,
   };
 }
 
@@ -264,6 +327,22 @@ function formatSpread(value: number | null): string {
 function formatSignedSpread(value: number): string {
   const points = toPercent(value);
   return `${value > 0 ? "+" : ""}${points}`;
+}
+
+function formatTradePosition(position: "bet_yes" | "bet_no" | "hold"): string {
+  if (position === "bet_yes") {
+    return "BET YES";
+  }
+
+  if (position === "bet_no") {
+    return "BET NO";
+  }
+
+  return "HOLD";
+}
+
+function formatCents(value: number): string {
+  return `${value.toFixed(1)}c`;
 }
 
 function toPercent(value: number): string {

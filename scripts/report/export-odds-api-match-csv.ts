@@ -120,7 +120,10 @@ async function main(): Promise<void> {
 }
 
 function parseCliArgs(argv: readonly string[]): CliOptions {
-  let apiKey = process.env["THE_ODDS_API_KEY"] ?? "";
+  let apiKey =
+    process.env["THE_ODDS_API_KEY_HISTORICAL"] ??
+    process.env["THE_ODDS_API_KEY"] ??
+    "";
   let commentaryUrl: string | null = null;
   let outputPath: string | null = null;
   let sportKey = "cricket_ipl";
@@ -173,7 +176,7 @@ function parseCliArgs(argv: readonly string[]): CliOptions {
 
   if (apiKey.trim().length === 0) {
     throw new Error(
-      "The Odds API key is required via --api-key or THE_ODDS_API_KEY.",
+      "The Odds API key is required via --api-key or THE_ODDS_API_KEY_HISTORICAL.",
     );
   }
   if (commentaryUrl === null || commentaryUrl.trim().length === 0) {
@@ -394,18 +397,10 @@ function buildCsvRows(
   timelineRows: readonly MatchBallTimelineRow[],
   snapshots: readonly SnapshotAnalysis[],
 ): CsvRow[] {
-  return timelineRows.map((row, index) => {
+  return timelineRows.map((row) => {
     const ballTimeMs = Date.parse(row.timestamp);
-    const nextBallTimeMs =
-      index < timelineRows.length - 1
-        ? Date.parse(timelineRows[index + 1]?.timestamp ?? row.timestamp)
-        : ballTimeMs + 120_000;
     const before = findLatestSnapshotAtOrBefore(snapshots, ballTimeMs);
-    const after = findEarliestSnapshotInWindow(
-      snapshots,
-      ballTimeMs,
-      nextBallTimeMs,
-    );
+    const after = findEarliestSnapshotAfter(snapshots, ballTimeMs);
 
     return {
       inning: row.inning,
@@ -448,18 +443,14 @@ function findLatestSnapshotAtOrBefore(
   return candidate;
 }
 
-function findEarliestSnapshotInWindow(
+function findEarliestSnapshotAfter(
   snapshots: readonly SnapshotAnalysis[],
   startMs: number,
-  endMs: number,
 ): SnapshotAnalysis | null {
   for (const snapshot of snapshots) {
     const snapshotMs = Date.parse(snapshot.snapshotTime);
     if (snapshotMs <= startMs) {
       continue;
-    }
-    if (snapshotMs > endMs) {
-      break;
     }
     return snapshot;
   }

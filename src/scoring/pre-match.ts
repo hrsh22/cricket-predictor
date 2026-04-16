@@ -2,10 +2,11 @@ import type { FeatureRow } from "../domain/checkpoint.js";
 import type { MarketSnapshot } from "../domain/market.js";
 import type { JsonObject } from "../domain/primitives.js";
 import {
-  BASELINE_IPL_RATING_MODEL_FAMILY,
-  BASELINE_IPL_RATING_MODEL_VERSION,
   DEFAULT_MODEL_WEIGHTS,
+  DEFAULT_PROFIT_FIRST_MARKET_MODEL_CONFIG,
   scoreBaselineIplPreMatch,
+  scoreProfitFirstPreMatch,
+  type ProfitFirstMarketModelConfig,
   type ModelWeights,
 } from "../models/base/index.js";
 import type {
@@ -19,7 +20,7 @@ import {
   type SocialSignalPolicy,
 } from "../social/index.js";
 
-const PRE_MATCH_VALUATION_VERSION = "task14-v1";
+const PRE_MATCH_VALUATION_VERSION = "task18-v2";
 
 export interface PreMatchValuationInput {
   mapping: MarketMatchMappingRecord;
@@ -104,7 +105,6 @@ export function scorePreMatchValuation(
   }
 
   const modelOptions = deriveModelScoreOptionsFromMetadata(input.modelMetadata);
-  const baseline = scoreBaselineIplPreMatch(input.featureRow, modelOptions);
   const yesOutcomeName = requireString(input.marketSnapshot.yesOutcomeName, {
     field: "marketSnapshot.yesOutcomeName",
   });
@@ -126,11 +126,38 @@ export function scorePreMatchValuation(
     teamBName,
     field: "marketSnapshot.yesOutcomeName",
   });
+  const marketImpliedProbability = readMarketImpliedProbability(
+    input.marketSnapshot.outcomeProbabilities,
+  );
+  const marketTeamAProbability =
+    yesOutcomeSide === "team_a"
+      ? marketImpliedProbability
+      : roundTo(1 - marketImpliedProbability, 6);
+  const baseModel =
+    modelOptions.strategy === "legacy_baseline_rating"
+      ? scoreBaselineIplPreMatch(input.featureRow, {
+          ...(modelOptions.weights === undefined
+            ? {}
+            : { weights: modelOptions.weights }),
+          ...(modelOptions.plattCalibration === undefined
+            ? {}
+            : { plattCalibration: modelOptions.plattCalibration }),
+        })
+      : scoreProfitFirstPreMatch(input.featureRow, {
+          marketTeamAProbability,
+          marketLiquidity: input.marketSnapshot.liquidity,
+          ...(modelOptions.config === undefined
+            ? {}
+            : { config: modelOptions.config }),
+          ...(modelOptions.plattCalibration === undefined
+            ? {}
+            : { plattCalibration: modelOptions.plattCalibration }),
+        });
 
   const structuredFairProbability =
     yesOutcomeSide === "team_a"
-      ? baseline.teamAWinProbability
-      : baseline.teamBWinProbability;
+      ? baseModel.teamAWinProbability
+      : baseModel.teamBWinProbability;
 
   const socialSignal = resolveSocialSignal(
     {
@@ -151,13 +178,19 @@ export function scorePreMatchValuation(
   const fairWinProbability = clampProbability(
     structuredFairProbability + socialAdjustment.adjustmentToYesOutcome,
   );
-  const marketImpliedProbability = readMarketImpliedProbability(
-    input.marketSnapshot.outcomeProbabilities,
-  );
   const spread = roundTo(fairWinProbability - marketImpliedProbability, 6);
-  const scoredAt = input.scoredAt ?? baseline.generatedAt;
+  const scoredAt = input.scoredAt ?? baseModel.generatedAt;
   const socialMode =
     socialSignal.status === "disabled" ? "disabled" : "enabled";
+  const tradeThesis = buildTradeThesis({
+    yesOutcomeName,
+    noOutcomeName,
+    fairWinProbability,
+    marketImpliedProbability,
+    scoreBreakdown: baseModel.scoreBreakdown,
+    marketLiquidity: input.marketSnapshot.liquidity,
+    socialAdjustmentToYesOutcome: socialAdjustment.adjustmentToYesOutcome,
+  });
 
   return {
     matchSlug: input.featureRow.matchSlug,
@@ -165,8 +198,8 @@ export function scorePreMatchValuation(
     checkpointTag: "pre_match",
     scoringRunKey: input.scoringRunKey,
     modelKey: input.modelKey,
-    modelFamily: BASELINE_IPL_RATING_MODEL_FAMILY,
-    modelVersion: BASELINE_IPL_RATING_MODEL_VERSION,
+    modelFamily: baseModel.modelFamily,
+    modelVersion: baseModel.modelVersion,
     checkpointStateId: input.checkpointStateId,
     sourceMarketId: input.mapping.sourceMarketId,
     sourceMarketSnapshotId: input.mapping.sourceMarketSnapshotId,
@@ -184,8 +217,8 @@ export function scorePreMatchValuation(
       lineage: {
         runKey: input.scoringRunKey,
         modelKey: input.modelKey,
-        modelFamily: BASELINE_IPL_RATING_MODEL_FAMILY,
-        modelVersion: BASELINE_IPL_RATING_MODEL_VERSION,
+        modelFamily: baseModel.modelFamily,
+        modelVersion: baseModel.modelVersion,
         checkpointStateId: input.checkpointStateId,
         sourceMarketId: input.mapping.sourceMarketId,
         sourceMarketSnapshotId: input.mapping.sourceMarketSnapshotId,
@@ -198,6 +231,7 @@ export function scorePreMatchValuation(
         edge: spread,
         spread,
       },
+      tradeThesis,
       market: {
         yesOutcomeName,
         noOutcomeName,
@@ -218,11 +252,13 @@ export function scorePreMatchValuation(
         summary: socialSignal.summary,
       },
       baseline: {
-        teamAWinProbability: baseline.teamAWinProbability,
-        teamBWinProbability: baseline.teamBWinProbability,
-        scoreBreakdown: baseline.scoreBreakdown,
+        teamAWinProbability: baseModel.teamAWinProbability,
+        teamBWinProbability: baseModel.teamBWinProbability,
+        scoreBreakdown: baseModel.scoreBreakdown,
         modelOptionsApplied: {
+          strategy: modelOptions.strategy,
           weightsOverridden: modelOptions.weights !== undefined,
+          configOverridden: modelOptions.config !== undefined,
           plattCalibrationApplied:
             modelOptions.plattCalibration !== undefined ? 1 : 0,
         },
@@ -234,17 +270,23 @@ export function scorePreMatchValuation(
 function deriveModelScoreOptionsFromMetadata(
   metadata: JsonObject | undefined,
 ): {
+  strategy: "profit_first_market" | "legacy_baseline_rating";
   weights?: ModelWeights;
+  config?: ProfitFirstMarketModelConfig;
   plattCalibration?: { intercept: number; slope: number };
 } {
   const preMatchOptions = readObject(metadata?.["preMatchModelOptions"]);
   if (preMatchOptions === null) {
-    return {};
+    return {
+      strategy: "profit_first_market",
+    };
   }
 
   const enabled = preMatchOptions["enabled"];
   if (enabled !== true) {
-    return {};
+    return {
+      strategy: "profit_first_market",
+    };
   }
 
   const platt = readObject(preMatchOptions["plattCalibration"]);
@@ -264,9 +306,25 @@ function deriveModelScoreOptionsFromMetadata(
     weightsInput === null
       ? undefined
       : readModelWeightsOverride(weightsInput, DEFAULT_MODEL_WEIGHTS);
+  const configInput = readObject(preMatchOptions["config"]);
+  const config =
+    configInput === null
+      ? undefined
+      : readProfitFirstModelConfigOverride(
+          configInput,
+          DEFAULT_PROFIT_FIRST_MARKET_MODEL_CONFIG,
+        );
+  const strategyValue = preMatchOptions["strategy"];
+  const strategy =
+    strategyValue === "legacy_baseline_rating" ||
+    (strategyValue !== "profit_first_market" && weights !== undefined)
+      ? "legacy_baseline_rating"
+      : "profit_first_market";
 
   return {
+    strategy,
     ...(weights === undefined ? {} : { weights }),
+    ...(config === undefined ? {} : { config }),
     ...(plattCalibration === undefined ? {} : { plattCalibration }),
   };
 }
@@ -346,6 +404,16 @@ function readModelWeightsOverride(
     bowlerShare: readFinite(value["bowlerShare"]) ?? fallback.bowlerShare,
     allRounderShare:
       readFinite(value["allRounderShare"]) ?? fallback.allRounderShare,
+    leftHandBatShare:
+      readFinite(value["leftHandBatShare"]) ?? fallback.leftHandBatShare,
+    paceBowlerShare:
+      readFinite(value["paceBowlerShare"]) ?? fallback.paceBowlerShare,
+    spinBowlerShare:
+      readFinite(value["spinBowlerShare"]) ?? fallback.spinBowlerShare,
+    leftBatVsOppSpin:
+      readFinite(value["leftBatVsOppSpin"]) ?? fallback.leftBatVsOppSpin,
+    leftBatVsOppPace:
+      readFinite(value["leftBatVsOppPace"]) ?? fallback.leftBatVsOppPace,
     seasonWinRate: readFinite(value["seasonWinRate"]) ?? fallback.seasonWinRate,
     seasonMatchesPlayed:
       readFinite(value["seasonMatchesPlayed"]) ?? fallback.seasonMatchesPlayed,
@@ -356,6 +424,325 @@ function readModelWeightsOverride(
     pitchBattingIndex:
       readFinite(value["pitchBattingIndex"]) ?? fallback.pitchBattingIndex,
   };
+}
+
+function readProfitFirstModelConfigOverride(
+  value: Record<string, unknown>,
+  fallback: Readonly<ProfitFirstMarketModelConfig>,
+): ProfitFirstMarketModelConfig {
+  return {
+    marketWeight: readFinite(value["marketWeight"]) ?? fallback.marketWeight,
+    liquidityBlendBoost:
+      readFinite(value["liquidityBlendBoost"]) ?? fallback.liquidityBlendBoost,
+    maxDeviationFromMarket:
+      readFinite(value["maxDeviationFromMarket"]) ??
+      fallback.maxDeviationFromMarket,
+    midFavoriteFade:
+      readFinite(value["midFavoriteFade"]) ?? fallback.midFavoriteFade,
+    probabilityFloor:
+      readFinite(value["probabilityFloor"]) ?? fallback.probabilityFloor,
+    probabilityCeiling:
+      readFinite(value["probabilityCeiling"]) ?? fallback.probabilityCeiling,
+    structuredLogitMin:
+      readFinite(value["structuredLogitMin"]) ?? fallback.structuredLogitMin,
+    structuredLogitMax:
+      readFinite(value["structuredLogitMax"]) ?? fallback.structuredLogitMax,
+    rating: readFinite(value["rating"]) ?? fallback.rating,
+    form: readFinite(value["form"]) ?? fallback.form,
+    venue: readFinite(value["venue"]) ?? fallback.venue,
+    headToHead: readFinite(value["headToHead"]) ?? fallback.headToHead,
+    rest: readFinite(value["rest"]) ?? fallback.rest,
+    congestion: readFinite(value["congestion"]) ?? fallback.congestion,
+    seasonWinStrength:
+      readFinite(value["seasonWinStrength"]) ?? fallback.seasonWinStrength,
+    lineupStability:
+      readFinite(value["lineupStability"]) ?? fallback.lineupStability,
+    lineupContinuity:
+      readFinite(value["lineupContinuity"]) ?? fallback.lineupContinuity,
+    lineupRotation:
+      readFinite(value["lineupRotation"]) ?? fallback.lineupRotation,
+    homeAdvantage: readFinite(value["homeAdvantage"]) ?? fallback.homeAdvantage,
+  };
+}
+
+function buildTradeThesis(input: {
+  yesOutcomeName: string;
+  noOutcomeName: string;
+  fairWinProbability: number;
+  marketImpliedProbability: number;
+  scoreBreakdown: JsonObject;
+  marketLiquidity: number | null;
+  socialAdjustmentToYesOutcome: number;
+}): JsonObject {
+  const signedYesEdge = roundTo(
+    input.fairWinProbability - input.marketImpliedProbability,
+    6,
+  );
+  const position = resolveTradePosition(signedYesEdge);
+  const outcomeName =
+    position === "bet_no" ? input.noOutcomeName : input.yesOutcomeName;
+  const opposingOutcomeName =
+    position === "bet_no" ? input.yesOutcomeName : input.noOutcomeName;
+  const priceProbability =
+    position === "bet_no"
+      ? roundTo(1 - input.marketImpliedProbability, 6)
+      : input.marketImpliedProbability;
+  const fairProbability =
+    position === "bet_no"
+      ? roundTo(1 - input.fairWinProbability, 6)
+      : input.fairWinProbability;
+  const edgeCents = roundTo(Math.abs(signedYesEdge) * 100, 1);
+  const priceCents = roundTo(priceProbability * 100, 1);
+  const fairValueCents = roundTo(fairProbability * 100, 1);
+  const scoreBreakdown = readObject(input.scoreBreakdown) ?? {};
+  const liquidityScore =
+    readFinite(scoreBreakdown["liquidityScore"]) ??
+    normalizeLiquiditySignal(input.marketLiquidity);
+  const marketAnchorWeight = readFinite(scoreBreakdown["marketAnchorWeight"]);
+  const favoriteFadeApplied =
+    readFinite(scoreBreakdown["favoriteFadeApplied"]) ?? 0;
+  const supportingDrivers = extractSupportingDrivers(
+    input.scoreBreakdown,
+    position,
+  );
+
+  return {
+    position,
+    outcomeName,
+    opposingOutcomeName,
+    edgeCents,
+    contractPriceCents: priceCents,
+    fairValueCents,
+    conviction: classifyTradeConviction({
+      edgeCents,
+      liquidityScore,
+      favoriteFadeApplied,
+      supportingDriverCount: supportingDrivers.length,
+      marketAnchorWeight,
+    }),
+    mispricingSummary: buildMispricingSummary({
+      position,
+      outcomeName,
+      opposingOutcomeName,
+      liquidityScore,
+      favoriteFadeApplied,
+      supportingDrivers,
+      socialAdjustmentToYesOutcome: input.socialAdjustmentToYesOutcome,
+    }),
+    counterpartySummary: buildCounterpartySummary({
+      position,
+      edgeCents,
+      liquidityScore,
+      favoriteFadeApplied,
+      marketAnchorWeight,
+      socialAdjustmentToYesOutcome: input.socialAdjustmentToYesOutcome,
+    }),
+    reasons: supportingDrivers.map((driver) => driver.label),
+    marketContext: {
+      liquidity: input.marketLiquidity,
+      liquidityScore: roundTo(liquidityScore, 6),
+      marketAnchorWeight,
+      favoriteFadeCents: roundTo(favoriteFadeApplied * 100, 1),
+    },
+  };
+}
+
+function resolveTradePosition(
+  signedYesEdge: number,
+): "bet_yes" | "bet_no" | "hold" {
+  if (Math.abs(signedYesEdge) < 0.01) {
+    return "hold";
+  }
+
+  return signedYesEdge > 0 ? "bet_yes" : "bet_no";
+}
+
+function buildMispricingSummary(input: {
+  position: "bet_yes" | "bet_no" | "hold";
+  outcomeName: string;
+  opposingOutcomeName: string;
+  liquidityScore: number;
+  favoriteFadeApplied: number;
+  supportingDrivers: TradeDriver[];
+  socialAdjustmentToYesOutcome: number;
+}): string {
+  if (input.position === "hold") {
+    return "Market and model are effectively aligned, so there is no clear pre-match mispricing to trade.";
+  }
+
+  const reasons: string[] = [];
+
+  if (input.favoriteFadeApplied >= 0.004) {
+    reasons.push(
+      input.position === "bet_no"
+        ? `${input.opposingOutcomeName} looks slightly overbid in the mid-favorite band`
+        : `${input.outcomeName} looks cheaper than a mid-band favorite market usually allows`,
+    );
+  }
+
+  if (input.supportingDrivers.length > 0) {
+    reasons.push(
+      `${input.supportingDrivers
+        .slice(0, 2)
+        .map((driver) => driver.label)
+        .join(" and ")} lean ${input.outcomeName}`,
+    );
+  }
+
+  if (input.liquidityScore < 0.25) {
+    reasons.push(
+      "pre-match liquidity is still thin enough for shallow order flow to distort price",
+    );
+  }
+
+  if (Math.abs(input.socialAdjustmentToYesOutcome) >= 0.004) {
+    reasons.push(
+      "fresh off-screen information is moving our fair price more than the market is reflecting",
+    );
+  }
+
+  if (reasons.length === 0) {
+    reasons.push(
+      `${input.outcomeName} grades better on our structured signals than the current screen price suggests`,
+    );
+  }
+
+  return capitalizeSentence(joinReasons(reasons));
+}
+
+function buildCounterpartySummary(input: {
+  position: "bet_yes" | "bet_no" | "hold";
+  edgeCents: number;
+  liquidityScore: number;
+  favoriteFadeApplied: number;
+  marketAnchorWeight: number | null;
+  socialAdjustmentToYesOutcome: number;
+}): string {
+  if (input.position === "hold") {
+    return "There is no distinct other side here beyond normal balanced market flow.";
+  }
+
+  if (input.favoriteFadeApplied >= 0.004 && input.position === "bet_no") {
+    return "Most likely the other side is favorite-leaning or narrative-driven buyers, with passive counterparties willing to sell them this price.";
+  }
+
+  if (input.liquidityScore < 0.25) {
+    return "Most likely the other side is thin-liquidity passive flow rather than a deeply informed sharp market.";
+  }
+
+  if (Math.abs(input.socialAdjustmentToYesOutcome) >= 0.004) {
+    return "Most likely the other side is a market still anchored to the visible price while underweighting fresher off-screen information.";
+  }
+
+  if (input.edgeCents < 1.5 || (input.marketAnchorWeight ?? 0) >= 0.84) {
+    return "Most likely the other side is ordinary balanced flow, which makes this edge fragile unless you get a better entry.";
+  }
+
+  return "Most likely the other side is general market flow leaning against our structured team-strength read, not a clearly isolated retail pocket.";
+}
+
+function classifyTradeConviction(input: {
+  edgeCents: number;
+  liquidityScore: number;
+  favoriteFadeApplied: number;
+  supportingDriverCount: number;
+  marketAnchorWeight: number | null;
+}): "fragile" | "tradable" | "strong" {
+  if (input.edgeCents < 1.5) {
+    return "fragile";
+  }
+
+  if (
+    input.edgeCents >= 4 &&
+    (input.favoriteFadeApplied >= 0.004 || input.supportingDriverCount >= 2) &&
+    input.liquidityScore < 0.65
+  ) {
+    return "strong";
+  }
+
+  if ((input.marketAnchorWeight ?? 0) >= 0.88 && input.edgeCents < 2.5) {
+    return "fragile";
+  }
+
+  return "tradable";
+}
+
+interface TradeDriver {
+  label: string;
+  contribution: number;
+}
+
+function extractSupportingDrivers(
+  scoreBreakdown: JsonObject,
+  position: "bet_yes" | "bet_no" | "hold",
+): TradeDriver[] {
+  if (position === "hold") {
+    return [];
+  }
+
+  const direction = position === "bet_yes" ? 1 : -1;
+  const components = readObject(scoreBreakdown["components"]) ?? scoreBreakdown;
+  const labels: Record<string, string> = {
+    ratingComponent: "rating edge",
+    formComponent: "recent form",
+    venueComponent: "venue fit",
+    headToHeadComponent: "head-to-head profile",
+    restComponent: "rest differential",
+    congestionComponent: "schedule congestion",
+    seasonWinStrengthComponent: "season strength",
+    lineupStabilityComponent: "lineup stability",
+    lineupContinuityComponent: "lineup continuity",
+    lineupRotationComponent: "rotation edge",
+    homeAdvantageComponent: "home advantage",
+  };
+
+  return Object.entries(labels)
+    .map(([key, label]) => {
+      const rawValue = readFinite(components[key]);
+      if (rawValue === null) {
+        return null;
+      }
+
+      const alignedContribution = roundTo(rawValue * direction, 6);
+      if (alignedContribution <= 0.015) {
+        return null;
+      }
+
+      return {
+        label,
+        contribution: alignedContribution,
+      } satisfies TradeDriver;
+    })
+    .filter((driver): driver is TradeDriver => driver !== null)
+    .sort((left, right) => right.contribution - left.contribution);
+}
+
+function joinReasons(reasons: readonly string[]): string {
+  if (reasons.length === 1) {
+    return reasons[0] as string;
+  }
+
+  if (reasons.length === 2) {
+    return `${reasons[0]} and ${reasons[1]}`;
+  }
+
+  return `${reasons.slice(0, -1).join(", ")}, and ${reasons[reasons.length - 1]}`;
+}
+
+function capitalizeSentence(value: string): string {
+  if (value.length === 0) {
+    return value;
+  }
+
+  return `${value.charAt(0).toUpperCase()}${value.slice(1)}.`;
+}
+
+function normalizeLiquiditySignal(value: number | null): number {
+  if (value === null || !Number.isFinite(value) || value <= 0) {
+    return 0;
+  }
+
+  return Math.max(0, Math.min(1, Math.log10(value + 1) / 4.7));
 }
 
 function deriveYesOutcomeAdjustment(input: {

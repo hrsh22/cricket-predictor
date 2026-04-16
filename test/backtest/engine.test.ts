@@ -45,6 +45,7 @@ describe("historical backtest engine", () => {
         actualOutcome: 1,
         socialOnProbability: 0.61,
         socialOffProbability: 0.61,
+        marketImpliedProbability: 0.57,
       }),
       ...createSyntheticRows(),
     ];
@@ -81,6 +82,9 @@ describe("historical backtest engine", () => {
     expect(result.socialComparison.recommendation).toBe(
       "disable_social_by_default",
     );
+    expect(result.trading).not.toBeNull();
+    expect(result.trading?.marketSampleSize).toBe(2);
+    expect(result.trading?.bestProfitThreshold?.totalProfit).toBeGreaterThan(0);
     expect(result.socialComparison.socialOff.logLoss).toBeLessThan(
       result.socialComparison.socialOn.logLoss,
     );
@@ -99,6 +103,7 @@ function createSyntheticRows(): HistoricalPredictionRow[] {
       actualOutcome: 1,
       socialOnProbability: 0.74,
       socialOffProbability: 0.7,
+      marketImpliedProbability: 0.68,
     }),
     createRow({
       modelScoreId: 2,
@@ -107,6 +112,7 @@ function createSyntheticRows(): HistoricalPredictionRow[] {
       actualOutcome: 0,
       socialOnProbability: 0.34,
       socialOffProbability: 0.3,
+      marketImpliedProbability: 0.4,
     }),
     createRow({
       modelScoreId: 3,
@@ -115,6 +121,7 @@ function createSyntheticRows(): HistoricalPredictionRow[] {
       actualOutcome: 1,
       socialOnProbability: 0.56,
       socialOffProbability: 0.74,
+      marketImpliedProbability: 0.5,
     }),
     createRow({
       modelScoreId: 4,
@@ -123,6 +130,7 @@ function createSyntheticRows(): HistoricalPredictionRow[] {
       actualOutcome: 0,
       socialOnProbability: 0.64,
       socialOffProbability: 0.28,
+      marketImpliedProbability: 0.7,
     }),
   ];
 }
@@ -134,6 +142,7 @@ function createRow(input: {
   actualOutcome: 0 | 1;
   socialOnProbability: number;
   socialOffProbability: number;
+  marketImpliedProbability: number;
 }): HistoricalPredictionRow {
   return {
     modelKey: "baseline-pre-match-v1",
@@ -149,7 +158,7 @@ function createRow(input: {
     socialOnProbability: input.socialOnProbability,
     socialOffProbability: input.socialOffProbability,
     socialSupported: true,
-    marketImpliedProbability: null,
+    marketImpliedProbability: input.marketImpliedProbability,
     provenance: {
       source: "unit-test",
       modelScoreId: input.modelScoreId,

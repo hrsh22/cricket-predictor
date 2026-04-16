@@ -25,6 +25,25 @@ export interface CricketLiveConfig {
   baseUrl: string;
 }
 
+export interface OpticOddsConfig {
+  apiKey: string | null;
+  baseUrl: string;
+  sport: "cricket";
+  leagueId: string;
+  seasonYear: number;
+  sportsbookIds: string[];
+  marketIds: string[];
+  oddsFormat: "DECIMAL";
+  excludeFees: boolean;
+  includeFixtureUpdates: boolean;
+  assumedTossLeadMinutesBeforeStart: number;
+  streamStartLeadMinutesBeforeToss: number;
+  fixtureRefreshIntervalMs: number;
+  liveResultsPollIntervalMs: number;
+  reconnectDelayMs: number;
+  streamInactivityTimeoutMs: number;
+}
+
 export interface AppConfig {
   databaseUrl: string;
   databaseName: string;
@@ -32,6 +51,7 @@ export interface AppConfig {
   checkpointToggles: CheckpointToggles;
   socialFlags: SocialFlags;
   cricketLive: CricketLiveConfig;
+  opticOdds: OpticOddsConfig;
 }
 
 export const defaultSourceToggles: SourceToggles = {
@@ -53,6 +73,31 @@ export const defaultCricketLiveConfig: CricketLiveConfig = {
   provider: "espncricinfo",
   apiKey: null,
   baseUrl: "https://www.espncricinfo.com",
+};
+
+export const defaultOpticOddsConfig: OpticOddsConfig = {
+  apiKey: null,
+  baseUrl: "https://api.opticodds.com/api/v3",
+  sport: "cricket",
+  leagueId: "india_-_ipl",
+  seasonYear: new Date().getUTCFullYear(),
+  sportsbookIds: [
+    "polymarket",
+    "1xbet",
+    "dafabet",
+    "parimatch_india_",
+    "betfair_exchange",
+  ],
+  marketIds: ["moneyline"],
+  oddsFormat: "DECIMAL",
+  excludeFees: true,
+  includeFixtureUpdates: true,
+  assumedTossLeadMinutesBeforeStart: 30,
+  streamStartLeadMinutesBeforeToss: 30,
+  fixtureRefreshIntervalMs: 60_000,
+  liveResultsPollIntervalMs: 15_000,
+  reconnectDelayMs: 5_000,
+  streamInactivityTimeoutMs: 90_000,
 };
 
 export function loadAppConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
@@ -105,6 +150,74 @@ export function loadAppConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
           env["CRICKET_LIVE_BASE_URL"] ?? env["CRICAPI_BASE_URL"],
         ) ?? defaultCricketLiveConfig.baseUrl,
     },
+    opticOdds: {
+      apiKey: parseOptionalStringEnv(env["OPTIC_ODDS_API_KEY"]),
+      baseUrl:
+        parseOptionalStringEnv(env["OPTIC_ODDS_BASE_URL"]) ??
+        defaultOpticOddsConfig.baseUrl,
+      sport: "cricket",
+      leagueId:
+        parseOptionalStringEnv(env["OPTIC_ODDS_LEAGUE_ID"]) ??
+        defaultOpticOddsConfig.leagueId,
+      seasonYear: parsePositiveIntegerEnv(
+        env["OPTIC_ODDS_SEASON_YEAR"],
+        "OPTIC_ODDS_SEASON_YEAR",
+        defaultOpticOddsConfig.seasonYear,
+      ),
+      sportsbookIds: parseCsvEnv(
+        env["OPTIC_ODDS_SPORTSBOOKS"],
+        defaultOpticOddsConfig.sportsbookIds,
+      ),
+      marketIds: parseCsvEnv(
+        env["OPTIC_ODDS_MARKETS"],
+        defaultOpticOddsConfig.marketIds,
+      ),
+      oddsFormat: "DECIMAL",
+      excludeFees: parseBooleanEnv(
+        env["OPTIC_ODDS_EXCLUDE_FEES"],
+        "OPTIC_ODDS_EXCLUDE_FEES",
+        defaultOpticOddsConfig.excludeFees,
+      ),
+      includeFixtureUpdates: parseBooleanEnv(
+        env["OPTIC_ODDS_INCLUDE_FIXTURE_UPDATES"],
+        "OPTIC_ODDS_INCLUDE_FIXTURE_UPDATES",
+        defaultOpticOddsConfig.includeFixtureUpdates,
+      ),
+      assumedTossLeadMinutesBeforeStart: parsePositiveIntegerEnv(
+        env["OPTIC_ODDS_ASSUMED_TOSS_LEAD_MINUTES_BEFORE_START"],
+        "OPTIC_ODDS_ASSUMED_TOSS_LEAD_MINUTES_BEFORE_START",
+        defaultOpticOddsConfig.assumedTossLeadMinutesBeforeStart,
+      ),
+      streamStartLeadMinutesBeforeToss: parsePositiveIntegerEnv(
+        env["OPTIC_ODDS_STREAM_START_LEAD_MINUTES_BEFORE_TOSS"],
+        "OPTIC_ODDS_STREAM_START_LEAD_MINUTES_BEFORE_TOSS",
+        defaultOpticOddsConfig.streamStartLeadMinutesBeforeToss,
+      ),
+      fixtureRefreshIntervalMs:
+        parsePositiveIntegerEnv(
+          env["OPTIC_ODDS_FIXTURE_REFRESH_INTERVAL_SECONDS"],
+          "OPTIC_ODDS_FIXTURE_REFRESH_INTERVAL_SECONDS",
+          defaultOpticOddsConfig.fixtureRefreshIntervalMs / 1000,
+        ) * 1000,
+      liveResultsPollIntervalMs:
+        parsePositiveIntegerEnv(
+          env["OPTIC_ODDS_LIVE_RESULTS_POLL_INTERVAL_SECONDS"],
+          "OPTIC_ODDS_LIVE_RESULTS_POLL_INTERVAL_SECONDS",
+          defaultOpticOddsConfig.liveResultsPollIntervalMs / 1000,
+        ) * 1000,
+      reconnectDelayMs:
+        parsePositiveIntegerEnv(
+          env["OPTIC_ODDS_RECONNECT_DELAY_SECONDS"],
+          "OPTIC_ODDS_RECONNECT_DELAY_SECONDS",
+          defaultOpticOddsConfig.reconnectDelayMs / 1000,
+        ) * 1000,
+      streamInactivityTimeoutMs:
+        parsePositiveIntegerEnv(
+          env["OPTIC_ODDS_STREAM_INACTIVITY_TIMEOUT_SECONDS"],
+          "OPTIC_ODDS_STREAM_INACTIVITY_TIMEOUT_SECONDS",
+          defaultOpticOddsConfig.streamInactivityTimeoutMs / 1000,
+        ) * 1000,
+    },
   };
 }
 
@@ -151,6 +264,41 @@ export function parseOptionalStringEnv(
 
   const trimmed = value.trim();
   return trimmed.length === 0 ? null : trimmed;
+}
+
+export function parseCsvEnv(
+  value: string | undefined,
+  defaultValue: readonly string[],
+): string[] {
+  const normalized = parseOptionalStringEnv(value);
+  if (normalized === null) {
+    return [...defaultValue];
+  }
+
+  return normalized
+    .split(",")
+    .map((entry) => entry.trim())
+    .filter((entry) => entry.length > 0);
+}
+
+export function parsePositiveIntegerEnv(
+  value: string | undefined,
+  envName: string,
+  defaultValue: number,
+): number {
+  const normalized = parseOptionalStringEnv(value);
+  if (normalized === null) {
+    return defaultValue;
+  }
+
+  const parsed = Number.parseInt(normalized, 10);
+  if (!Number.isInteger(parsed) || parsed <= 0) {
+    throw new Error(
+      `Invalid ${envName} value "${value}". Expected a positive integer.`,
+    );
+  }
+
+  return parsed;
 }
 
 export function parseCricketLiveSourceEnv(

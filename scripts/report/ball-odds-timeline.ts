@@ -682,7 +682,7 @@ function buildDeliveries(
 ): CricsheetDelivery[] {
   const teams = match.info?.teams ?? [];
   const innings = match.innings ?? [];
-  if (teams.length !== 2 || innings.length < 2) {
+  if (teams.length !== 2 || innings.length < 1) {
     throw new Error("Unexpected Cricsheet match shape for IPL T20 innings.");
   }
 

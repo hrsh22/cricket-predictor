@@ -17,6 +17,10 @@ import {
   createMatchingRepository,
   type MatchingRepository,
 } from "./matching.js";
+import {
+  createOpticOddsRepository,
+  type OpticOddsRepository,
+} from "./opticodds.js";
 
 export interface RepositorySet {
   raw: RawSnapshotRepository;
@@ -24,6 +28,7 @@ export interface RepositorySet {
   read: ReadModelRepository;
   modeling: ModelingRepository;
   matching: MatchingRepository;
+  opticodds: OpticOddsRepository;
   close(): Promise<void>;
 }
 
@@ -38,6 +43,7 @@ export function createRepositorySet(
     read: createReadModelRepository(pool),
     modeling: createModelingRepository(pool),
     matching: createMatchingRepository(pool),
+    opticodds: createOpticOddsRepository(pool),
     close: () => closePgPool(pool),
   };
 }
@@ -48,6 +54,7 @@ export { createNormalizedRepository };
 export { createReadModelRepository };
 export { createModelingRepository };
 export { createMatchingRepository };
+export { createOpticOddsRepository };
 export type { AppConfig } from "../config/index.js";
 export type {
   RawCricketSnapshotInsert,
@@ -59,6 +66,19 @@ export type {
   RawPolymarketTradeRecord,
   RawSnapshotRepository,
 } from "./raw.js";
+export type {
+  OpticOddsBallOddsSnapshotInsert,
+  OpticOddsBallOddsSnapshotRecord,
+  OpticOddsRepository,
+  OpticOddsStreamCursorInsert,
+  OpticOddsStreamCursorRecord,
+  RawOpticOddsFixtureInsert,
+  RawOpticOddsFixtureRecord,
+  RawOpticOddsOddsEventInsert,
+  RawOpticOddsOddsEventRecord,
+  RawOpticOddsResultsEventInsert,
+  RawOpticOddsResultsEventRecord,
+} from "./opticodds.js";
 export type {
   CanonicalMatchRecord,
   CheckpointStateRecord,

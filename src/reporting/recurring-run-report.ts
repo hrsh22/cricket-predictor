@@ -39,6 +39,16 @@ interface ReportRow {
   modelVersion: string;
   note: string;
   scoredAt: string;
+  tradeThesis?: {
+    position: "bet_yes" | "bet_no" | "hold";
+    outcomeName: string;
+    edgeCents: number;
+    contractPriceCents: number;
+    fairValueCents: number;
+    conviction: "fragile" | "tradable" | "strong";
+    mispricingSummary: string;
+    counterpartySummary: string;
+  };
 }
 
 function formatValuationCard(row: ReportRow): string[] {
@@ -82,8 +92,17 @@ function formatValuationCard(row: ReportRow): string[] {
     noTeam,
     yesEdge,
     yesMarketProb,
+    row.tradeThesis,
   );
   lines.push(...recommendation);
+
+  if (row.tradeThesis !== undefined) {
+    lines.push(
+      `   Edge: ${formatCents(row.tradeThesis.edgeCents)} | Price: ${formatCents(row.tradeThesis.contractPriceCents)} | Fair: ${formatCents(row.tradeThesis.fairValueCents)} | Quality: ${row.tradeThesis.conviction.toUpperCase()}`,
+    );
+    lines.push(`   Why: ${row.tradeThesis.mispricingSummary}`);
+    lines.push(`   Other side: ${row.tradeThesis.counterpartySummary}`);
+  }
 
   lines.push("");
   lines.push(`Model: ${row.modelKey} | Checkpoint: ${row.checkpointType}`);
@@ -100,27 +119,31 @@ function buildRecommendation(
   noTeam: string,
   yesEdge: number | null,
   yesMarketProb: number | null,
+  tradeThesis?: ReportRow["tradeThesis"],
 ): string[] {
   if (yesEdge === null || yesMarketProb === null) {
     return ["⚠️  NO RECOMMENDATION: Missing market data"];
   }
 
   const edgePp = Math.abs(yesEdge * 100).toFixed(1);
+  const edgeCents = tradeThesis?.edgeCents ?? Number(edgePp);
 
   if (Math.abs(yesEdge) < 0.01) {
-    return ["➖ NO EDGE: Model and market agree (within 1pp)"];
+    return [
+      `➖ NO EDGE: Model and market agree (within 1pp / ${formatCents(edgeCents)})`,
+    ];
   }
 
   if (yesEdge > 0) {
     return [
       `✅ RECOMMENDATION: BET ${yesTeam.toUpperCase()}`,
-      `   Underpriced by ${edgePp}pp`,
+      `   Underpriced by ${edgePp}pp (${formatCents(edgeCents)})`,
       `   → On Polymarket: Bet YES on "${yesTeam} to win"`,
     ];
   } else {
     return [
       `✅ RECOMMENDATION: BET ${noTeam.toUpperCase()}`,
-      `   Underpriced by ${edgePp}pp`,
+      `   Underpriced by ${edgePp}pp (${formatCents(edgeCents)})`,
       `   → On Polymarket: Bet NO on "${yesTeam} to win"`,
     ];
   }
@@ -152,6 +175,10 @@ function formatEdge(value: number | null): string {
   if (value === null) return "n/a";
   const pp = (value * 100).toFixed(1);
   return `${value > 0 ? "+" : ""}${pp}pp`;
+}
+
+function formatCents(value: number): string {
+  return `${value.toFixed(1)}c`;
 }
 
 function padCenter(str: string, width: number): string {

@@ -44,6 +44,7 @@ describe("pre-match scorer valuation", () => {
     expect(result.checkpointType).toBe("pre_match");
     expect(result.checkpointTag).toBe("pre_match");
     expect(result.modelKey).toBe("baseline-pre-match-v1");
+    expect(result.modelFamily).toBe("profit_first_market");
     expect(result.scoringRunKey).toBe("run-pre-match-001");
     expect(result.marketImpliedProbability).toBe(0.54);
     expect(result.edge).toBe(result.spread);
@@ -57,9 +58,27 @@ describe("pre-match scorer valuation", () => {
       string,
       unknown
     >;
+    const tradeThesis = result.scorePayload["tradeThesis"] as Record<
+      string,
+      unknown
+    >;
     expect(socialAdjustment["requestedAdjustment"]).toBe(0.08);
     expect(socialAdjustment["boundedAdjustment"]).toBe(0.05);
     expect(socialAdjustment["mode"]).toBe("enabled");
+    expect(tradeThesis["position"]).toBe("bet_yes");
+    expect(tradeThesis["outcomeName"]).toBe("Royal Challengers Bengaluru");
+    expect(tradeThesis["edgeCents"]).toBeTypeOf("number");
+    expect(tradeThesis["mispricingSummary"]).toBeTypeOf("string");
+    expect(tradeThesis["counterpartySummary"]).toBeTypeOf("string");
+
+    const baselinePayload = result.scorePayload["baseline"] as Record<
+      string,
+      unknown
+    >;
+    const modelOptionsApplied = baselinePayload[
+      "modelOptionsApplied"
+    ] as Record<string, unknown>;
+    expect(modelOptionsApplied["strategy"]).toBe("profit_first_market");
   });
 
   it("keeps base probability unchanged when social is explicitly disabled", () => {
@@ -311,6 +330,87 @@ describe("pre-match scorer valuation", () => {
       withoutMetadata.structuredFairProbability,
     );
   });
+
+  it("supports opting back into the legacy baseline model via metadata", () => {
+    const featureRow = buildBaselinePreMatchFeatureRow(
+      baselinePreMatchCheckpoint,
+      baselinePreMatchFeatureContext,
+    );
+
+    const result = scorePreMatchValuation({
+      mapping: createResolvedMapping(featureRow.matchSlug),
+      marketSnapshot: createMarketSnapshot(),
+      featureRow,
+      checkpointStateId: 511,
+      scoringRunKey: "run-pre-match-011",
+      modelKey: "baseline-pre-match-v1",
+      socialPolicyOverrides: {
+        enabled: false,
+      },
+      modelMetadata: {
+        preMatchModelOptions: {
+          enabled: true,
+          weights: {
+            rating: 0.5,
+            form: 0.2,
+            headToHead: 0.2,
+            rest: 0.5,
+            congestion: 0.4,
+          },
+        },
+      },
+    });
+
+    expect(result.modelFamily).toBe("baseline_ipl_rating");
+    const baselinePayload = result.scorePayload["baseline"] as Record<
+      string,
+      unknown
+    >;
+    const modelOptionsApplied = baselinePayload[
+      "modelOptionsApplied"
+    ] as Record<string, unknown>;
+    expect(modelOptionsApplied["strategy"]).toBe("legacy_baseline_rating");
+    expect(modelOptionsApplied["weightsOverridden"]).toBe(true);
+  });
+
+  it("trusts the market more when liquidity is high", () => {
+    const featureRow = buildBaselinePreMatchFeatureRow(
+      baselinePreMatchCheckpoint,
+      baselinePreMatchFeatureContext,
+    );
+
+    const lowLiquidity = scorePreMatchValuation({
+      mapping: createResolvedMapping(featureRow.matchSlug),
+      marketSnapshot: createMarketSnapshot({
+        liquidity: 100,
+      }),
+      featureRow,
+      checkpointStateId: 512,
+      scoringRunKey: "run-pre-match-012",
+      modelKey: "baseline-pre-match-v1",
+      socialPolicyOverrides: {
+        enabled: false,
+      },
+    });
+
+    const highLiquidity = scorePreMatchValuation({
+      mapping: createResolvedMapping(featureRow.matchSlug),
+      marketSnapshot: createMarketSnapshot({
+        liquidity: 500000,
+      }),
+      featureRow,
+      checkpointStateId: 513,
+      scoringRunKey: "run-pre-match-013",
+      modelKey: "baseline-pre-match-v1",
+      socialPolicyOverrides: {
+        enabled: false,
+      },
+    });
+
+    expect(
+      Math.abs(lowLiquidity.structuredFairProbability - 0.54),
+    ).toBeGreaterThan(Math.abs(highLiquidity.structuredFairProbability - 0.54));
+  });
 });
 
 function createResolvedMapping(matchSlug: string): MarketMatchMappingRecord {
@@ -338,7 +438,14 @@ function createResolvedMapping(matchSlug: string): MarketMatchMappingRecord {
   };
 }
 
-function createMarketSnapshot() {
+function createMarketSnapshot(
+  overrides: Partial<{
+    yesProbability: number;
+    noProbability: number;
+    liquidity: number;
+    lastTradedPrice: number;
+  }> = {},
+) {
   return parseMarketSnapshot({
     competition: "IPL",
     sourceMarketId: "market-ipl-rcb-kkr-001",
@@ -349,11 +456,11 @@ function createMarketSnapshot() {
     yesOutcomeName: "Royal Challengers Bengaluru",
     noOutcomeName: "Kolkata Knight Riders",
     outcomeProbabilities: {
-      yes: 0.54,
-      no: 0.46,
+      yes: overrides.yesProbability ?? 0.54,
+      no: overrides.noProbability ?? 0.46,
     },
-    lastTradedPrice: 0.53,
-    liquidity: 32000,
+    lastTradedPrice: overrides.lastTradedPrice ?? 0.53,
+    liquidity: overrides.liquidity ?? 32000,
     payload: {
       source: "test",
     },

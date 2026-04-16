@@ -184,6 +184,8 @@ describe("stored score historical backtest", () => {
     expect(result.socialComparison.recommendation).toBe(
       "disable_social_by_default",
     );
+    expect(result.trading).not.toBeNull();
+    expect(result.trading?.marketSampleSize).toBe(2);
     expect(
       result.skippedRows.some(
         (row) => row.reason === "unsupported_match_result",
@@ -207,10 +209,12 @@ describe("stored score historical backtest", () => {
       string,
       unknown
     >;
+    const trading = summaryRecord["trading"] as Record<string, unknown>;
     expect(socialComparison["recommendation"]).toBe(
       "disable_social_by_default",
     );
     expect(socialComparison["regressionDetected"]).toBe(true);
+    expect(trading["marketSampleSize"]).toBe(2);
   });
 
   async function cleanupSyntheticRows(

@@ -110,6 +110,126 @@ describe("postgres repositories", () => {
     expect(priceHistoryPoint.tokenId).toBe(`token-yes-${suffix}`);
     expect(trade.tradeKey).toBe(`trade-${suffix}`);
 
+    const opticFixture = await repositories.opticodds.saveFixture({
+      fixtureId: `optic-fixture-${suffix}`,
+      gameId: `optic-game-${suffix}`,
+      sportId: "cricket",
+      leagueId: "india_-_ipl",
+      seasonYear: 2026,
+      seasonType: "Regular Season",
+      seasonWeek: "5",
+      startDate: "2026-04-15T14:00:00.000Z",
+      status: "live",
+      isLive: true,
+      homeTeamName: "Royal Challengers Bengaluru",
+      awayTeamName: "Lucknow Super Giants",
+      homeTeamId: `optic-home-${suffix}`,
+      awayTeamId: `optic-away-${suffix}`,
+      hasOdds: true,
+      venueName: "M. Chinnaswamy Stadium",
+      venueLocation: "Bengaluru, India",
+      payload: { source: "integration-test" },
+    });
+
+    const opticResults = await repositories.opticodds.saveResultsEvent({
+      dedupeKey: `optic-results-${suffix}`,
+      fixtureId: opticFixture.fixtureId,
+      eventSource: "bootstrap",
+      eventType: "fixture-results",
+      eventEntryId: null,
+      snapshotTime: "2026-04-15T14:12:59.849Z",
+      status: "live",
+      isLive: true,
+      period: "1",
+      periodNumber: 1,
+      ballClock: "2.5",
+      homeScore: 0,
+      awayScore: 16,
+      payload: { clock: "2.5" },
+    });
+
+    const opticOdd = await repositories.opticodds.saveOddsEvent({
+      dedupeKey: `optic-odd-${suffix}`,
+      fixtureId: opticFixture.fixtureId,
+      eventSource: "stream",
+      eventType: "odds",
+      eventEntryId: `1776262470913-${suffix}`,
+      sourceOddId: `optic-selection-${suffix}`,
+      sportsbookId: "polymarket",
+      sportsbookName: "Polymarket",
+      marketId: "moneyline",
+      marketName: "Moneyline",
+      selection: "Lucknow Super Giants",
+      normalizedSelection: "lucknow_super_giants",
+      teamId: `optic-away-${suffix}`,
+      playerId: null,
+      groupingKey: "default",
+      isMain: true,
+      isLive: true,
+      isLocked: false,
+      price: 2.7,
+      points: null,
+      eventTime: "2026-04-15T14:14:25.889Z",
+      orderBook: [[2.7, 2287.19]],
+      limits: { max: 2287.19 },
+      sourceIds: { selection_id: `optic-source-${suffix}` },
+      payload: { source: "integration-test" },
+    });
+
+    const opticBallSnapshot = await repositories.opticodds.saveBallOddsSnapshot(
+      {
+        snapshotKey: `optic-ball-${suffix}`,
+        fixtureId: opticFixture.fixtureId,
+        sourceResultsDedupeKey: opticResults.dedupeKey,
+        sourceOddsDedupeKey: opticOdd.dedupeKey,
+        seasonYear: 2026,
+        fixtureStartDate: opticFixture.startDate,
+        fixtureStatus: "live",
+        isLive: true,
+        period: "1",
+        periodNumber: 1,
+        ballClock: "2.5",
+        ballKey: "1:2.5",
+        snapshotTime: "2026-04-15T14:14:25.889Z",
+        homeTeamName: opticFixture.homeTeamName,
+        awayTeamName: opticFixture.awayTeamName,
+        homeScore: 0,
+        awayScore: 16,
+        sportsbookId: "polymarket",
+        sportsbookName: "Polymarket",
+        marketId: "moneyline",
+        marketName: "Moneyline",
+        selection: "Lucknow Super Giants",
+        normalizedSelection: "lucknow_super_giants",
+        teamId: `optic-away-${suffix}`,
+        playerId: null,
+        groupingKey: "default",
+        isMain: true,
+        isLocked: false,
+        price: 2.7,
+        points: null,
+        orderBook: [[2.7, 2287.19]],
+        limits: { max: 2287.19 },
+        sourceIds: { selection_id: `optic-source-${suffix}` },
+        payload: { source: "integration-test" },
+      },
+    );
+
+    const opticCursor = await repositories.opticodds.saveStreamCursor({
+      streamKey: `opticodds-${suffix}`,
+      lastEntryId: `1776262470913-${suffix}`,
+      payload: { source: "integration-test" },
+    });
+    const opticCursorLookup = await repositories.opticodds.getStreamCursor(
+      opticCursor.streamKey,
+    );
+
+    expect(opticFixture.fixtureId).toBe(`optic-fixture-${suffix}`);
+    expect(opticResults.ballClock).toBe("2.5");
+    expect(opticOdd.sportsbookId).toBe("polymarket");
+    expect(opticBallSnapshot.ballKey).toBe("1:2.5");
+    expect(opticCursorLookup?.lastEntryId).toBe(`1776262470913-${suffix}`);
+
     const canonicalMatch = await repositories.normalized.saveCanonicalMatch({
       competition: "IPL",
       matchSlug: `ipl-2026-match-${suffix}`,
@@ -520,6 +640,22 @@ describe("postgres repositories", () => {
     if (suffixes.length === 0) {
       return;
     }
+
+    await cleanupPool.query(
+      `
+        delete from opticodds_stream_cursors
+        where right(stream_key, 8) = any($1::text[])
+      `,
+      [suffixes],
+    );
+
+    await cleanupPool.query(
+      `
+        delete from raw_opticodds_fixtures
+        where right(fixture_id, 8) = any($1::text[])
+      `,
+      [suffixes],
+    );
 
     await cleanupPool.query(
       `

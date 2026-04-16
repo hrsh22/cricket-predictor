@@ -3,9 +3,12 @@ import type {
   CalibrationSummary,
   HistoricalPredictionRow,
   ProbabilityMetrics,
+  TradingMetricsSummary,
+  TradingThresholdSummary,
 } from "./types.js";
 
 const DEFAULT_EPSILON = 1e-6;
+const DEFAULT_TRADING_EDGE_THRESHOLDS = [0, 0.01, 0.02, 0.03, 0.05] as const;
 
 export function calculateProbabilityMetrics(
   rows: readonly HistoricalPredictionRow[],
@@ -131,6 +134,39 @@ export function calculateCalibrationSummary(
   };
 }
 
+export function calculateTradingMetrics(
+  rows: readonly HistoricalPredictionRow[],
+  selector: (row: HistoricalPredictionRow) => number,
+  thresholds: readonly number[] = DEFAULT_TRADING_EDGE_THRESHOLDS,
+): TradingMetricsSummary | null {
+  const marketRows = rows.filter(
+    (row) => row.marketImpliedProbability !== null,
+  );
+
+  if (marketRows.length === 0) {
+    return null;
+  }
+
+  const normalizedThresholds = thresholds
+    .filter((threshold) => Number.isFinite(threshold) && threshold >= 0)
+    .map((threshold) => roundTo(threshold, 6));
+
+  const uniqueThresholds = Array.from(new Set(normalizedThresholds)).sort(
+    (left, right) => left - right,
+  );
+
+  const summaries = uniqueThresholds.map((minimumEdge) =>
+    summarizeTradingThreshold(marketRows, selector, minimumEdge),
+  );
+
+  return {
+    marketSampleSize: marketRows.length,
+    thresholds: summaries,
+    bestRoiThreshold: pickBestTradingThreshold(summaries, "roi"),
+    bestProfitThreshold: pickBestTradingThreshold(summaries, "totalProfit"),
+  };
+}
+
 export function normalizeProbability(value: number): number {
   if (!Number.isFinite(value) || value < 0 || value > 1) {
     throw new Error("Probability values must be finite and within [0, 1].");
@@ -149,6 +185,107 @@ function clampProbability(value: number, epsilon: number): number {
   }
 
   return value;
+}
+
+function summarizeTradingThreshold(
+  rows: readonly HistoricalPredictionRow[],
+  selector: (row: HistoricalPredictionRow) => number,
+  minimumEdge: number,
+): TradingThresholdSummary {
+  let betCount = 0;
+  let winCount = 0;
+  let totalProfit = 0;
+  let totalEntryPrice = 0;
+  let totalModelProbability = 0;
+  let totalEdge = 0;
+  let totalExpectedValue = 0;
+
+  for (const row of rows) {
+    const marketProbability = row.marketImpliedProbability;
+    if (marketProbability === null) {
+      continue;
+    }
+
+    const modelProbability = normalizeProbability(selector(row));
+    const yesEdge = modelProbability - marketProbability;
+    if (Math.abs(yesEdge) <= minimumEdge) {
+      continue;
+    }
+
+    const backYes = yesEdge > 0;
+    const entryPrice = backYes ? marketProbability : 1 - marketProbability;
+    const modelProbabilityForTrade = backYes
+      ? modelProbability
+      : roundTo(1 - modelProbability, 6);
+    const tradeEdge = roundTo(modelProbabilityForTrade - entryPrice, 6);
+    const tradeWon = backYes
+      ? row.actualOutcome === 1
+      : row.actualOutcome === 0;
+    const profit = tradeWon ? 1 - entryPrice : -entryPrice;
+
+    betCount += 1;
+    winCount += tradeWon ? 1 : 0;
+    totalProfit += profit;
+    totalEntryPrice += entryPrice;
+    totalModelProbability += modelProbabilityForTrade;
+    totalEdge += tradeEdge;
+    totalExpectedValue += tradeEdge;
+  }
+
+  return {
+    minimumEdge,
+    betCount,
+    winCount,
+    winRate: betCount === 0 ? null : roundTo(winCount / betCount, 6),
+    totalStake: betCount,
+    totalProfit: roundTo(totalProfit, 6),
+    roi: betCount === 0 ? null : roundTo(totalProfit / betCount, 6),
+    averageEntryPrice:
+      betCount === 0 ? null : roundTo(totalEntryPrice / betCount, 6),
+    averageModelProbability:
+      betCount === 0 ? null : roundTo(totalModelProbability / betCount, 6),
+    averageEdge: betCount === 0 ? null : roundTo(totalEdge / betCount, 6),
+    totalExpectedValue: roundTo(totalExpectedValue, 6),
+  };
+}
+
+function pickBestTradingThreshold(
+  thresholds: readonly TradingThresholdSummary[],
+  metric: "roi" | "totalProfit",
+): TradingThresholdSummary | null {
+  const eligible = thresholds.filter((threshold) => threshold.betCount > 0);
+  if (eligible.length === 0) {
+    return null;
+  }
+
+  return eligible.reduce((best, current) => {
+    const currentMetric =
+      metric === "roi"
+        ? (current.roi ?? Number.NEGATIVE_INFINITY)
+        : current.totalProfit;
+    const bestMetric =
+      metric === "roi"
+        ? (best.roi ?? Number.NEGATIVE_INFINITY)
+        : best.totalProfit;
+
+    if (currentMetric > bestMetric) {
+      return current;
+    }
+
+    if (currentMetric < bestMetric) {
+      return best;
+    }
+
+    if (current.totalProfit > best.totalProfit) {
+      return current;
+    }
+
+    if (current.totalProfit < best.totalProfit) {
+      return best;
+    }
+
+    return current.minimumEdge < best.minimumEdge ? current : best;
+  });
 }
 
 function roundTo(value: number, decimals: number): number {

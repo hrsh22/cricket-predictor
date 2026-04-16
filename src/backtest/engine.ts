@@ -4,6 +4,7 @@ import type { SqlExecutor } from "../repositories/postgres.js";
 import {
   calculateCalibrationSummary,
   calculateProbabilityMetrics,
+  calculateTradingMetrics,
 } from "./metrics.js";
 import { loadStoredScoreBacktestDataset } from "./repository.js";
 import type {
@@ -184,6 +185,7 @@ export function runHistoricalBacktestFromRows(
       (row) => row.primaryProbability,
       calibrationBinCount,
     ),
+    trading: calculateTradingMetrics(foldRows, (row) => row.primaryProbability),
     folds: foldSummaries,
     skippedFolds: splitResult.skippedFolds,
     socialComparison: summarizeSocialComparison(foldRows, calibrationBinCount),
@@ -262,6 +264,10 @@ function summarizeFold(
       fold.testRows,
       (row) => row.primaryProbability,
       calibrationBinCount,
+    ),
+    trading: calculateTradingMetrics(
+      fold.testRows,
+      (row) => row.primaryProbability,
     ),
     socialComparison: summarizeSocialComparison(
       fold.testRows,
@@ -370,6 +376,7 @@ function buildBacktestSummaryJson(
       skippedRowCount: result.skippedRowCount,
       overallMetrics: result.overallMetrics,
       calibration: result.calibration,
+      trading: result.trading,
       folds: result.folds,
       skippedFolds: result.skippedFolds,
       socialComparison: result.socialComparison,

@@ -412,6 +412,16 @@ function readModelWeightsOverride(
     bowlerShare: readFinite(value["bowlerShare"]) ?? fallback.bowlerShare,
     allRounderShare:
       readFinite(value["allRounderShare"]) ?? fallback.allRounderShare,
+    leftHandBatShare:
+      readFinite(value["leftHandBatShare"]) ?? fallback.leftHandBatShare,
+    paceBowlerShare:
+      readFinite(value["paceBowlerShare"]) ?? fallback.paceBowlerShare,
+    spinBowlerShare:
+      readFinite(value["spinBowlerShare"]) ?? fallback.spinBowlerShare,
+    leftBatVsOppSpin:
+      readFinite(value["leftBatVsOppSpin"]) ?? fallback.leftBatVsOppSpin,
+    leftBatVsOppPace:
+      readFinite(value["leftBatVsOppPace"]) ?? fallback.leftBatVsOppPace,
     seasonWinRate: readFinite(value["seasonWinRate"]) ?? fallback.seasonWinRate,
     seasonMatchesPlayed:
       readFinite(value["seasonMatchesPlayed"]) ?? fallback.seasonMatchesPlayed,

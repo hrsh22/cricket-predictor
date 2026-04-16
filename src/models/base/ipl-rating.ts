@@ -28,6 +28,11 @@ export interface ModelWeights {
   lineupRotation: number;
   bowlerShare: number;
   allRounderShare: number;
+  leftHandBatShare: number;
+  paceBowlerShare: number;
+  spinBowlerShare: number;
+  leftBatVsOppSpin: number;
+  leftBatVsOppPace: number;
   seasonWinRate: number;
   seasonMatchesPlayed: number;
   seasonWinStrength: number;
@@ -56,6 +61,11 @@ export const DEFAULT_MODEL_WEIGHTS: Readonly<ModelWeights> = {
   lineupRotation: 0.0,
   bowlerShare: 0.0,
   allRounderShare: 0.0,
+  leftHandBatShare: 0.0,
+  paceBowlerShare: 0.0,
+  spinBowlerShare: 0.0,
+  leftBatVsOppSpin: 0.0,
+  leftBatVsOppPace: 0.0,
   seasonWinRate: 0.0,
   seasonMatchesPlayed: 0.0,
   seasonWinStrength: 0.0,
@@ -159,6 +169,31 @@ export function scoreBaselineIplPreMatch(
     "allRounderShareDiff",
     0,
   );
+  const leftHandBatShareDiff = readOptionalFiniteNumber(
+    featureRow.features,
+    "leftHandBatShareDiff",
+    0,
+  );
+  const paceBowlerShareDiff = readOptionalFiniteNumber(
+    featureRow.features,
+    "paceBowlerShareDiff",
+    0,
+  );
+  const spinBowlerShareDiff = readOptionalFiniteNumber(
+    featureRow.features,
+    "spinBowlerShareDiff",
+    0,
+  );
+  const leftBatVsOppSpinDiff = readOptionalFiniteNumber(
+    featureRow.features,
+    "leftBatVsOppSpinDiff",
+    0,
+  );
+  const leftBatVsOppPaceDiff = readOptionalFiniteNumber(
+    featureRow.features,
+    "leftBatVsOppPaceDiff",
+    0,
+  );
   const headToHeadDiff = readRequiredFiniteNumber(
     featureRow.features,
     "headToHeadDiff",
@@ -192,6 +227,16 @@ export function scoreBaselineIplPreMatch(
   const bowlerShareComponent = bowlerShareDiff * weights.bowlerShare;
   const allRounderShareComponent =
     allRounderShareDiff * weights.allRounderShare;
+  const leftHandBatShareComponent =
+    leftHandBatShareDiff * weights.leftHandBatShare;
+  const paceBowlerShareComponent =
+    paceBowlerShareDiff * weights.paceBowlerShare;
+  const spinBowlerShareComponent =
+    spinBowlerShareDiff * weights.spinBowlerShare;
+  const leftBatVsOppSpinComponent =
+    leftBatVsOppSpinDiff * weights.leftBatVsOppSpin;
+  const leftBatVsOppPaceComponent =
+    leftBatVsOppPaceDiff * weights.leftBatVsOppPace;
   const seasonWinRateComponent = seasonWinRateDiff * weights.seasonWinRate;
   const seasonMatchesPlayedComponent =
     seasonMatchesPlayedDiffNormalized * weights.seasonMatchesPlayed;
@@ -214,6 +259,11 @@ export function scoreBaselineIplPreMatch(
     lineupRotationComponent +
     bowlerShareComponent +
     allRounderShareComponent +
+    leftHandBatShareComponent +
+    paceBowlerShareComponent +
+    spinBowlerShareComponent +
+    leftBatVsOppSpinComponent +
+    leftBatVsOppPaceComponent +
     seasonWinRateComponent +
     seasonMatchesPlayedComponent +
     seasonWinStrengthComponent +
@@ -263,6 +313,11 @@ export function scoreBaselineIplPreMatch(
       lineupRotationComponent: roundTo(lineupRotationComponent, 8),
       bowlerShareComponent: roundTo(bowlerShareComponent, 8),
       allRounderShareComponent: roundTo(allRounderShareComponent, 8),
+      leftHandBatShareComponent: roundTo(leftHandBatShareComponent, 8),
+      paceBowlerShareComponent: roundTo(paceBowlerShareComponent, 8),
+      spinBowlerShareComponent: roundTo(spinBowlerShareComponent, 8),
+      leftBatVsOppSpinComponent: roundTo(leftBatVsOppSpinComponent, 8),
+      leftBatVsOppPaceComponent: roundTo(leftBatVsOppPaceComponent, 8),
       seasonWinRateComponent: roundTo(seasonWinRateComponent, 8),
       seasonMatchesPlayedComponent: roundTo(seasonMatchesPlayedComponent, 8),
       seasonWinStrengthComponent: roundTo(seasonWinStrengthComponent, 8),

@@ -60,6 +60,7 @@ describe("baseline pre-match feature generation", () => {
         venueTossDecisionWinRate: {},
         teamLineupContext: {},
         teamRoleCompositionContext: {},
+        teamStyleCompositionContext: {},
       },
     );
 
