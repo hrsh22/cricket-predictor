@@ -47,12 +47,17 @@ export interface OpticOddsConfig {
 export interface AppConfig {
   databaseUrl: string;
   databaseName: string;
+  logLevel: LogLevel;
   sourceToggles: SourceToggles;
   checkpointToggles: CheckpointToggles;
   socialFlags: SocialFlags;
   cricketLive: CricketLiveConfig;
   opticOdds: OpticOddsConfig;
 }
+
+export type LogLevel = "error" | "warn" | "info" | "debug";
+
+export const defaultLogLevel: LogLevel = "info";
 
 export const defaultSourceToggles: SourceToggles = {
   marketSnapshots: true,
@@ -106,6 +111,7 @@ export function loadAppConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
   return {
     databaseUrl,
     databaseName: getDatabaseName(databaseUrl),
+    logLevel: parseLogLevelEnv(env["LOG_LEVEL"]),
     sourceToggles: {
       marketSnapshots: parseBooleanEnv(
         env["ENABLE_MARKET_SNAPSHOTS"],
@@ -219,6 +225,26 @@ export function loadAppConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
         ) * 1000,
     },
   };
+}
+
+export function parseLogLevelEnv(value: string | undefined): LogLevel {
+  const normalized = parseOptionalStringEnv(value);
+  if (normalized === null) {
+    return defaultLogLevel;
+  }
+
+  if (
+    normalized === "error" ||
+    normalized === "warn" ||
+    normalized === "info" ||
+    normalized === "debug"
+  ) {
+    return normalized;
+  }
+
+  throw new Error(
+    `Invalid LOG_LEVEL value "${value}". Expected one of: error, warn, info, debug.`,
+  );
 }
 
 export function parseBooleanEnv(

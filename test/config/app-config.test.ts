@@ -4,6 +4,7 @@ import { DEFAULT_DATABASE_URL } from "../../database/config.js";
 import {
   defaultCheckpointToggles,
   defaultCricketLiveConfig,
+  defaultLogLevel,
   defaultOpticOddsConfig,
   defaultSocialFlags,
   defaultSourceToggles,
@@ -15,6 +16,7 @@ describe("app config", () => {
     const config = loadAppConfig({});
 
     expect(config.databaseUrl).toBe(DEFAULT_DATABASE_URL);
+    expect(config.logLevel).toBe(defaultLogLevel);
     expect(config.sourceToggles).toEqual(defaultSourceToggles);
     expect(config.checkpointToggles).toEqual(defaultCheckpointToggles);
     expect(config.socialFlags).toEqual(defaultSocialFlags);
@@ -44,6 +46,15 @@ describe("app config", () => {
     expect(config.cricketLive.provider).toBe("cricapi");
     expect(config.cricketLive.apiKey).toBe("demo-key");
     expect(config.cricketLive.baseUrl).toBe("https://api.cricapi.com/v1");
+  });
+
+  it("loads optional log level configuration", () => {
+    const config = loadAppConfig({
+      DATABASE_URL: DEFAULT_DATABASE_URL,
+      LOG_LEVEL: "debug",
+    });
+
+    expect(config.logLevel).toBe("debug");
   });
 
   it("loads optional OpticOdds configuration", () => {

@@ -1,5 +1,6 @@
 import { loadAppConfig } from "../../src/config/index.js";
 import { runOpticOddsBallByBallIngestion } from "../../src/ingest/opticodds/index.js";
+import logger from "../../src/logger.js";
 import { createRepositorySet } from "../../src/repositories/index.js";
 
 async function main(): Promise<void> {
@@ -14,7 +15,7 @@ async function main(): Promise<void> {
         config: config.opticOdds,
         once: true,
       });
-      process.stdout.write(`${JSON.stringify(summary, null, 2)}\n`);
+      logger.info(JSON.stringify(summary));
       return;
     }
 
@@ -23,18 +24,16 @@ async function main(): Promise<void> {
     process.once("SIGINT", stop);
     process.once("SIGTERM", stop);
 
-    process.stdout.write(
-      `${JSON.stringify(
-        {
-          mode: "continuous",
-          seasonYear: config.opticOdds.seasonYear,
-          leagueId: config.opticOdds.leagueId,
-          sportsbookIds: config.opticOdds.sportsbookIds,
-          marketIds: config.opticOdds.marketIds,
-        },
-        null,
-        2,
-      )}\n`,
+    logger.info(
+      JSON.stringify({
+        source: "opticodds-worker",
+        event: "worker_starting",
+        mode: "continuous",
+        seasonYear: config.opticOdds.seasonYear,
+        leagueId: config.opticOdds.leagueId,
+        sportsbookIds: config.opticOdds.sportsbookIds,
+        marketIds: config.opticOdds.marketIds,
+      }),
     );
 
     await runOpticOddsBallByBallIngestion({
@@ -50,6 +49,12 @@ async function main(): Promise<void> {
 main().catch((error: unknown) => {
   const message =
     error instanceof Error ? (error.stack ?? error.message) : String(error);
-  process.stderr.write(`${message}\n`);
+  logger.error(
+    JSON.stringify({
+      source: "opticodds-worker",
+      event: "worker_crashed",
+      message,
+    }),
+  );
   process.exitCode = 1;
 });

@@ -4,6 +4,7 @@ import {
   type JsonObject,
   type JsonValue,
 } from "../../domain/primitives.js";
+import logger from "../../logger.js";
 import type {
   OpticOddsRepository,
   OpticOddsBallOddsSnapshotInsert,
@@ -110,6 +111,7 @@ interface MutableServiceState {
   watchedFixtureVersion: number;
   bootstrappedOddsFixtureIds: Set<string>;
   bootstrappedResultsFixtureIds: Set<string>;
+  lastIdleLogKey: string | null;
 }
 
 interface ServerSentEvent {
@@ -144,6 +146,7 @@ export async function runOpticOddsBallByBallIngestion(
     watchedFixtureVersion: 0,
     bootstrappedOddsFixtureIds: new Set(),
     bootstrappedResultsFixtureIds: new Set(),
+    lastIdleLogKey: null,
   };
   const summary: OpticOddsBallByBallIngestionSummary = {
     startedAt: new Date().toISOString(),
@@ -440,6 +443,12 @@ async function refreshFixturesAndBootstrap(input: {
   );
   input.summary.watchedFixtureCount = watchedFixtures.length;
 
+  if (watchedFixtures.length === 0) {
+    logIdleSchedule(input.state, currentTime, input.config);
+  } else {
+    input.state.lastIdleLogKey = null;
+  }
+
   for (const fixture of watchedFixtures) {
     if (!input.state.bootstrappedOddsFixtureIds.has(fixture.id)) {
       await bootstrapFixtureOdds({
@@ -664,7 +673,7 @@ async function runOddsStreamLoop(input: {
     const watchVersion = input.state.watchedFixtureVersion;
     const cursor = await input.repository.getStreamCursor(streamKey);
     const managedSignal = createManagedAbortSignal({
-      externalSignal: input.signal,
+      ...(input.signal === undefined ? {} : { externalSignal: input.signal }),
       shouldAbort: () => input.state.watchedFixtureVersion !== watchVersion,
     });
     const url = input.client.buildOddsStreamUrl({
@@ -824,7 +833,7 @@ async function runResultsStreamLoop(input: {
     const watchVersion = input.state.watchedFixtureVersion;
     const cursor = await input.repository.getStreamCursor(streamKey);
     const managedSignal = createManagedAbortSignal({
-      externalSignal: input.signal,
+      ...(input.signal === undefined ? {} : { externalSignal: input.signal }),
       shouldAbort: () => input.state.watchedFixtureVersion !== watchVersion,
     });
     const url = input.client.buildResultsStreamUrl({
@@ -1355,6 +1364,92 @@ function getIdleSleepMs(
   );
 }
 
+function logIdleSchedule(
+  state: MutableServiceState,
+  now: Date,
+  config: Pick<
+    OpticOddsConfig,
+    | "fixtureRefreshIntervalMs"
+    | "assumedTossLeadMinutesBeforeStart"
+    | "streamStartLeadMinutesBeforeToss"
+  >,
+): void {
+  const nextFixture = findNextWatchCandidate(state, now, config);
+  const idleSleepMs = getIdleSleepMs(state, now, config);
+  const logKey = JSON.stringify({
+    nextFixtureId: nextFixture?.fixtureId ?? null,
+    nextWatchStartTime: nextFixture?.watchStartTime ?? null,
+    idleSleepMs,
+  });
+
+  if (state.lastIdleLogKey === logKey) {
+    return;
+  }
+
+  state.lastIdleLogKey = logKey;
+  logWorkerEvent("debug", "idle_waiting_for_fixture", {
+    nextFixtureId: nextFixture?.fixtureId ?? null,
+    nextFixtureStartDate: nextFixture?.startDate ?? null,
+    nextFixtureStatus: nextFixture?.status ?? null,
+    nextWatchStartTime: nextFixture?.watchStartTime ?? null,
+    idleSleepMs,
+  });
+}
+
+function findNextWatchCandidate(
+  state: MutableServiceState,
+  now: Date,
+  config: Pick<
+    OpticOddsConfig,
+    "assumedTossLeadMinutesBeforeStart" | "streamStartLeadMinutesBeforeToss"
+  >,
+): {
+  fixtureId: string;
+  startDate: string;
+  status: string;
+  watchStartTime: string;
+} | null {
+  let nextFixture: {
+    fixtureId: string;
+    startDate: string;
+    status: string;
+    watchStartTime: string;
+  } | null = null;
+
+  for (const fixture of state.fixturesById.values()) {
+    if (isTerminalFixtureStatus(fixture.status) || fixture.isLive) {
+      continue;
+    }
+
+    const watchStartTime = getFixtureWatchStartTime(fixture.startDate, config);
+    if (watchStartTime === null) {
+      continue;
+    }
+
+    const watchStartTimestamp = Date.parse(watchStartTime);
+    if (
+      !Number.isFinite(watchStartTimestamp) ||
+      watchStartTimestamp < now.getTime()
+    ) {
+      continue;
+    }
+
+    if (
+      nextFixture === null ||
+      watchStartTimestamp < Date.parse(nextFixture.watchStartTime)
+    ) {
+      nextFixture = {
+        fixtureId: fixture.fixtureId,
+        startDate: fixture.startDate,
+        status: fixture.status,
+        watchStartTime,
+      };
+    }
+  }
+
+  return nextFixture;
+}
+
 function replaceWatchedFixtureIds(
   state: MutableServiceState,
   watchedFixtureIds: readonly string[],
@@ -1469,28 +1564,29 @@ function describeError(error: unknown): string {
 }
 
 function logWorkerEvent(
-  level: "info" | "warn" | "error",
+  level: "debug" | "info" | "warn" | "error",
   event: string,
   payload: Record<string, unknown>,
 ): void {
-  const entry = {
-    level,
-    event,
+  const serializedPayload = JSON.stringify({
     source: "opticodds-worker",
-    timestamp: new Date().toISOString(),
+    event,
     ...payload,
-  };
+  });
 
-  const serialized = JSON.stringify(entry);
   if (level === "error") {
-    console.error(serialized);
+    logger.error(serializedPayload);
     return;
   }
   if (level === "warn") {
-    console.warn(serialized);
+    logger.warn(serializedPayload);
     return;
   }
-  console.info(serialized);
+  if (level === "debug") {
+    logger.debug(serializedPayload);
+    return;
+  }
+  logger.info(serializedPayload);
 }
 
 async function consumeServerSentEvents(input: {

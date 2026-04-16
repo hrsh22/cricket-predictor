@@ -58,13 +58,14 @@
     "eslint": "^9.22.0",
     "eslint-config-prettier": "^10.0.2",
     "prettier": "^3.5.3",
-    "tsx": "^4.19.3",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.26.1",
     "vitest": "^3.0.7"
   },
   "dependencies": {
     "cheerio": "^1.2.0",
-    "pg": "^8.20.0"
+    "pg": "^8.20.0",
+    "tsx": "^4.19.3",
+    "winston": "^3.17.0"
   }
 }
