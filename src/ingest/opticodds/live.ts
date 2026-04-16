@@ -109,7 +109,7 @@ interface MutableServiceState {
   oddsCacheByFixtureId: Map<string, Map<string, CachedOddState>>;
   watchedFixtureIds: string[];
   watchedFixtureVersion: number;
-  bootstrappedOddsFixtureIds: Set<string>;
+  lastOddsBootstrapAtByFixtureId: Map<string, string>;
   bootstrappedResultsFixtureIds: Set<string>;
   lastIdleLogKey: string | null;
 }
@@ -144,7 +144,7 @@ export async function runOpticOddsBallByBallIngestion(
     oddsCacheByFixtureId: new Map(),
     watchedFixtureIds: [],
     watchedFixtureVersion: 0,
-    bootstrappedOddsFixtureIds: new Set(),
+    lastOddsBootstrapAtByFixtureId: new Map(),
     bootstrappedResultsFixtureIds: new Set(),
     lastIdleLogKey: null,
   };
@@ -311,6 +311,15 @@ export function createSportsbookSlug(value: string): string {
     .replace(/_+/gu, "_");
 }
 
+function canonicalizeSportsbookId(value: string): string {
+  const normalized = createSportsbookSlug(value);
+  if (normalized === "parimatch_india") {
+    return "parimatch_india_";
+  }
+
+  return normalized;
+}
+
 export function buildResultsEventDedupeKey(input: {
   eventSource: "stream" | "bootstrap";
   fixtureId: string;
@@ -450,7 +459,18 @@ async function refreshFixturesAndBootstrap(input: {
   }
 
   for (const fixture of watchedFixtures) {
-    if (!input.state.bootstrappedOddsFixtureIds.has(fixture.id)) {
+    if (
+      shouldBootstrapFixtureOdds(
+        {
+          fixtureId: fixture.id,
+          status: fixture.status,
+          isLive: fixture.is_live,
+        },
+        input.state,
+        input.config,
+        currentTime,
+      )
+    ) {
       await bootstrapFixtureOdds({
         client: input.client,
         config: input.config,
@@ -459,7 +479,10 @@ async function refreshFixturesAndBootstrap(input: {
         state: input.state,
         summary: input.summary,
       });
-      input.state.bootstrappedOddsFixtureIds.add(fixture.id);
+      input.state.lastOddsBootstrapAtByFixtureId.set(
+        fixture.id,
+        currentTime.toISOString(),
+      );
     }
 
     if (
@@ -1076,9 +1099,9 @@ async function persistOddsUpdate(input: {
   const normalizedSelection =
     readString(input.odd.normalized_selection) ??
     createSportsbookSlug(input.odd.selection ?? input.odd.name);
-  const sportsbookId =
-    readString(input.odd.sportsbook_id) ??
-    createSportsbookSlug(input.odd.sportsbook);
+  const sportsbookId = canonicalizeSportsbookId(
+    readString(input.odd.sportsbook_id) ?? input.odd.sportsbook,
+  );
   const marketId =
     readString(input.odd.market_id) ?? createSportsbookSlug(input.odd.market);
   const eventTime = toEventTimestamp(input.odd.timestamp);
@@ -1313,6 +1336,43 @@ function refreshWatchedFixtureState(
   replaceWatchedFixtureIds(state, watchedFixtureIds);
 }
 
+function shouldBootstrapFixtureOdds(
+  fixture: Pick<RawOpticOddsFixtureInsert, "fixtureId" | "status" | "isLive">,
+  state: MutableServiceState,
+  config: Pick<OpticOddsConfig, "fixtureRefreshIntervalMs" | "sportsbookIds">,
+  now: Date,
+): boolean {
+  const lastBootstrapAt = state.lastOddsBootstrapAtByFixtureId.get(
+    fixture.fixtureId,
+  );
+  if (lastBootstrapAt === undefined) {
+    return true;
+  }
+
+  if (fixture.isLive || fixture.status.toLowerCase() === "live") {
+    return false;
+  }
+
+  const fixtureCache = state.oddsCacheByFixtureId.get(fixture.fixtureId);
+  const seenSportsbookIds = new Set(
+    fixtureCache === undefined
+      ? []
+      : Array.from(fixtureCache.values()).map((odd) => odd.sportsbookId),
+  );
+  const missingConfiguredBook = config.sportsbookIds.some(
+    (sportsbookId) =>
+      !seenSportsbookIds.has(canonicalizeSportsbookId(sportsbookId)),
+  );
+  if (!missingConfiguredBook) {
+    return false;
+  }
+
+  return (
+    now.getTime() - Date.parse(lastBootstrapAt) >=
+    config.fixtureRefreshIntervalMs
+  );
+}
+
 function getIdleSleepMs(
   state: MutableServiceState,
   now: Date,
@@ -1469,9 +1529,9 @@ function replaceWatchedFixtureIds(
   }
 
   const nextIdSet = new Set(nextIds);
-  for (const fixtureId of state.bootstrappedOddsFixtureIds) {
+  for (const fixtureId of state.lastOddsBootstrapAtByFixtureId.keys()) {
     if (!nextIdSet.has(fixtureId)) {
-      state.bootstrappedOddsFixtureIds.delete(fixtureId);
+      state.lastOddsBootstrapAtByFixtureId.delete(fixtureId);
     }
   }
   for (const fixtureId of state.bootstrappedResultsFixtureIds) {

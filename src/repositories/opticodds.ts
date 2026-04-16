@@ -254,7 +254,7 @@ export function createOpticOddsRepository(
           fixture.hasOdds,
           fixture.venueName,
           fixture.venueLocation,
-          fixture.payload,
+          toPgJson(fixture.payload),
         ],
       );
 
@@ -332,7 +332,7 @@ export function createOpticOddsRepository(
           event.ballClock,
           event.homeScore,
           event.awayScore,
-          event.payload,
+          toPgJson(event.payload),
         ],
       );
 
@@ -451,10 +451,10 @@ export function createOpticOddsRepository(
           event.price,
           event.points,
           event.eventTime,
-          event.orderBook,
-          event.limits,
-          event.sourceIds,
-          event.payload,
+          toPgJson(event.orderBook),
+          toPgJson(event.limits),
+          toPgJson(event.sourceIds),
+          toPgJson(event.payload),
         ],
       );
 
@@ -610,10 +610,10 @@ export function createOpticOddsRepository(
           snapshot.isLocked,
           snapshot.price,
           snapshot.points,
-          snapshot.orderBook,
-          snapshot.limits,
-          snapshot.sourceIds,
-          snapshot.payload,
+          toPgJson(snapshot.orderBook),
+          toPgJson(snapshot.limits),
+          toPgJson(snapshot.sourceIds),
+          toPgJson(snapshot.payload),
         ],
       );
 
@@ -638,7 +638,7 @@ export function createOpticOddsRepository(
             updated_at = now()
           returning stream_key, last_entry_id, payload, updated_at
         `,
-        [cursor.streamKey, cursor.lastEntryId, cursor.payload],
+        [cursor.streamKey, cursor.lastEntryId, toPgJson(cursor.payload)],
       );
 
       return mapStreamCursorRow(result.rows[0] as OpticOddsStreamCursorRow);
@@ -660,6 +660,10 @@ export function createOpticOddsRepository(
       return row === undefined ? null : mapStreamCursorRow(row);
     },
   };
+}
+
+function toPgJson(value: JsonValue | JsonObject | null): string | null {
+  return value === null ? null : JSON.stringify(value);
 }
 
 interface RawOpticOddsFixtureRow {
